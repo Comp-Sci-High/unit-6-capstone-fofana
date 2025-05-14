@@ -1,12 +1,8 @@
 const mongoose = require("mongoose");
 const express = require("express");
-
 const app = express();
-
 app.use(express.static(__dirname + "/public"));
-
 app.use(express.json());
-
 app.set("view engine", "ejs");
 
 app.use((req, res, next) => {
@@ -22,34 +18,24 @@ const requestSchema = new mongoose.Schema(
         Description: { type: String, required: true },
         Price: { type: String, required: true },
         GradeLevel: { type: Number, required: true },
-        StandardsAssignment: { type: String, required: true },
+        StandardAlignment: { type: String, required: true },
         SupportedLanguages: { type: String, required: true },
+        isApproved: {type: Boolean, required: true},
         }
 );
+
+// rating schema with a referenceID to the requestSchema. (1 to many relationship
 
 const Request = mongoose.model("Request", requestSchema, "Requests");
 
-const PostedSchema = new mongoose.Schema(
-    {
-        ProductName: { type: String, required: true },
-        StandardsAssignment: { type: String, required: true },
-        Description: { type: String, required: true },
-        Price: { type: String, required: true },
-        Rating: { type: Number },
-
-        }
-);
-
-const Post = mongoose.model("Post", PostedSchema, "Posts");
-
 app.get("/library", async (req, res) => {
     const Requests = await Request.find({});
-    res.render("library.ejs", { Posts });
+    res.render("library.ejs", { Requests });
 });
 
 app.get("/home", async (req, res) => {
     const Requests = await Request.find({});
-    res.render("home.ejs", { Posts });
+    res.render("home.ejs", { Requests });
 });
 
 app.post("/add/tool", async (req, res) => {
@@ -60,7 +46,7 @@ app.post("/add/tool", async (req, res) => {
     Description: req.body.Description,
     Price: req.body.Price,
     GradeLevel: req.body.GradeLevel,
-    StandardsAssignment: req.body.StandardsAssignment,
+    StandardAlignment: req.body.StandardAlignment,
     SupportedLanguages: req.body.SupportedLanguages,
   }).save();
 
