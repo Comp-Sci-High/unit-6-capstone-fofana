@@ -28,13 +28,71 @@ const requestSchema = new mongoose.Schema(
         }
 );
 
-
 const Request = mongoose.model("Request", requestSchema, "Requests");
 
-app.get("/", async (req, res) => {
+app.get("/library", async (req, res) => {
     const Requests = await Request.find({});
-    res.render("library.ejs", { requests });
+    res.render("library.ejs", { Requests });
 });
+
+app.post("/add/tool", async (req, res) => {
+  const newTeacher = await new Teacher({
+    ProductName: req.body.ProductName,
+    Website: req.body.Website,
+    ProductType: req.body.ProductType,
+    Description: req.body.Description,
+    Price: req.body.Price,
+    GradeLevel: req.body.GradeLevel,
+    StandardsAssignment: req.body.StandardsAssignment,
+    SupportedLanguages: req.body.SupportedLanguages,
+  }).save();
+
+  res.json(newTeacher);
+});
+
+app.delete("/delTool/:_id", async (req, res) => {
+    const response = await Request.findOneAndDelete({ _id: req.params._id })
+    res.json(response);
+    });
+
+ app.patch("/upTool/:_id", async (req, res) => {
+    const response = await Request.findOneAndUpdate({ _id: req.params._id }, 
+    req.body, {new: true})
+    res.json(response);
+    });
+
+
+const insideSchema = new mongoose.Schema(
+    {
+    username: { type: String },
+    comment: { type: String },
+    rating: { type: Number },
+        }
+);
+
+const Inside = mongoose.model("Inside", insideSchema, "Insides");
+
+app.post("/add/comment", async (req, res) => {
+  const newComment = await new Inside({
+    username: req.body.username,
+    comment: req.body.comment,
+    rating: req.body.rating,
+  }).save();
+
+  res.json(newComment);
+});
+
+app.delete("/delete/:_id", async (req, res) => {
+    const response = await Inside.findOneAndDelete({ _id: req.params._id })
+    res.json(response);
+    });
+
+    app.patch("/update/:_id", async (req, res) => {
+    const response = await Inside.findOneAndUpdate({ _id: req.params._id }, 
+    req.body, {new: true})
+    res.json(response);
+    });
+
 
 
 async function startServer() {
