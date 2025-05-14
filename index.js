@@ -14,7 +14,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 const requestSchema = new mongoose.Schema(
     {
         ProductName: { type: String, required: true },
@@ -30,13 +29,31 @@ const requestSchema = new mongoose.Schema(
 
 const Request = mongoose.model("Request", requestSchema, "Requests");
 
+const PostedSchema = new mongoose.Schema(
+    {
+        ProductName: { type: String, required: true },
+        StandardsAssignment: { type: String, required: true },
+        Description: { type: String, required: true },
+        Price: { type: String, required: true },
+        Rating: { type: Number },
+
+        }
+);
+
+const Post = mongoose.model("Post", PostedSchema, "Posts");
+
 app.get("/library", async (req, res) => {
     const Requests = await Request.find({});
-    res.render("library.ejs", { Requests });
+    res.render("library.ejs", { Posts });
+});
+
+app.get("/home", async (req, res) => {
+    const Requests = await Request.find({});
+    res.render("home.ejs", { Posts });
 });
 
 app.post("/add/tool", async (req, res) => {
-  const newTeacher = await new Teacher({
+  const newRequest = await new Teacher({
     ProductName: req.body.ProductName,
     Website: req.body.Website,
     ProductType: req.body.ProductType,
@@ -47,7 +64,7 @@ app.post("/add/tool", async (req, res) => {
     SupportedLanguages: req.body.SupportedLanguages,
   }).save();
 
-  res.json(newTeacher);
+  res.json(newRequest);
 });
 
 app.delete("/delTool/:_id", async (req, res) => {
@@ -92,7 +109,6 @@ app.delete("/delete/:_id", async (req, res) => {
     req.body, {new: true})
     res.json(response);
     });
-
 
 
 async function startServer() {
