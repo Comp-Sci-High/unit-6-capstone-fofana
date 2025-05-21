@@ -1,14 +1,1266 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CS EdTech Resource Library</title>
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Link to the correct js file -->
-  <script src="script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS Unplugged | CSTA Resource Library</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 24px;
+            text-decoration: none;
+            color: #222;
+        }
+
+        .logo-squares {
+            display: grid;
+            grid-template-columns: repeat(3, 8px);
+            grid-template-rows: repeat(3, 8px);
+            grid-gap: 2px;
+            margin-right: 10px;
+        }
+
+        .square {
+            width: 8px;
+            height: 8px;
+            background-color: #222;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #ff3366;
+        }
+
+        .auth-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .btn-outline {
+            border: 1px solid #ff3366;
+            color: #ff3366;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 51, 102, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #ff3366;
+            color: white;
+            border: 1px solid #ff3366;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6275a;
+        }
+
+        /* Main Content Styles */
+        .hero {
+            padding: 60px 0;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb {
+            display: flex;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #ff3366;
+        }
+
+        .breadcrumb .separator {
+            margin: 0 10px;
+            color: #999;
+        }
+
+        .breadcrumb .active {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .resource-title {
+            flex: 1;
+        }
+
+        .resource-title h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 20px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tag-free {
+            background-color: #e6f7ff;
+            color: #0086e6;
+        }
+
+        .tag-featured {
+            background-color: #ffebf5;
+            color: #ff3366;
+        }
+
+        .tag-programming {
+            background-color: #f2f2f2;
+            color: #666;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stars {
+            display: flex;
+            margin-right: 10px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 20px;
+            margin-right: 2px;
+        }
+
+        .rating-count {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+            text-align: center;
+            width: 200px;
+        }
+
+        .resource-preview {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Content Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #ff3366;
+            border-bottom: 3px solid #ff3366;
+        }
+
+        .tab:hover:not(.active) {
+            color: #e6275a;
+            border-bottom: 3px solid #f9d0dd;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Resource Description */
+        .resource-description {
+            margin-bottom: 40px;
+        }
+
+        .resource-description h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .resource-description p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .resource-section {
+            margin-bottom: 40px;
+        }
+
+        .resource-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .fact-list {
+            list-style: none;
+        }
+
+        .fact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .fact-icon {
+            background-color: #e6f7ff;
+            color: #0086e6;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .fact-content {
+            flex: 1;
+        }
+
+        .fact-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .fact-content p {
+            font-size: 15px;
+            color: #666;
+        }
+
+        /* Related Resources */
+        .related-resources {
+            margin-bottom: 60px;
+        }
+
+        .related-resources h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 30px;
+        }
+
+        .resource-card {
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            background-color: #f2f2f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .card-tag {
+            padding: 4px 8px;
+            border-radius: 50px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            margin-bottom: 60px;
+        }
+
+        .comments-section h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .comment-form {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff3366;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .rating-select {
+            display: flex;
+            align-items: center;
+        }
+
+        .rating-option {
+            cursor: pointer;
+            font-size: 24px;
+            color: #ddd;
+            margin-right: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .rating-option.selected, .rating-option:hover {
+            color: #ffc107;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-submit {
+            background-color: #ff3366;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #e6275a;
+        }
+
+        .comments-list {
+            margin-top: 30px;
+        }
+
+        .comment {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+        }
+
+        .comment-date {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .comment-rating {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .comment-content {
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #222;
+            color: #fff;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-column {
+            width: 22%;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #ff3366;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .resources-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-content {
+                flex-wrap: wrap;
+            }
+            
+            .footer-column {
+                width: 45%;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .resource-header {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+                justify-content: flex-start;
+                margin-top: 20px;
+            }
+            
+            .action-btn {
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+            
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .footer-column {
+                width: 100%;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="#" class="logo">
+                    <div class="logo-squares">
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                        <div class="square"></div>
+                    </div>
+                    CSTA
+                </a>
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#">Resources</a>
+                    <a href="#">Submit</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="auth-links">
+                    <a href="#" class="btn btn-outline">Log In</a>
+                    <a href="#" class="btn btn-primary">Join CSTA</a>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    </body>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="#">Home</a>
+                    <span class="separator">/</span>
+                    <a href="#">Resources</a>
+                    <span class="separator">/</span>
+                    <span class="active">CS Unplugged</span>
+                </div>
+
+                <div class="resource-header">
+                    <div class="resource-title">
+                        <h1>CS Unplugged</h1>
+                        <div class="tags">
+                            <span class="tag tag-free">free</span>
+                            <span class="tag tag-featured">featured</span>
+                            <span class="tag tag-programming">programming</span>
+                        </div>
+                        <div class="rating">
+                            <div class="stars">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                            <span class="rating-count">(42 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="https://csunplugged.org" target="_blank" class="action-btn btn-primary">Visit Resource</a>
+                        <a href="#" class="action-btn btn-outline">Save for Later</a>
+                    </div>
+                </div>
+
+                <div class="resource-preview">
+                    <img src="/api/placeholder/1200/600" alt="CS Unplugged Preview">
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" data-tab="overview">Overview</div>
+                    <div class="tab" data-tab="features">Features</div>
+                    <div class="tab" data-tab="reviews">Reviews</div>
+                    <div class="tab" data-tab="related">Related Resources</div>
+                </div>
+
+                <div id="overview" class="tab-content active">
+                    <div class="resource-description">
+                        <h2>What is CS Unplugged?</h2>
+                        <p>CS Unplugged is a collection of free teaching resources that teach computer science concepts through engaging games and puzzles using cards, string, crayons, and physical movement. The activities introduce learners to computational thinking through concepts such as binary numbers, algorithms and data compression, separated from the distractions and technical detail of having to use computers.</p>
+                        <p>Originating from the University of Canterbury in New Zealand, CS Unplugged has become a worldwide phenomenon, with materials available in over 20 languages. The activities require minimal preparation and equipment, making them ideal for classroom use or informal settings like after-school programs or coding clubs.</p>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>Key Facts</h3>
+                        <ul class="fact-list">
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Target Age Group</h4>
+                                    <p>Primarily designed for K-12 students (ages 5-18), but many activities can be adapted for different age groups</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Required Equipment</h4>
+                                    <p>Minimal - most activities use everyday items like cards, string, paper, and pencils</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Curriculum Alignment</h4>
+                                    <p>Activities align with computer science curriculum standards from various countries including CSTA K-12 Computer Science Standards</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Language Support</h4>
+                                    <p>Materials available in over 20 languages, including English, Spanish, Chinese, Japanese, and Arabic</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>License</h4>
+                                    <p>Creative Commons Attribution-ShareAlike 4.0 International License</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>Teaching Benefits</h3>
+                        <ul class="fact-list">
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Accessibility</h4>
+                                    <p>CS Unplugged activities break down barriers to computer science by removing technical obstacles, making CS concepts accessible to all students regardless of their background or prior experience</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Engagement</h4>
+                                    <p>The kinesthetic, hands-on nature of the activities makes learning CS concepts fun and memorable for students</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Versatility</h4>
+                                    <p>Activities can be used as standalone lessons or integrated into broader curriculum units across various subjects</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">✓</div>
+                                <div class="fact-content">
+                                    <h4>Teacher Support</h4>
+                                    <p>Comprehensive teacher guides include learning objectives, step-by-step instructions, discussion questions, and assessment ideas</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="features" class="tab-content">
+                    <div class="resource-section">
+                        <h3>Popular Activities</h3>
+                        <ul class="fact-list">
+                            <li class="fact-item">
+                                <div class="fact-icon">1</div>
+                                <div class="fact-content">
+                                    <h4>Binary Numbers</h4>
+                                    <p>Students learn how computers represent information using only 0s and 1s through card-flipping activities</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">2</div>
+                                <div class="fact-content">
+                                    <h4>Error Detection</h4>
+                                    <p>Students learn how computers detect and correct errors in data through a magic trick activity using cards</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">3</div>
+                                <div class="fact-content">
+                                    <h4>Sorting Networks</h4>
+                                    <p>Students physically walk through a network drawn on the ground to understand parallel sorting algorithms</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">4</div>
+                                <div class="fact-content">
+                                    <h4>Image Representation</h4>
+                                    <p>Students learn how images are represented digitally through an activity involving a grid-based coloring system</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">5</div>
+                                <div class="fact-content">
+                                    <h4>Searching Algorithms</h4>
+                                    <p>Students learn about different search strategies through physical demonstrations and games</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="resource-section">
+                        <h3>Resource Types</h3>
+                        <ul class="fact-list">
+                            <li class="fact-item">
+                                <div class="fact-icon">📋</div>
+                                <div class="fact-content">
+                                    <h4>Lesson Plans</h4>
+                                    <p>Detailed instructions for leading activities, including timing, materials needed, and learning objectives</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">📄</div>
+                                <div class="fact-content">
+                                    <h4>Worksheets</h4>
+                                    <p>Printable resources for students to use during activities</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">🎥</div>
+                                <div class="fact-content">
+                                    <h4>Videos</h4>
+                                    <p>Demonstration videos showing how to implement the activities in classrooms</p>
+                                </div>
+                            </li>
+                            <li class="fact-item">
+                                <div class="fact-icon">📚</div>
+                                <div class="fact-content">
+                                    <h4>Supporting Materials</h4>
+                                    <p>Additional background information for teachers on CS concepts covered in the activities</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="reviews" class="tab-content">
+                    <div class="comments-section">
+                        <h2>Teacher Reviews</h2>
+                        <div class="comment-form">
+                            <h3>Add Your Review</h3>
+                            <form id="review-form">
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" id="name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rating">Rating</label>
+                                    <div class="rating-select">
+                                        <span class="rating-option" data-rating="1">★</span>
+                                        <span class="rating-option" data-rating="2">★</span>
+                                        <span class="rating-option" data-rating="3">★</span>
+                                        <span class="rating-option" data-rating="4">★</span>
+                                        <span class="rating-option" data-rating="5">★</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="comment">Review</label>
+                                    <textarea id="comment" class="form-control" required></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-submit">Submit Review</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="comments-list">
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-author">Sarah Johnson</span>
+                                    <span class="comment-date">March 15, 2025</span>
+                                </div>
+                                <div class="comment-rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                                <div class="comment-content">
+                                    <p>As a high school CS teacher, I was skeptical about using "unplugged" activities with older students, but they've been incredibly effective for introducing difficult concepts before diving into code. The sorting networks and graph theory activities in particular have helped my students understand algorithms much more intuitively. Highly recommended for all grade levels!</p>
+                                </div>
+                            </div>
+
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <span class="comment-author">Lisa Chen</span>
+                                    <span class="comment-date">January 12, 2025</span>
+                                </div>
+                                <div class="comment-rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">☆</span>
+                                </div>
+                                <div class="comment-content">
+                                    <p>CS Unplugged has been a game-changer for my rural elementary school where we have limited technology resources. The activities are engaging and require minimal preparation. My only suggestion would be to include more differentiation ideas for different ability levels within the same classroom. Overall though, it's an excellent resource that makes computer science accessible to all.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="related" class="tab-content">
+                    <div class="related-resources">
+                        <h2>Related Resources</h2>
+                        <div class="resources-grid">
+                            <div class="resource-card">
+                                <div class="card-img">
+                                    <img src="/api/placeholder/400/200" alt="Scratch: Creative Computing">
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-tags">
+                                        <span class="card-tag tag-free">free</span>
+                                        <span class="card-tag tag-programming">programming</span>
+                                    </div>
+                                    <h3 class="card-title">Scratch: Creative Computing</h3>
+                                    <p class="card-description">An introductory computing curriculum using Scratch designed for ages 8-16 that encourages creative thinking, systematic reasoning, and collaborative work.</p>
+                                    <a href="#" class="btn btn-outline">Learn More</a>
+                                </div>
+                            </div>
+
+                            <div class="resource-card">
+                                <div class="card-img">
+                                    <img src="/api/placeholder/400/200" alt="Python for Data Science">
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-tags">
+                                        <span class="card-tag tag-premium">premium</span>
+                                        <span class="card-tag tag-programming">programming</span>
+                                        <span class="card-tag tag-data">data</span>
+                                    </div>
+                                    <h3 class="card-title">Python for Data Science</h3>
+                                    <p class="card-description">A comprehensive curriculum that teaches data analysis, visualization, and machine learning concepts using Python for high school students.</p>
+                                    <a href="#" class="btn btn-outline">Learn More</a>
+                                </div>
+                            </div>
+
+                            <div class="resource-card">
+                                <div class="card-img">
+                                    <img src="/api/placeholder/400/200" alt="Code.org Curriculum">
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-tags">
+                                        <span class="card-tag tag-free">free</span>
+                                        <span class="card-tag tag-featured">featured</span>
+                                    </div>
+                                    <h3 class="card-title">Code.org Curriculum</h3>
+                                    <p class="card-description">K-12 computer science curriculum with courses that blend online, self-guided, and self-paced tutorials with "unplugged" classroom activities.</p>
+                                    <a href="#" class="btn btn-outline">Learn More</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About CSTA</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Mission & Vision</a></li>
+                        <li><a href="#">Board of Directors</a></li>
+                        <li><a href="#">Staff</a></li>
+                        <li><a href="#">Annual Report</a></li>
+                        <li><a href="#">Sponsorship Opportunities</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Browse Library</a></li>
+                        <li><a href="#">Teaching Standards</a></li>
+                        <li><a href="#">Submit Resource</a></li>
+                        <li><a href="#">Featured Collections</a></li>
+                        <li><a href="#">Professional Development</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Membership</a></li>
+                        <li><a href="#">Chapters</a></li>
+                        <li><a href="#">Events & Conferences</a></li>
+                        <li><a href="#">Awards</a></li>
+                        <li><a href="#">Forum</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Get in Touch</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Computer Science Teachers Association. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+
+            // Rating Selection Functionality
+            const ratingOptions = document.querySelectorAll('.rating-option');
+            let selectedRating = 0;
+            
+            ratingOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const rating = parseInt(option.dataset.rating);
+                    selectedRating = rating;
+                    
+                    // Update visual selection
+                    ratingOptions.forEach(opt => {
+                        if (parseInt(opt.dataset.rating) <= rating) {
+                            opt.classList.add('selected');
+                        } else {
+                            opt.classList.remove('selected');
+                        }
+                    });
+                });
+            });
+
+            // Comment Form Submission
+            const reviewForm = document.getElementById('review-form');
+            const commentsList = document.querySelector('.comments-list');
+            
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const comment = document.getElementById('comment').value;
+                
+                if (name && comment && selectedRating > 0) {
+                    // Create new comment
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment fade-in';
+                    
+                    // Get current date
+                    const now = new Date();
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    const formattedDate = now.toLocaleDateString('en-US', options);
+                    
+                    // Create stars based on rating
+                    let starsHTML = '';
+                    for (let i = 1; i <= 5; i++) {
+                        if (i <= selectedRating) {
+                            starsHTML += '<span class="star">★</span>';
+                        } else {
+                            starsHTML += '<span class="star">☆</span>';
+                        }
+                    }
+                    
+                    // Build comment HTML
+                    newComment.innerHTML = `
+                        <div class="comment-header">
+                            <span class="comment-author">${name}</span>
+                            <span class="comment-date">${formattedDate}</span>
+                        </div>
+                        <div class="comment-rating">
+                            ${starsHTML}
+                        </div>
+                        <div class="comment-content">
+                            <p>${comment}</p>
+                        </div>
+                    `;
+                    
+                    // Add to comments list at the top
+                    commentsList.insertBefore(newComment, commentsList.firstChild);
+                    
+                    // Reset form
+                    reviewForm.reset();
+                    selectedRating = 0;
+                    ratingOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Show success message
+                    alert('Thank you for your review!');
+                } else {
+                    alert('Please fill out all fields and select a rating.');
+                }
+            });
+
+            // Resource Card Hover Effects
+            const resourceCards = document.querySelectorAll('.resource-card');
+            
+            resourceCards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.querySelector('.btn').classList.remove('btn-outline');
+                    card.querySelector('.btn').classList.add('btn-primary');
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.querySelector('.btn').classList.remove('btn-primary');
+                    card.querySelector('.btn').classList.add('btn-outline');
+                });
+            });
+            
+            // Bookmark functionality
+            const saveButton = document.querySelector('.action-btn.btn-outline');
+            saveButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (this.textContent === 'Save for Later') {
+                    this.textContent = 'Saved';
+                    this.style.backgroundColor = '#e6f7ff';
+                    this.style.borderColor = '#0086e6';
+                    this.style.color = '#0086e6';
+                    
+                    // Show confirmation toast
+                    showToast('Resource saved to your collection!');
+                } else {
+                    this.textContent = 'Save for Later';
+                    this.style.backgroundColor = '';
+                    this.style.borderColor = '';
+                    this.style.color = '';
+                    
+                    showToast('Resource removed from your collection');
+                }
+            });
+            
+            // Toast notification function
+            function showToast(message) {
+                // Create toast element if it doesn't exist
+                let toast = document.getElementById('toast-notification');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'toast-notification';
+                    toast.style.position = 'fixed';
+                    toast.style.bottom = '20px';
+                    toast.style.right = '20px';
+                    toast.style.backgroundColor = '#333';
+                    toast.style.color = '#fff';
+                    toast.style.padding = '12px 20px';
+                    toast.style.borderRadius = '4px';
+                    toast.style.zIndex = '1000';
+                    toast.style.transition = 'opacity 0.3s ease';
+                    toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                    document.body.appendChild(toast);
+                }
+                
+                // Set message and show toast
+                toast.textContent = message;
+                toast.style.opacity = '1';
+                
+                // Hide toast after 3 seconds
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                }, 3000);
+            }
+            
+            // Add smooth scroll behavior for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId !== '#') {
+                        e.preventDefault();
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Initialize page view counter (simulated)
+            const viewCount = Math.floor(Math.random() * 500) + 1500;
+            const viewCountElement = document.createElement('div');
+            viewCountElement.className = 'resource-views';
+            viewCountElement.innerHTML = `<i class="fa fa-eye"></i> ${viewCount} teachers have viewed this resource`;
+            viewCountElement.style.fontSize = '14px';
+            viewCountElement.style.color = '#666';
+            viewCountElement.style.marginTop = '15px';
+            viewCountElement.style.textAlign = 'center';
+            document.querySelector('.resource-preview').after(viewCountElement);
+        });
+    </script>
+</body>
 </html>
