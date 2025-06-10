@@ -1,24 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSTA - CS Teaching Tools Library</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSTA - CS Teaching Tools Library</title>
   <link rel="stylesheet" href="library.css" />
-
-    
-<!-- <% if (isApproved == false) { %>
-dont display
-<% } else { %>
-display
-<% } %> -->
-
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <header>
+ 
+   <header>
         <div class="container header-container">
-            <a href="#" class="logo">
+            <a href="/" class="logo">
                 <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
                     <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
@@ -33,11 +26,11 @@ display
             </a>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Resources</a></li>
-                    <li><a href="#">Submit</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/library">Requests</a></li>
+                    <li><a href="/Request">Submit</a></li>
+                                        <li><a href="/indy">Submit</a></li>
+
                 </ul>
             </nav>
             <div class="header-actions">
@@ -49,307 +42,125 @@ display
             </div>
         </div>
     </header>
-        <button class="mobile-menu-btn">☰</button>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero container">
-        <div class="hero-content">
-            <h1>Library of CS Teaching Tools</h1>
-            <p>Explore our curated collection of top-rated resources for computer science education, reviewed by teachers like you.</p>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <button class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="/views/library.ejs">Requests</a></li>
+            <li><a href="#">Submit</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+
+
+    <h1 style="color: transparent;">.</h1>
+  <!-- Hero Section -->
+  <section class="hero container">
+    <div class="hero-content">
+      <h1>Library of CS Teaching Tools</h1>
+      <p>Explore our curated collection of top-rated Requests for computer science education, reviewed by teachers like you.</p>
+    </div>
+    <div class="circles">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+  </section>
+
+<!-- Library Section -->
+<section class="library-section container">
+    <div class="library-header">
+        <h2 class="library-title">Browse Requests</h2>
+    </div>
+
+    <!-- Enhanced Filter Controls -->
+    <div class="library-controls">
+        <div class="search-group">
+            <input type="text" class="search-input" placeholder="Search Requests...">
+            <button class="btn btn-primary apply-filters">Search</button>
         </div>
-        <div class="circles">
-            <div class="circle circle-1"></div>
-            <div class="circle circle-2"></div>
-            <div class="circle circle-3"></div>
+        <div class="filter-group">
+            <label for="grade-filter">Grade Level</label>
+            <select id="grade-filter" class="filter-select">
+                <option value="all">All Grades</option>
+                <option value="K-5">K-5</option>
+                <option value="6-8">6-8</option>
+                <option value="9-12">9-12</option>
+                <option value="Higher Ed">Higher Ed</option>
+            </select>
         </div>
-    </section>
-
-    <!-- Library Section -->
-    <section class="library-section container">
-        <div class="library-header">
-            <h2 class="library-title">Browse Resources</h2>
+        <div class="filter-group">
+            <label for="topic-filter">Request Type</label>
+            <select id="topic-filter" class="filter-select">
+                <option value="all">All Types</option>
+                <option value="Curriculum">Curriculum</option>
+                <option value="Tool">Tool</option>
+                <option value="Platform">Platform</option>
+                <option value="Book">Book</option>
+            </select>
         </div>
+    </div>
 
-        <!-- Filter and Sort Controls -->
-        <div class="library-controls">
-            <div class="search-group">
-                <span class="search-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </span>
-                <input type="text" class="search-input" placeholder="Search resources..." id="search-input">
-            </div>
-            <div class="filter-group">
-                <label class="filter-label" for="grade-filter">Grade Level</label>
-                <select class="filter-select" id="grade-filter">
-                    <option value="all">All Grades</option>
-                    <option value="elementary">Elementary (K-5)</option>
-                    <option value="middle">Middle School (6-8)</option>
-                    <option value="high">High School (9-12)</option>
-                    <option value="college">College</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label" for="topic-filter">CS Topic</label>
-                <select class="filter-select" id="topic-filter">
-                    <option value="all">All Topics</option>
-                    <option value="programming">Programming</option>
-                    <option value="algorithms">Algorithms</option>
-                    <option value="data">Data Science</option>
-                    <option value="robotics">Robotics</option>
-                    <option value="cybersecurity">Cybersecurity</option>
-                    <option value="ai">Artificial Intelligence</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label" for="sort-filter">Sort By</label>
-                <select class="filter-select" id="sort-filter">
-                    <option value="featured">Featured</option>
-                    <option value="newest">Newest</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="popular">Most Popular</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Card Grid -->
-        <div class="card-grid" id="card-grid">
-            <!-- Cards will be injected here by JavaScript -->
-        </div>
-
-        <!-- No Results (hidden by default) -->
-        <div class="no-results" id="no-results" style="display: none;">
-            <h3>No matching resources found</h3>
-            <p>Try adjusting your filters or search terms</p>
-        </div>
-
-        <!-- Pagination -->
-        <div class="pagination">
-            <button class="pagination-item disabled" id="prev-page">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
-            <button class="pagination-item active">1</button>
-            <button class="pagination-item">2</button>
-            <button class="pagination-item">3</button>
-            <button class="pagination-item">...</button>
-            <button class="pagination-item" id="next-page">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-        </div>
-    </section>
-
-    <script>
-        // Sample data for resources
-        const resources = [
-            {
-                id: 1,
-                title: "CS Unplugged",
-                description: "A collection of free learning activities that teach Computer Science through engaging games and puzzles using cards, string, crayons and physical movement.",
-                image: "/api/placeholder/400/320",
-                tags: ["free", "featured"],
-                category: "programming",
-                grade: ["elementary", "middle"],
-                rating: 4.9,
-                ratingCount: 238,
-                author: "CS Education Research Group",
-                level: "Beginner",
-                date: "2024-02-15"
-            },
-            {
-                id: 2,
-                title: "Scratch: Creative Computing",
-                description: "An introductory computing curriculum using Scratch designed for students ages 8-16 that encourages creative thinking and self-expression.",
-                image: "/api/placeholder/400/320",
-                tags: ["free"],
-                category: "programming",
-                grade: ["elementary", "middle"],
-                rating: 4.8,
-                ratingCount: 312,
-                author: "Harvard Graduate School of Education",
-                level: "Beginner to Intermediate",
-                date: "2024-03-20"
-            },
-            {
-                id: 3,
-                title: "Python for Data Science",
-                description: "A comprehensive curriculum that teaches data analysis, visualization, and machine learning concepts using Python for high school students.",
-                image: "/api/placeholder/400/320",
-                tags: ["premium"],
-                category: "data",
-                grade: ["high", "college"],
-                rating: 4.7,
-                ratingCount: 186,
-                author: "Data Science Academy",
-                level: "Intermediate to Advanced",
-                date: "2024-04-05"
-            }
-        ];
-
-        // DOM Elements
-        const cardGrid = document.getElementById('card-grid');
-        const noResults = document.getElementById('no-results');
-        const searchInput = document.getElementById('search-input');
-        const gradeFilter = document.getElementById('grade-filter');
-        const topicFilter = document.getElementById('topic-filter');
-        const sortFilter = document.getElementById('sort-filter');
-
-        // Function to render star rating
-        function renderStars(rating) {
-            const fullStars = Math.floor(rating);
-            const halfStar = rating % 1 >= 0.5;
-            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-            
-            let starsHTML = '';
-            
-            // Full stars
-            for (let i = 0; i < fullStars; i++) {
-                starsHTML += '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-            }
-            
-            // Half star if needed
-            if (halfStar) {
-                starsHTML += '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12,2 L8.91,8.26 L2,9.27 L7,14.14 L5.82,21.02 L12,17.77 L12,2 Z"></path><path d="M12,2 L15.09,8.26 L22,9.27 L17,14.14 L18.18,21.02 L12,17.77 L12,2 Z" fill="none" stroke="currentColor" stroke-width="1"></path></svg>';
-            }
-            
-            // Empty stars
-            for (let i = 0; i < emptyStars; i++) {
-                starsHTML += '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
-            }
-            
-            return starsHTML;
-        }
-
-        // Function to render a card
-        function renderCard(resource) {
-            return `
-                <div class="card">
-                    <div class="card-image">
-                        <img src="${resource.image}" alt="${resource.title}">
-                    </div>
-                    <div class="card-content">
-                        <div class="card-tags">
-                            ${resource.tags.map(tag => `<span class="card-tag ${tag}">${tag}</span>`).join('')}
-                            <span class="card-tag">${resource.category}</span>
-                        </div>
-                        <h3 class="card-title">${resource.title}</h3>
-                        <p class="card-description">${resource.description}</p>
-                        <div class="card-meta">
-                            <div class="card-rating">
-                                <span class="rating-stars">${renderStars(resource.rating)}</span>
-                                <span class="rating-count">(${resource.ratingCount})</span>
-                            </div>
-                            <div class="card-author">By ${resource.author}</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="card-level">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 20h.01"></path>
-                                <path d="M7 20v-4"></path>
-                                <path d="M12 20v-8"></path>
-                                <path d="M17 20v-12"></path>
-                                <path d="M22 20v-16"></path>
-                            </svg>
-                            ${resource.level}
-                        </div>
-                        <a href="#" class="card-link">
-                            View Details
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Function to filter and sort resources
-        function filterAndSortResources() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const gradeValue = gradeFilter.value;
-            const topicValue = topicFilter.value;
-            const sortValue = sortFilter.value;
-            
-            // Filter resources
-            let filteredResources = resources.filter(resource => {
-                // Search term filter
-                const matchesSearch = 
-                    resource.title.toLowerCase().includes(searchTerm) || 
-                    resource.description.toLowerCase().includes(searchTerm) ||
-                    resource.author.toLowerCase().includes(searchTerm);
-                
-                // Grade filter
-                const matchesGrade = 
-                    gradeValue === 'all' || 
-                    (resource.grade && resource.grade.includes(gradeValue));
-                
-                // Topic filter
-                const matchesTopic = 
-                    topicValue === 'all' || 
-                    resource.category === topicValue;
-                
-                return matchesSearch && matchesGrade && matchesTopic;
-            });
-            
-            // Sort resources
-            switch(sortValue) {
-                case 'newest':
-                    filteredResources.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    break;
-                case 'rating':
-                    filteredResources.sort((a, b) => b.rating - a.rating);
-                    break;
-                case 'popular':
-                    filteredResources.sort((a, b) => b.ratingCount - a.ratingCount);
-                    break;
-                case 'featured':
-                default:
-                    filteredResources = filteredResources.sort((a, b) => {
-                        const aIsFeatured = a.tags.includes('featured');
-                        const bIsFeatured = b.tags.includes('featured');
+    <!-- Request Grid -->
+    <div class="Request-grid">
+        <% if (Requests && Requests.length > 0) { %>
+            <% Requests.forEach(function(Request) { %>
+                <% if (Requests.isApproved == true) { %>
+                    <div class="Request-card" 
+                         data-id="<%= Request._id %>"
+                         data-name="<%= Request.ProductName.toLowerCase() %>"
+                         data-grades="<%= Request.GradeLevel.toLowerCase() %>"
+                         data-type="<%= Request.ProductType.toLowerCase() %>">
                         
-                        if (aIsFeatured && !bIsFeatured) return -1;
-                        if (!aIsFeatured && bIsFeatured) return 1;
-                        return b.rating - a.rating;
-                    });
-            }
-            
-            // Display results or no results message
-            if (filteredResources.length === 0) {
-                cardGrid.innerHTML = '';
-                noResults.style.display = 'block';
-            } else {
-                noResults.style.display = 'none';
-                cardGrid.innerHTML = filteredResources.map(renderCard).join('');
-            }
-        }
+                        <div class="card-image">
+                            <img src="/images/default-Request.jpg" alt="<%= Request.ProductName %>" 
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDMwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMjAgODBIMTgwVjEyMEgxMjBWODBaIiBmaWxsPSIjRDFEMUQxIi8+CjxjaXJjbGUgY3g9IjEzNSIgY3k9Ijk1IiByPSI1IiBmaWxsPSIjOTk5OTk5Ii8+CjxwYXRoIGQ9Ik0xMjUgMTEwTDE0MCAxMDBMMTYwIDExNUwxNzUgMTA1VjEyMEgxMjVWMTEwWiIgZmlsbD0iIzk5OTk5OSIvPgo8L3N2Zz4K'">
+                        </div>
+                        
+                        <div class="card-content">
+                            <h3 class="Request-title"><%= Request.ProductName %></h3>
+                            <p class="Request-type"><%= Request.ProductType %></p>
+                            
+                            <% if (Request.Description) { %>
+                                <p class="card-description"><%= Request.Description %></p>
+                            <% } %>
+                            
+                            <div class="Request-meta">
+                                <% if (Request.GradeLevel) { %>
+                                    <span class="Request-tag">
+                                        📚 <%= Request.GradeLevel %>
+                                    </span>
+                                <% } %>
+                                <% if (Request.SupportedLanguages) { %>
+                                    <span class="Request-tag">
+                                        💻 <%= Request.SupportedLanguages %>
+                                    </span>
+                                <% } %>
+                            </div>
+                            
+                            <div class="Request-footer">
+                                <span class="Request-price <%= Request.Price === 'Free' ? 'price-free' : 'price-paid' %>">
+                                    <%= Request.Price || 'Not specified' %>
+                                </span>
+                                <a href="/Request/<%= Request._id %>" class="btn btn-primary">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <% }); %>
+        <% } else { %>
+            <div class="no-results">
+                <h3>No Requests found</h3>
+                <p>Be the first to submit a Request!</p>
+            </div>
+        <% } %>
+    </div>
 
-        // Event listeners for filters
-        searchInput.addEventListener('input', filterAndSortResources);
-        gradeFilter.addEventListener('change', filterAndSortResources);
-        topicFilter.addEventListener('change', filterAndSortResources);
-        sortFilter.addEventListener('change', filterAndSortResources);
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            filterAndSortResources();
-        });
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navbarLinks = document.querySelector('.navbar-links');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            navbarLinks.style.display = navbarLinks.style.display === 'flex' ? 'none' : 'flex';
-        });
-    </script>
+</section>
 </body>
 </html>

@@ -3,934 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit a CS Teaching Tool - CSTA</title>
-    <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-
-        body {
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header and Navigation */
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            font-size: 20px;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .logo-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 2px;
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-        .logo-square {
-            background-color: #000;
-        }
-
-        .main-nav {
-            display: flex;
-            list-style: none;
-        }
-
-        .main-nav li {
-            margin-left: 30px;
-        }
-
-        .main-nav a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .main-nav a:hover {
-            color: #ff3566;
-        }
-
-        .auth-buttons {
-            display: flex;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-outline {
-            border: 1px solid #ff3566;
-            color: #ff3566;
-            background: transparent;
-            margin-right: 15px;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 53, 102, 0.1);
-        }
-
-        .btn-primary {
-            background: #ff3566;
-            color: #fff;
-            border: 1px solid #ff3566;
-        }
-
-        .btn-primary:hover {
-            background: #e62e5c;
-            border-color: #e62e5c;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 60px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: #222;
-            margin-bottom: 20px;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 30px;
-            color: #555;
-        }
-
-        .circles-decoration {
-            position: absolute;
-            top: 50px;
-            right: 50px;
-            width: 400px;
-            height: 400px;
-            z-index: -1;
-        }
-
-        .circle {
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .circle-1 {
-            width: 200px;
-            height: 200px;
-            background-color: rgba(255, 242, 204, 0.6);
-            top: 20px;
-            right: 30px;
-        }
-
-        .circle-2 {
-            width: 150px;
-            height: 150px;
-            background-color: rgba(255, 231, 166, 0.5);
-            bottom: 30px;
-            right: 10px;
-        }
-
-        .circle-3 {
-            width: 120px;
-            height: 120px;
-            background-color: rgba(224, 242, 217, 0.7);
-            left: 50px;
-            bottom: 10px;
-        }
-
-        /* Form Styles */
-        .form-section {
-            background-color: #fff;
-            padding: 50px 0;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 60px;
-        }
-
-        .form-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .form-header {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .form-header h2 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .form-header p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: 0 -10px;
-        }
-
-        .form-col {
-            flex: 1;
-            padding: 0 10px;
-            min-width: 250px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #444;
-        }
-
-        .required::after {
-            content: "*";
-            color: #ff3566;
-            margin-left: 4px;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border 0.3s;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #ff3566;
-            box-shadow: 0 0 0 3px rgba(255, 53, 102, 0.1);
-        }
-
-        textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
-
-        .checkbox-group {
-            margin-top: 5px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .checkbox-item input {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        .checkbox-item label {
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .tag {
-            background-color: #f0f0f0;
-            border-radius: 30px;
-            padding: 5px 15px;
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .tag span {
-            margin-right: 5px;
-        }
-
-        .tag button {
-            background: none;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .tag-input {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        .tag-input input {
-            flex: 1;
-            border-radius: 6px 0 0 6px;
-        }
-
-        .tag-input button {
-            background-color: #ff3566;
-            color: white;
-            border: none;
-            border-radius: 0 6px 6px 0;
-            padding: 0 15px;
-            cursor: pointer;
-        }
-
-        .file-upload {
-            position: relative;
-            overflow: hidden;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        .file-upload .file-upload-btn {
-            background-color: #f0f0f0;
-            color: #555;
-            border: 1px dashed #ccc;
-            border-radius: 6px;
-            padding: 30px 20px;
-            text-align: center;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .file-upload:hover .file-upload-btn {
-            background-color: #e8e8e8;
-            border-color: #aaa;
-        }
-
-        .file-upload input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .file-info {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .uploaded-files {
-            margin-top: 15px;
-        }
-
-        .uploaded-file {
-            display: flex;
-            align-items: center;
-            background-color: #f8f8f8;
-            border-radius: 6px;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-        }
-
-        .uploaded-file .file-name {
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .uploaded-file .file-remove {
-            background: none;
-            border: none;
-            color: #ff3566;
-            cursor: pointer;
-        }
-
-        .helper-text {
-            font-size: 0.85rem;
-            color: #777;
-            margin-top: 5px;
-        }
-
-        .error-text {
-            color: #d9534f;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .form-actions {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .form-note {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .submission-progress {
-            margin: 40px 0;
-            display: none;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #ff3566;
-            width: 0%;
-            transition: width 0.5s;
-        }
-
-        .progress-text {
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-        }
-
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 20px;
-            border-radius: 6px;
-            margin-top: 30px;
-            display: none;
-        }
-
-        .success-message h3 {
-            margin-bottom: 10px;
-        }
-
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 6px;
-            margin-top: 30px;
-            display: none;
-        }
-
-        /* Tag Styles */
-        .tag-section {
-            margin-bottom: 30px;
-        }
-
-        .tag-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .tag-option {
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 30px;
-            padding: 8px 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .tag-option:hover {
-            background-color: #e8e8e8;
-        }
-
-        .tag-option.selected {
-            background-color: #ff3566;
-            color: white;
-            border-color: #ff3566;
-        }
-
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 5px;
-            cursor: help;
-        }
-
-        .tooltip-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            background-color: #ddd;
-            color: #666;
-            border-radius: 50%;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            font-weight: normal;
-        }
-
-        .tooltip-text::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #333 transparent transparent transparent;
-        }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Requirements Section */
-        .requirements-section {
-            background-color: #f6f9fc;
-            padding: 60px 0;
-            margin-bottom: 60px;
-        }
-
-        .requirements-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .requirements-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .requirements-header h2 {
-            font-size: 2.2rem;
-            color: #222;
-            margin-bottom: 15px;
-        }
-
-        .requirements-header p {
-            color: #666;
-            font-size: 1.1rem;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .requirements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .requirement-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .requirement-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .requirement-icon {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 53, 102, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .requirement-icon svg {
-            width: 30px;
-            height: 30px;
-            fill: #ff3566;
-        }
-
-        .requirement-card h3 {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .requirement-card p {
-            color: #666;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #f8f8f8;
-            padding: 40px 0;
-            border-top: 1px solid #eee;
-        }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .footer-logo {
-            margin-bottom: 20px;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .footer-column {
-            min-width: 160px;
-            margin-right: 40px;
-            margin-bottom: 30px;
-        }
-
-        .footer-column h4 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .footer-column ul {
-            list-style: none;
-        }
-
-        .footer-column li {
-            margin-bottom: 10px;
-        }
-
-        .footer-column a {
-            text-decoration: none;
-            color: #666;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-        }
-
-        .footer-column a:hover {
-            color: #ff3566;
-        }
-
-        .copyright {
-            width: 100%;
-            text-align: center;
-            padding-top: 30px;
-            margin-top: 20px;
-            border-top: 1px solid #eee;
-            color: #777;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .hero h1 {
-                font-size: 2.4rem;
-            }
-
-            .circles-decoration {
-                opacity: 0.4;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .main-nav {
-                margin-top: 20px;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .main-nav li {
-                margin-left: 0;
-            }
-
-            .auth-buttons {
-                margin-top: 20px;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .btn {
-                width: 48%;
-            }
-
-            .form-col {
-                flex: 100%;
-                margin-bottom: 15px;
-            }
-
-            .requirement-card {
-                padding: 20px;
-            }
-
-            .footer-column {
-                flex: 100%;
-                margin-right: 0;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero {
-                padding: 40px 0;
-            }
-
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .form-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .form-actions .btn {
-                width: 100%;
-                margin-bottom: 15px;
-            }
-
-            .form-note {
-                text-align: center;
-            }
-        }
-    </style>
+    <title>Submit CS Teaching Tool - CSTA</title>
+      <link rel="stylesheet" href="request.css" />
+    <script src="request.js" defer></script>
 </head>
 <body>
-    <!-- Header and Navigation -->
     <header>
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <div class="logo-grid">
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                    <div class="logo-square"></div>
-                </div>
+        <div class="header-container">
+            <a href="/" class="logo">
+                <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
+                    <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
+                    <path d="M60 5H45V20H60V5Z" fill="#1A1A1A"/>
+                    <path d="M80 5H65V20H80V5Z" fill="#1A1A1A"/>
+                    <path d="M95 20H80V35H95V20Z" fill="#1A1A1A"/>
+                    <path d="M60 20H45V35H60V20Z" fill="#1A1A1A"/>
+                    <path d="M40 20H25V35H40V20Z" fill="#1A1A1A"/>
+                    <path d="M20 20H5V35H20V20Z" fill="#1A1A1A"/>
+                </svg>
                 CSTA
             </a>
-            <ul class="main-nav">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Resources</a></li>
-                <li><a href="#">Submit</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <a href="#" class="btn btn-outline">Log In</a>
-                <a href="#" class="btn btn-primary">Join CSTA</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/library">Resources</a></li>
+                    <li><a href="/request">Submit</a></li>
+                    <li><a href="/indy">Submit</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-outline login-btn">Log In</button>
+                <button class="btn btn-primary">Join CSTA</button>
+                <button class="mobile-menu-btn">
+                    <span>☰</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <div class="submission-page">
         <div class="container">
-            <h1>Submit a Teaching Tool</h1>
-            <p>Share your educational resources with the CS teaching community. Complete the form below to submit your tool for review.</p>
-        </div>
-        <div class="circles-decoration">
-            <div class="circle circle-1"></div>
-            <div class="circle circle-2"></div>
-            <div class="circle circle-3"></div>
-        </div>
-    </section>
-
-    <!-- Requirements Section -->
-    <section class="requirements-section">
-        <div class="requirements-container">
-            <div class="requirements-header">
-                <h2>Submission Requirements</h2>
-                <p>To ensure your teaching tool meets our quality standards and can be effectively evaluated, please review these requirements before submitting.</p>
-            </div>
-            <div class="requirements-grid">
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M19 2H5C3.9 2 3 2.9 3 4V18C3 19.1 3.9 20 5 20H9L12 23L15 20H19C20.1 20 21 19.1 21 18V4C21 2.9 20.1 2 19 2ZM19 18H14.17L12 20.17L9.83 18H5V4H19V18ZM11 15H13V17H11V15ZM12 7C13.1 7 14 7.9 14 9C14 10.55 11 10.75 11 13H13C13 11.75 16 11.5 16 9C16 6.79 14.21 5 12 5C9.79 5 8 6.79 8 9H10C10 7.9 10.9 7 12 7Z"></path>
-                        </svg>
+            <h1>Submit a New Resource</h1>
+            <p>Share your favorite CS teaching resource with the community</p>
+            
+            <form id="resource-submission-form">
+                <div class="form-section">
+                    <h2>Basic Information</h2>
+                    <div class="form-group">
+                        <label for="product-name">Resource Name *</label>
+                        <input type="text" id="product-name" name="productName" required>
                     </div>
-                    <h3>Educational Value</h3>
-                    <p>Tools must have clear educational objectives and demonstrate effectiveness in teaching computer science concepts.</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11.99H19C18.47 16.11 15.72 19.78 12 20.93V12H5V6.3L12 3.19V11.99Z"></path>
-                        </svg>
+                    
+                    <div class="form-group">
+                        <label for="website-url">Website URL *</label>
+                        <input type="url" id="website-url" name="website" required>
                     </div>
-                    <h3>Accessibility</h3>
-                    <p>Tools should be accessible to all students, including those with disabilities, and work across various devices and platforms.</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M17.66 8L12 2.35L6.34 8C4.78 9.56 4 11.64 4 13.64C4 15.64 4.78 17.75 6.34 19.31C7.9 20.87 9.95 21.66 12 21.66C14.05 21.66 16.1 20.87 17.66 19.31C19.22 17.75 20 15.64 20 13.64C20 11.64 19.22 9.56 17.66 8ZM6 14C6.01 12 6.62 10.73 7.76 9.6L12 5.27L16.24 9.65C17.38 10.77 17.99 12 18 14H6Z"></path>
-                        </svg>
+                    
+                    <div class="form-group">
+                        <label for="description">Description *</label>
+                        <textarea id="description" name="description" required></textarea>
                     </div>
-                    <h3>Original Content</h3>
-                    <p>You must have the legal right to submit the tool. If it includes third-party content, proper attribution and licensing must be provided.</p>
                 </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3ZM9 17H7V10H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z"></path>
-                        </svg>
-                    </div>
-                    <h3>Documentation</h3>
-                    <p>Include comprehensive documentation, lesson plans, or implementation guides that help teachers understand how to use the tool effectively.</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M15 4V11H5.17L4 12.17V4H15ZM16 2H3C2.45 2 2 2.45 2 3V17L6 13H16C16.55 13 17 12.55 17 12V3C17 2.45 16.55 2 16 2ZM21 6H19V15H6V17C6 17.55 6.45 18 7 18H18L22 22V7C22 6.45 21.55 6 21 6Z"></path>
-                        </svg>
-                    </div>
-                    <h3>User Experience</h3>
-                    <p>Tools should have a user-friendly interface, be intuitive to navigate, and provide clear instructions for both teachers and students.</p>
-                </div>
-                <div class="requirement-card">
-                    <div class="requirement-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M10 4H4C2.89 4 2 4.89 2 6V18C2 19.11 2.89 20 4 20H20C21.11 20 22 19.11 22 18V8C22 6.89 21.11 6 20 6H12L10 4Z"></path>
-                        </svg>
-                    </div>
-                    <h3>Alignment</h3>
-                    <p>Tools should align with current computer science education frameworks, standards, or curriculum guidelines where applicable.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Form Section -->
-    <section class="form-section">
-        <div class="form-container">
-            <div class="form-header">
-                <h2>Tool Submission Form</h2>
-                <p>Please complete all required fields to submit your CS teaching tool for review.</p>
-            </div>
-
-            <form id="toolSubmissionForm">
-                <!-- Basic Information -->
-                <div class="form-group">
-                    <h3>Basic Information</h3>
+                
+                <div class="form-section">
+                    <h2>Resource Details</h2>
                     <div class="form-row">
-                        <div class="form-col">
-                            <label for="toolName" class="required">Tool Name</label>
-                            <input type="text" id="toolName" placeholder="Enter the name of your tool" required>
-                            <div class="error-text" id="toolNameError">Please enter a valid tool name</div>
-                        </div>
-                        <div class="form-col">
-                            <label for="toolType" class="required">Tool Type</label>
-                            <select id="toolType" required>
-                                <option value="" disabled selected>Select a tool type</option>
-                                <option value="application">Application/Software</option>
-                                <option value="curriculum">Curriculum/Lesson Plan</option>
-                                <option value="activity">Hands-on Activity</option>
-                                <option value="assessment">Assessment Tool</option>
-                                <option value="resource">Teaching Resource</option>
-                                <option value="other">Other</option>
+                        <div class="form-group">
+                            <label for="product-type">Resource Type *</label>
+                            <select id="product-type" name="productType" required>
+                                <option value="">Select a type</option>
+                                <option value="Curriculum">Curriculum</option>
+                                <option value="Tool">Teaching Tool</option>
+                                <option value="Platform">Online Platform</option>
+                                <option value="Book">Book/Textbook</option>
                             </select>
-                            <div class="error-text" id="toolTypeError">Please select a tool type</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price-model">Price Model *</label>
+                            <select id="price-model" name="price" required>
+                                <option value="">Select price model</option>
+                                <option value="Free">Free</option>
+                                <option value="Freemium">Freemium</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Subscription">Subscription</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+    <label for="standard-alignment">Standards Alignment</label>
+    <input type="text" id="standard-alignment" name="standardAlignment" 
+           placeholder="e.g., CSTA K-12 CS Standards">
+</div>
+
+                    <div class="form-group">
+                        <label>Grade Levels *</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="gradeLevel" value="K-5">
+                                K-5
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="gradeLevel" value="6-8">
+                                6-8
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="gradeLevel" value="9-12">
+                                9-12
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="gradeLevel" value="Higher Ed">
+                                Higher Ed
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Supported Languages/Tools</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="Scratch">
+                                Scratch
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="Python">
+                                Python
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="JavaScript">
+                                JavaScript
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="Java">
+                                Java
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="Block-based">
+                                Block-based
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="HTML/CSS">
+                                HTML/CSS
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="languages" value="Unplugged">
+                                Unplugged
+                            </label>
                         </div>
                     </div>
                 </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Submit Resource</button>
+                    <button type="reset" class="btn btn-outline">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <!-- Description -->
-                <div class="form-group">
-                    <label for="toolDescription" class="required">Description</label>
-                    <textarea id="toolDescription" placeholder="Provide a comprehensive description of your teaching tool, its purpose, and how it works" required></textarea>
-                    <div class="helper-text">Be specific about what your tool does and how it helps teach computer science concepts ( 
+</body>
+</html>
