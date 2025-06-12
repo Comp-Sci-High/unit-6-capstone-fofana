@@ -5,42 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS Unplugged | CSTA Request Library</title>
       <link rel="stylesheet" href="indy.css" />
-        <script src="script.js" defer></script>
+        <script src="indy.js" defer></script>
 
-
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Icon imports -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 </head>
 <body>
+   
+    <!-- Header -->
     <header>
-        <div class="container">
-            <div class="navbar">
-                <a href="/" class="logo">
-                    <div class="logo-squares">
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                        <div class="square"></div>
-                    </div>
-                    CSTA
-                </a>
-                <div class="nav-links">
-                    <a href="/">Home</a>
-                    <a href="/library">Requests</a>
-                    <a href="/request">Submit</a>
-                </div>
-                <div class="auth-links">
-                    <a href="#" class="btn btn-outline">Log In</a>
-                    <a href="#" class="btn btn-primary">Join CSTA</a>
-                </div>
+        <div class="container header-container">
+            <a href="/" class="logo">
+                <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
+                    <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
+                    <path d="M60 5H45V20H60V5Z" fill="#1A1A1A"/>
+                    <path d="M80 5H65V20H80V5Z" fill="#1A1A1A"/>
+                    <path d="M95 20H80V35H95V20Z" fill="#1A1A1A"/>
+                    <path d="M60 20H45V35H60V20Z" fill="#1A1A1A"/>
+                    <path d="M40 20H25V35H40V20Z" fill="#1A1A1A"/>
+                    <path d="M20 20H5V35H20V20Z" fill="#1A1A1A"/>
+                </svg>
+                CSTA
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/library">Resources</a></li>
+                    <li><a href="/request">Submit</a></li>
+                                        <li><a href="/indy">Submit</a></li>
+
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-outline login-btn">Log In</button>
+                <button class="btn">Join CSTA</button>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
     </header>
 
-
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <button class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/library">Resources</a></li>
+            <li><a href="/request">Submit</a></li>
+        </ul>
+    </div>
        
 <div class="Request-detail">
     <div class="container">

@@ -34,29 +34,28 @@ app.get("/", async (req, res) => {
     res.render("index.ejs", { Requests });
 });
 
+app.get("/admin", async (req, res) => {
+const Requests = await Request.find({})
+res.render("admin.ejs", { Requests } )
+})
+
 app.get("/library", async (req, res) => {
     const Requests = await Request.find({});
     console.log(Requests)
     res.render("library.ejs", { Requests });
 });
 
-app.get("/library", async (req, res) => {
-    try {
-        const Requests = await Request.find({});
-        console.log("Total requests found:", Requests.length);
-        console.log("Approved requests:", Requests.filter(r => r.isApproved).length);
-        
-        // Log first request to see structure
-        if (Requests.length > 0) {
-            console.log("First request structure:", JSON.stringify(Requests[0], null, 2));
-        }
-        
-        res.render("library.ejs", { Requests });
-    } catch (error) {
-        console.error("Error fetching requests:", error);
-        res.status(500).send("Server error");
-    }
-});
+app.patch("/approve/:_id", async (req, res) => {
+    const response = await Request.findOneAndUpdate({_id: req.params._id}, {isApproved: true}, {new: true}
+    )
+    res.json(response);
+})
+
+app.patch("/disapprove/:_id", async (req, res) => {
+    const response = await Request.findOneAndUpdate({_id: req.params._id}, {isApproved: false}, {new: true}
+    )
+    res.json(response);
+})
 
 app.get("/indy", async (req, res) => {
     const Requests = await Request.find({});

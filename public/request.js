@@ -1,23 +1,3 @@
- const createForm = document.querySelector("form")
-createForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
-    const formData = new formData(form);
-    const reqBody = object.fromEntries(formData)
-
-    const response = await fetch("/request", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(reqBody)
-
-    })
-    window.location.href = "/"
-
-    const data = await response.json()
-    console.log(data)
-})
-
 document.getElementById('resource-submission-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
