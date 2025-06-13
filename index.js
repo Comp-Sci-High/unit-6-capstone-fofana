@@ -20,7 +20,7 @@ const requestSchema = new mongoose.Schema(
         GradeLevel: { type: String, required: true },
         StandardAlignment: { type: String, required: false },
         SupportedLanguages: { type: String, required: false },
-        isApproved: {type: Boolean, required: true},
+        isApproved: {type: Boolean, required: true, default: false},
         }
 );
 
