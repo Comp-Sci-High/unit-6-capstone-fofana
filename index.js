@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
-app.use(express.static(__dirname + "/public"));
-app.use(express.json());
+
 app.set("view engine", "ejs");
+app.use(express.json());
 
 app.use((req, res, next) => {
     console.log(`${req.method}: ${req.path}`);
@@ -18,8 +18,8 @@ const requestSchema = new mongoose.Schema(
         Description: { type: String, required: true },
         Price: { type: String, required: true },
         GradeLevel: { type: String, required: true },
-        StandardAlignment: { type: String, required: true },
-        SupportedLanguages: { type: String, required: true },
+        StandardAlignment: { type: String, required: false },
+        SupportedLanguages: { type: String, required: false },
         isApproved: {type: Boolean, required: true},
         }
 );
@@ -35,8 +35,9 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/admin", async (req, res) => {
-const Requests = await Request.find({})
-res.render("admin.ejs", { Requests } )
+const Requests = await Request.find({});
+    console.log(Requests)
+res.render("admin.ejs", { Requests } );
 })
 
 app.get("/library", async (req, res) => {
@@ -132,6 +133,12 @@ app.delete("/delete/:_id", async (req, res) => {
     req.body, {new: true})
     res.json(response);
     });
+
+app.use(express.static(__dirname + "/public"));
+
+app.use((req, res) => {
+    res.status(404).send(`404 Not Found: ${req.originalUrl}`);
+});
 
 async function startServer() {
     // Add your SRV string, make sure that the database is called SE12

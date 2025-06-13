@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSTA Admin Portal</title>
+     <link rel="stylesheet" href="admin.css" />
+  <script src="admin.js" defer></script>
 </head>
 <body>
     <!-- Admin Dashboard -->
@@ -11,9 +13,7 @@
         <header class="header">
             <div class="header-content">
                 <h1>🛠 CSTA Admin Portal</h1>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </header>
+<a href="/" class="logout-btn" onclick="logout()">Logout</a>       </header>
 
         <main class="main-content">
             <!-- Statistics -->
@@ -48,272 +48,59 @@
                     </div>
                 </div>
 
-                <div class="submissions-list" id="submissionsList">
-                    <!-- Submissions will be dynamically populated -->
+                <div class="submissions-list" id="submissionsList"> 
+  <% if (Requests.length === 0) { %>
+    <div class="empty-state">
+      <h3>No submissions found</h3>
+      <p>There are no requests at the moment.</p>
+    </div>
+  <% } else { %>
+    <% Requests.forEach(submission => { %>
+      <div class="submission-card" data-status="<%= Request.isApproved ? 'approved' : 'pending' %>">
+        <div class="submission-header">
+          <div style="flex: 1;">
+            <h3 class="submission-title"><%= Request.ProductName %></h3>
+            <div class="submission-meta">
+              Submitted on <%= new Date(Request.createdAt || Request._id.getTimestamp()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+              <span class="status-badge status-<%= Request.isApproved ? 'approved' : 'pending' %>">
+                <%= Request.isApproved ? 'Approved' : 'Pending' %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p class="submission-description"><%= Request.Description %></p>
+
+        <div class="submission-details">
+          <div class="detail-item">
+            <span class="detail-label">Website URL</span>
+            <span class="detail-value"><a href="<%= Request.Website %>" target="_blank"><%= submission.Website %></a></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Contact Email</span>
+            <span class="detail-value"><%= Request.ContactEmail %></span>
+          </div>
+        </div>
+
+        <div class="submission-actions">
+          <form method="POST" action="/approve/<%= Request._id %>">
+            <button class="action-btn approve-btn" type="submit">✅ Approve</button>
+          </form>
+          <form method="POST" action="/reject/<%= Request._id %>">
+            <button class="action-btn reject-btn" type="submit">❌ Reject</button>
+          </form>
+          <button class="action-btn view-btn" onclick="window.open('<%= Request.Website %>', '_blank')">
+            🌐 View Resource
+          </button>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
                 </div>
             </div>
         </main>
     </div>
 
-    <script>
-        // Sample data for demonstration
-        const submissions = [
-            {
-                id: 1,
-                name: "Python Turtle Graphics Interactive Tutorial",
-                url: "https://pythonturtle-academy.com",
-                description: "An interactive web-based tutorial that teaches programming concepts through Python's turtle graphics. Students can write code and see immediate visual results, making it perfect for beginners learning loops, functions, and basic programming logic.",
-                type: "Interactive Tutorial",
-                priceModel: "Free",
-                gradeLevel: ["6-8", "9-12"],
-                languages: ["Python"],
-                submittedBy: "Sarah Johnson",
-                submittedDate: "2025-06-08",
-                status: "pending"
-            },
-            {
-                id: 2,
-                name: "Code.org Hour of Code Activities",
-                url: "https://code.org/hourofcode",
-                description: "A comprehensive collection of one-hour coding activities designed to introduce students to computer science. Features activities for all ages with popular themes like Minecraft, Star Wars, and Frozen.",
-                type: "Activity Collection",
-                priceModel: "Free",
-                gradeLevel: ["K-5", "6-8"],
-                languages: ["Block-based", "JavaScript"],
-                submittedBy: "Michael Chen",
-                submittedDate: "2025-06-07",
-                status: "approved"
-            },
-            {
-                id: 3,
-                name: "Replit Classroom",
-                url: "https://replit.com/teams-for-education",
-                description: "A collaborative online IDE that allows teachers to create assignments, provide real-time feedback, and manage classroom coding projects. Supports multiple programming languages and includes automated testing features.",
-                type: "IDE Platform",
-                priceModel: "Freemium",
-                gradeLevel: ["9-12", "Higher Ed"],
-                languages: ["Python", "JavaScript", "Java"],
-                submittedBy: "Emily Rodriguez",
-                submittedDate: "2025-06-06",
-                status: "pending"
-            },
-            {
-                id: 4,
-                name: "MIT App Inventor",
-                url: "https://appinventor.mit.edu",
-                description: "A visual programming environment that allows students to create mobile apps through drag-and-drop interface. Great for teaching programming concepts while creating real-world applications.",
-                type: "Development Platform",
-                priceModel: "Free",
-                gradeLevel: ["6-8", "9-12"],
-                languages: ["Block-based"],
-                submittedBy: "David Kim",
-                submittedDate: "2025-06-05",
-                status: "approved"
-            },
-            {
-                id: 5,
-                name: "CodeHS Curriculum",
-                url: "https://codehs.com",
-                description: "Comprehensive computer science curriculum with interactive lessons, exercises, and assessments. Includes teacher resources and classroom management tools.",
-                type: "Curriculum Platform",
-                priceModel: "Paid",
-                gradeLevel: ["9-12"],
-                languages: ["Python", "JavaScript", "Java"],
-                submittedBy: "Lisa Wang",
-                submittedDate: "2025-06-04",
-                status: "rejected"
-            }
-        ];
-
-        let currentFilter = 'all';
-
-        // Initialize the page when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSubmissions();
-            updateStats();
-        });
-
-        function logout() {
-            // Removed logout functionality since login is removed
-            location.reload();
-        }
-
-        function filterSubmissions(filter) {
-            currentFilter = filter;
-            
-            // Update active tab
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            loadSubmissions();
-        }
-
-        function loadSubmissions() {
-            const filteredSubmissions = currentFilter === 'all' 
-                ? submissions 
-                : submissions.filter(sub => sub.status === currentFilter);
-            
-            const submissionsList = document.getElementById('submissionsList');
-            
-            if (filteredSubmissions.length === 0) {
-                submissionsList.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No submissions found</h3>
-                        <p>There are no ${currentFilter === 'all' ? '' : currentFilter} submissions at the moment.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            submissionsList.innerHTML = filteredSubmissions.map(submission => `
-                <div class="submission-card" data-status="${submission.status}">
-                    <div class="submission-header">
-                        <div style="flex: 1;">
-                            <h3 class="submission-title">${submission.name}</h3>
-                            <div class="submission-meta">
-                                Submitted by ${submission.submittedBy} on ${formatDate(submission.submittedDate)}
-                                <span class="status-badge status-${submission.status}">${submission.status}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p class="submission-description">${submission.description}</p>
-                    
-                    <div class="submission-details">
-                        <div class="detail-item">
-                            <span class="detail-label">Website URL</span>
-                            <span class="detail-value">${submission.url}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Resource Type</span>
-                            <span class="detail-value">${submission.type}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Price Model</span>
-                            <span class="detail-value">${submission.priceModel}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Grade Levels</span>
-                            <span class="detail-value">${submission.gradeLevel.join(', ')}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Languages/Tools</span>
-                            <span class="detail-value">${submission.languages.join(', ')}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="submission-actions">
-                        <button class="action-btn view-btn" onclick="viewResource('${submission.url}')">
-                            🌐 View Resource
-                        </button>
-                        ${submission.status === 'pending' ? `
-                            <button class="action-btn approve-btn" onclick="approveSubmission(${submission.id})">
-                                ✅ Approve
-                            </button>
-                            <button class="action-btn reject-btn" onclick="rejectSubmission(${submission.id})">
-                                ❌ Reject
-                            </button>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function approveSubmission(id) {
-            const submission = submissions.find(sub => sub.id === id);
-            if (submission) {
-                submission.status = 'approved';
-                updateStats();
-                loadSubmissions();
-                showNotification(`"${submission.name}" has been approved!`, 'success');
-            }
-        }
-
-        function rejectSubmission(id) {
-            const reason = prompt('Please provide a reason for rejection (optional):');
-            const submission = submissions.find(sub => sub.id === id);
-            if (submission) {
-                submission.status = 'rejected';
-                submission.rejectionReason = reason;
-                updateStats();
-                loadSubmissions();
-                showNotification(`"${submission.name}" has been rejected.`, 'error');
-            }
-        }
-
-        function viewResource(url) {
-            window.open(url, '_blank');
-        }
-
-        function updateStats() {
-            const pending = submissions.filter(sub => sub.status === 'pending').length;
-            const approved = submissions.filter(sub => sub.status === 'approved').length;
-            const rejected = submissions.filter(sub => sub.status === 'rejected').length;
-            const total = submissions.length;
-            
-            document.getElementById('pendingCount').textContent = pending;
-            document.getElementById('approvedCount').textContent = approved;
-            document.getElementById('rejectedCount').textContent = rejected;
-            document.getElementById('totalCount').textContent = total;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-        }
-
-        function showNotification(message, type) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                border-radius: 10px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-                ${type === 'success' ? 'background: #10b981;' : 'background: #ef4444;'}
-            `;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-
-        // Initialize stats on page load - remove this duplicate line since it's now in DOMContentLoaded
-        // updateStats();
-
-             if (!localStorage.getItem('isAuthenticated')) {
-            window.location.href = 'index.html';
-        }
-        
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            localStorage.removeItem('isAuthenticated');
-            window.location.href = 'index.html';
-        });
-    </script>
+   
 </body>
 </html>

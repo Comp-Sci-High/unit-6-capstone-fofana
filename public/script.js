@@ -1,27 +1,6 @@
-async function deleteTool(id) {
-    await fetch('/delTool/' + id, {method: 'DELETE'});
-    window.location.href = "/"
-   }
-   
 
-   async function editTool(e, id) {
-    e.preventDefault();
-   
-    const formData = new FormData(e.target);
-    const formObject = Object.fromEntries(formData.entries());
-   
-    await fetch('/upTool/' + id, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formObject)
-    });
-   
-    window.location.href = '/'
-   }
-
-        // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Hide loader after page load
+
             const loader = document.querySelector('.loader');
             setTimeout(() => {
                 loader.classList.add('hidden');
@@ -166,54 +145,32 @@ async function deleteTool(id) {
             createHeroBackground();
         });
 
-        loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-   
-        
-    
-const ADMIN_CREDENTIALS = {
+
+
+  const ADMIN_CREDENTIALS = {
     username: "admin",
-    password: "admin123" // In a real app, never store passwords like this
-};
-        
-document.getElementById('login-form').addEventListener('submit', function(e) {
+    password: "admin123" // In real-world apps, NEVER do this
+  };
+
+  document.getElementById('login-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    
+
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const errorElement = document.getElementById('error-message');
-    
+
     if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        // Successful login
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('admin-container').style.display = 'block';
-        document.getElementById('admin-username').textContent = username;
-                window.location.href = '/admin';
-
-        // Store login state in sessionStorage
-        sessionStorage.setItem('isAuthenticated', 'true');
+      sessionStorage.setItem('isAuthenticated', 'true');
+      // Redirect to /admin
+      window.location.href = '/admin';
     } else {
-        errorElement.textContent = 'Invalid username or password';
+      errorElement.textContent = 'Invalid username or password';
     }
-});
+  });
 
-   
-document.getElementById('logout-btn').addEventListener('click', function() {
-    sessionStorage.removeItem('isAuthenticated');
-    location.reload();
-});
-        
-// Check if already logged in when page loads
-window.addEventListener('DOMContentLoaded', function() {
+  // Optional: auto redirect if already logged in
+  window.addEventListener('DOMContentLoaded', function () {
     if (sessionStorage.getItem('isAuthenticated') === 'true') {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('admin-container').style.display = 'block';
-        document.getElementById('admin-username').textContent = ADMIN_CREDENTIALS.username;
+      window.location.href = '/admin'; // Automatically redirect if already logged in
     }
-});
-        });
-
-    
+  });

@@ -1,98 +1,5 @@
 
 
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Submit CS Teaching Tool - CSTA</title> <link rel="stylesheet" href="request.css" /> <script src="request.js" defer></script>
-
-pasted
-
-
-const mongoose = require("mongoose"); const express = require("express"); const app = express(); app.use(express.static(__dirname + "/public")); app.use(express.json()); app.set("view engine", "ejs"); app.use((req, res, next) => { console.log(`${req.method}: ${req.path}`); next();
-
-pasted
-
-is there any mistakes here that'll stop the form from creating a post for the tool that'll go to the admin page
-
-Looking at your code, I can identify several issues that would prevent the form from creating a successful POST request:
-
-Major Issues:
-1. JavaScript Errors in Form Submission
-In the HTML file, you have this problematic code:
-
-javascript
-const createForm = document.querySelector("form")
-createForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
-    const formData = new formData(form); // ❌ Issues here
-    const reqBody = object.fromEntries(formData) // ❌ And here
-    // ...
-})
-Problems:
-
-new formData(form) should be new FormData(createForm) (capital F, and use the correct variable)
-object.fromEntries should be Object.fromEntries (capital O)
-Variable form is undefined - should be createForm
-2. Missing Price Model Input Field
-Your form references a price field but it's missing from the HTML:
-
-javascript
-Price: document.getElementById('price-model').value, // ❌ This element doesn't exist
-You have this in your HTML but no actual input:
-
-html
-<div class="form-group">
-    <label for="price-model">Price Model *</label>
-    <!-- Missing input field here! -->
-</div>
-3. Duplicate Event Listeners
-You have two different submit event listeners on the same form, which could cause conflicts.
-
-4. Schema Mismatch
-Your backend expects a Price field as required, but your form doesn't collect this data properly.
-
-Quick Fixes:
-1. Add the missing price input field:
-html
-<div class="form-group">
-    <label for="price-model">Price Model *</label>
-    <select id="price-model" name="priceModel" required>
-        <option value="">Select price model</option>
-        <option value="Free">Free</option>
-        <option value="Paid">Paid</option>
-        <option value="Freemium">Freemium</option>
-        <option value="Subscription">Subscription</option>
-    </select>
-</div>
-2. Fix the placeholder attribute:
-html
-<input type="text" id="standard-alignment" name="standardAlignment" 
-       placeholder="e.g., CSTA K-12 CS Standards">
-3. Remove the duplicate/broken JavaScript and keep only the working one:
-Remove this entire block:
-
-javascript
-const createForm = document.querySelector("form")
-createForm.addEventListener("submit", async (e) => {
-    // ... remove this entire block
-})
-4. Make StandardAlignment optional in your schema (since the form doesn't mark it as required):
-javascript
-StandardAlignment: { type: String, required: false }, // or just remove required: true
-The main issue preventing form submission is the missing price input field and the JavaScript errors. Fix these and your form should work properly!
-
-
-
-
-can you make the changes
-
-I'll fix the issues in both files for you.
-
-
-Fixed HTML Form
-Interactive artifact 
-
-Fixed Server Code
-Code 
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,7 +17,6 @@ Code
 </head>
 <body>
  
-    <!-- Header -->
     <header>
         <div class="container header-container">
             <a href="/" class="logo">
@@ -144,7 +50,6 @@ Code
         </div>
     </header>
 
-    <!-- Mobile Menu -->
     <div class="mobile-menu">
         <button class="close-btn">
             <i class="fas fa-times"></i>
@@ -271,4 +176,3 @@ Code
 
 </body>
 </html>
-Claude
