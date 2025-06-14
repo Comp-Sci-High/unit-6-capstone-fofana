@@ -10,90 +10,6 @@
             min-height: 100vh;
         }
 
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            transform: translateY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .login-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            color: #333;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .logo p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"]:focus, input[type="password"]:focus {
-            outline: none;
-            border-color: #e91e63;
-            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(233, 30, 99, 0.3);
-        }
-
         .admin-container {
             min-height: 100vh;
             background: #f8fafc;
@@ -128,6 +44,8 @@
             cursor: pointer;
             font-weight: 600;
             transition: background 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .logout-btn:hover {
@@ -232,7 +150,7 @@
 
         .submission-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
         }
@@ -245,10 +163,27 @@
             flex: 1;
         }
 
-        .submission-meta {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+        }
+
+        .status-approved {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #ef4444;
+            color: white;
         }
 
         .submission-description {
@@ -283,6 +218,15 @@
         .detail-value {
             color: #333;
             font-weight: 500;
+        }
+
+        .detail-value a {
+            color: #e91e63;
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
         }
 
         .submission-actions {
@@ -333,29 +277,6 @@
             transform: translateY(-2px);
         }
 
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-pending {
-            background: #ff9800;
-            color: white;
-        }
-
-        .status-approved {
-            background: #10b981;
-            color: white;
-        }
-
-        .status-rejected {
-            background: #ef4444;
-            color: white;
-        }
-
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -384,4 +305,3 @@
                 grid-template-columns: 1fr;
             }
         }
-    

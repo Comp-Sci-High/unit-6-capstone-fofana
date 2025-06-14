@@ -408,12 +408,10 @@
             color: #666;
             margin-bottom: 15px;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        /* Comments Section */
         .comments-section {
             margin-bottom: 60px;
         }
@@ -442,6 +440,7 @@
             font-weight: 500;
         }
 
+        
         .form-control {
             width: 100%;
             padding: 12px;

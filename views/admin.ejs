@@ -4,103 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSTA Admin Portal</title>
-     <link rel="stylesheet" href="admin.css" />
+      <link rel="stylesheet" href="admin.css" />
   <script src="admin.js" defer></script>
 </head>
 <body>
-    <!-- Admin Dashboard -->
-    <div class="admin-container" id="adminDashboard">
+    <div class="admin-container">
         <header class="header">
             <div class="header-content">
                 <h1>🛠 CSTA Admin Portal</h1>
-<a href="/" class="logout-btn" onclick="logout()">Logout</a>       </header>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </header>
 
         <main class="main-content">
-            <!-- Statistics -->
+
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-number" id="pendingCount">8</div>
+                    <div class="stat-number" id="pendingCount">
+                        <%= Requests.filter(req => req.isApproved === null || req.isApproved === undefined).length %>
+                    </div>
                     <div class="stat-label">Pending Reviews</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="approvedCount">142</div>
+                    <div class="stat-number" id="approvedCount">
+                        <%= Requests.filter(req => req.isApproved === true).length %>
+                    </div>
                     <div class="stat-label">Approved Resources</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="rejectedCount">23</div>
+                    <div class="stat-number" id="rejectedCount">
+                        <%= Requests.filter(req => req.isApproved === false).length %>
+                    </div>
                     <div class="stat-label">Rejected Submissions</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalCount">173</div>
+                    <div class="stat-number" id="totalCount">
+                        <%= Requests.length %>
+                    </div>
                     <div class="stat-label">Total Submissions</div>
                 </div>
             </div>
 
-            <!-- Submissions Section -->
             <div class="submissions-section">
                 <div class="section-header">
                     <h2 class="section-title">Resource Submissions</h2>
                     <div class="filter-tabs">
-                        <button class="filter-tab active" onclick="filterSubmissions('all')">All</button>
-                        <button class="filter-tab" onclick="filterSubmissions('pending')">Pending</button>
-                        <button class="filter-tab" onclick="filterSubmissions('approved')">Approved</button>
-                        <button class="filter-tab" onclick="filterSubmissions('rejected')">Rejected</button>
+                        <button class="filter-tab active" onclick="filterSubmissions(event, 'all')">All</button>
+                        <button class="filter-tab" onclick="filterSubmissions(event, 'pending')">Pending</button>
+                        <button class="filter-tab" onclick="filterSubmissions(event, 'approved')">Approved</button>
+                        <button class="filter-tab" onclick="filterSubmissions(event, 'rejected')">Rejected</button>
                     </div>
                 </div>
 
-                <div class="submissions-list" id="submissionsList"> 
-  <% if (Requests.length === 0) { %>
-    <div class="empty-state">
-      <h3>No submissions found</h3>
-      <p>There are no requests at the moment.</p>
-    </div>
-  <% } else { %>
-    <% Requests.forEach(submission => { %>
-      <div class="submission-card" data-status="<%= Request.isApproved ? 'approved' : 'pending' %>">
-        <div class="submission-header">
-          <div style="flex: 1;">
-            <h3 class="submission-title"><%= Request.ProductName %></h3>
-            <div class="submission-meta">
-              Submitted on <%= new Date(Request.createdAt || Request._id.getTimestamp()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-              <span class="status-badge status-<%= Request.isApproved ? 'approved' : 'pending' %>">
-                <%= Request.isApproved ? 'Approved' : 'Pending' %>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <p class="submission-description"><%= Request.Description %></p>
-
-        <div class="submission-details">
-          <div class="detail-item">
-            <span class="detail-label">Website URL</span>
-            <span class="detail-value"><a href="<%= Request.Website %>" target="_blank"><%= submission.Website %></a></span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Contact Email</span>
-            <span class="detail-value"><%= Request.ContactEmail %></span>
-          </div>
-        </div>
-
-        <div class="submission-actions">
-          <form method="POST" action="/approve/<%= Request._id %>">
-            <button class="action-btn approve-btn" type="submit">✅ Approve</button>
-          </form>
-          <form method="POST" action="/reject/<%= Request._id %>">
-            <button class="action-btn reject-btn" type="submit">❌ Reject</button>
-          </form>
-          <button class="action-btn view-btn" onclick="window.open('<%= Request.Website %>', '_blank')">
-            🌐 View Resource
-          </button>
-        </div>
-      </div>
-    <% }) %>
-  <% } %>
+                <div class="submissions-list" id="submissionsList">
+                    <% if (Requests.length === 0) { %>
+                        <div class="empty-state">
+                            <h3>No submissions found</h3>
+                            <p>There are no requests at the moment.</p>
+                        </div>
+                  <% } else { %>
+                        <% for (let i = 0; i < Requests.length; i++) { %>
+                            <% const Request = Requests[i]; %>
+                            <div class="submission-card" data-status="<%= Request.isApproved === true ? 'approved' : Request.isApproved === false ? 'rejected' : 'pending' %>">
+                                <div class="submission-header">
+                                    <h3 class="submission-title"><%= Request.ProductName %></h3>
+                                    <span class="status-badge <%= Request.isApproved === true ? 'status-approved' : Request.isApproved === false ? 'status-rejected' : 'status-pending' %>">
+                                        <%= Request.isApproved === true ? 'Approved' : Request.isApproved === false ? 'Rejected' : 'Pending' %>
+                                    </span>
+                                </div>
+                                
+                                <p class="submission-description"><%= Request.Description %></p>
+                                
+                                <div class="submission-details">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Website</span>
+                                        <span class="detail-value">
+                                            <a href="<%= Request.Website %>" target="_blank"><%= Request.Website %></a>
+                                        </span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Product Type</span>
+                                        <span class="detail-value"><%= Request.ProductType %></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Price</span>
+                                        <span class="detail-value"><%= Request.Price %></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Grade Level</span>
+                                        <span class="detail-value"><%= Request.GradeLevel %></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Standard Alignment</span>
+                                        <span class="detail-value"><%= Request.StandardAlignment || 'N/A' %></span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Languages/Tools</span>
+                                        <span class="detail-value"><%= Request.SupportedLanguages || 'N/A' %></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="submission-actions">
+                                    <button class="action-btn view-btn" onclick="viewResource('<%= Request.Website %>')">
+                                        🌐 View Resource
+                                    </button>
+                                    <button class="action-btn approve-btn" onclick="approveSubmission('<%= Request._id %>')">
+                                        ✅ Approve
+                                    </button>
+                                    <button class="action-btn reject-btn" onclick="rejectSubmission('<%= Request._id %>')">
+                                        ❌ Reject
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteRequest('<%= Request._id %>')">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        <% } %>         
+                            <% } %>
                 </div>
             </div>
         </main>
     </div>
 
-   
 </body>
 </html>

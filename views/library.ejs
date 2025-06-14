@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CSTA - CS Teaching Tools Library</title>
-  <link rel="stylesheet" href="library.css" />
-    <script src="library.js" defer></script>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Icon imports -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSTA Resource Library</title>
+   <link rel="stylesheet" href="library.css" />
+  <script src="library.js" defer></script>
 </head>
 <body>
- 
-   
-    <!-- Header -->
     <header>
         <div class="container header-container">
             <a href="/" class="logo">
@@ -36,13 +28,10 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/library">Resources</a></li>
                     <li><a href="/request">Submit</a></li>
-                                        <li><a href="/indy">Submit</a></li>
-
                 </ul>
             </nav>
             <div class="header-actions">
-                <button class="btn btn-outline login-btn">Log In</button>
-                <button class="btn">Join CSTA</button>
+                <button class="btn btn-outline login-btn">Log In At The Home Page</button>
                 <button class="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -62,101 +51,153 @@
         </ul>
     </div>
 
-    <h1 style="color: transparent;">.</h1>
-  <section class="hero container">
-    <div class="hero-content">
-      <h1>Library of CS Teaching Tools</h1>
-      <p>Explore our curated collection of top-rated Requests for computer science education, reviewed by teachers like you.</p>
-    </div>
-    <div class="circles">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="circle circle-3"></div>
-    </div>
-  </section>
-
-<section class="library-section container">
-    <div class="library-header">
-        <h2 class="library-title">Browse Requests</h2>
-    </div>
-
-    <!-- Enhanced Filter Controls -->
-    <div class="library-controls">
-        <div class="search-group">
-            <input type="text" class="search-input" placeholder="Search Requests...">
-            <button class="btn btn-primary apply-filters">Search</button>
+    <div class="container">
+        <div class="page-title">
+            <h1>CS Teaching Resources Library</h1>
+            <p>Discover approved, high-quality resources for computer science education</p>
         </div>
-        <div class="filter-group">
-            <label for="grade-filter">Grade Level</label>
-            <select id="grade-filter" class="filter-select">
-                <option value="all">All Grades</option>
-                <option value="K-5">K-5</option>
-                <option value="6-8">6-8</option>
-                <option value="9-12">9-12</option>
-                <option value="Higher Ed">Higher Ed</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="topic-filter">Request Type</label>
-            <select id="topic-filter" class="filter-select">
-                <option value="all">All Types</option>
-                <option value="Curriculum">Curriculum</option>
-                <option value="Tool">Tool</option>
-                <option value="Platform">Platform</option>
-                <option value="Book">Book</option>
-            </select>
-        </div>
-    </div>
 
-    <div class="Request-grid">
-              <% for(let i = 0; i < Requests.length; i++){ %>
-   <%    if(Requests[i].isApproved == true){ %>
-
-      <div class="card">
-        <img src="<%= Requests[i].image %>" />
-        <div class="card-content">
-          <h3 id="name"><%= Requests[i].name %> </h3>
-          <p><%= Requests[i].Description %></p>
-          <p><strong>Level:</strong> </p>
-          <p><strong>Grade:</strong></p>
-        </div>
-      </div>
-
-      
-
-        <div class="resource-card" id="resource-card">
-                <div class="resource-header">
-                    <h3 class="resource-title"><%= Requests[i].ProductName %></h3>
-                    <p class="resource-type"><%= Requests[i].ProductType %></p>
+        <div class="filters">
+            <h3>Filter Resources</h3>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="searchInput">Search Resources</label>
+                    <input type="text" id="searchInput" placeholder="Search by name or description...">
                 </div>
-                <div class="resource-body">
-                    <p class="resource-description"><%= Requests[i].Description %> </p>
-                    <div class="resource-meta">
-                        <span class="resource-tag"><i class="fas fa-layer-group"></i> <%= Requests[i].GradeLevel %> </span>
-                        <span class="resource-tag"><i class="fas fa-code"></i> <%= Requests[i].SupportedLanguages %></span>
-                        <span class="resource-tag"><i class="fas fa-check-circle"></i><%= Requests[i].StandardAlignment %></span>
-                    </div>
-                    <div class="resource-rating">
-                        <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                
+                <div class="filter-group">
+                    <label for="productTypeFilter">Resource Type</label>
+                    <select id="productTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="Software">Software</option>
+                        <option value="Platform">Platform</option>
+                        <option value="Tool">Tool</option>
+                        <option value="Game">Game</option>
+                        <option value="Curriculum">Curriculum</option>
+                        <option value="Website">Website</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="priceFilter">Price Model</label>
+                    <select id="priceFilter">
+                        <option value="">All Prices</option>
+                        <option value="Free">Free</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Freemium">Freemium</option>
+                        <option value="Subscription">Subscription</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Grade Levels</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gradeK5" value="K-5">
+                            <label for="gradeK5">K-5</label>
                         </div>
-                        <span class="reviews-count">(127 reviews)</span>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="grade68" value="6-8">
+                            <label for="grade68">6-8</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="grade912" value="9-12">
+                            <label for="grade912">9-12</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gradeHigherEd" value="Higher Ed">
+                            <label for="gradeHigherEd">Higher Ed</label>
+                        </div>
                     </div>
-                    <div class="resource-footer">
-                        <span class="resource-price price-free"><%= Requests[i].Price %></span>
-                        <a href="#" class="btn">Try It Out</a>
+                </div>
+
+                <div class="filter-group">
+                    <label>Supported Languages/Tools</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langScratch" value="Scratch">
+                            <label for="langScratch">Scratch</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langPython" value="Python">
+                            <label for="langPython">Python</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langJavaScript" value="JavaScript">
+                            <label for="langJavaScript">JavaScript</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langJava" value="Java">
+                            <label for="langJava">Java</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langBlockBased" value="Block-based">
+                            <label for="langBlockBased">Block-based</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="langHTML" value="HTML/CSS">
+                            <label for="langHTML">HTML/CSS</label>
+                        </div>
                     </div>
                 </div>
             </div>
-<% } %>
-<% } %>
 
+            <button class="clear-filters" onclick="clearAllFilters()">Clear All Filters</button>
+        </div>
 
+        <div class="results-count" id="resultsCount">
+            <% if (Requests && Requests.length > 0) { %>
+                <% const approvedCount = Requests.filter(request => request.isApproved).length; %>
+                Showing <%= approvedCount %> approved resource<%= approvedCount !== 1 ? 's' : '' %>
+            <% } else { %>
+                No resources available
+            <% } %>
+        </div>
 
-</section>
+        <div class="resources-grid" id="resourcesGrid">
+            <% if (Requests && Requests.length > 0) { %>
+                <% Requests.filter(request => request.isApproved).forEach(request => { %>
+                    <div class="resource-card" data-resource='<%- JSON.stringify(request) %>'>
+                        <h3><%= request.ProductName %></h3>
+                        <a href="<%= request.Website %>" target="_blank" class="website"><%= request.Website %></a>
+                        <p class="description"><%= request.Description %></p>
+                        
+                        <div class="resource-meta">
+                            <span class="meta-tag"><%= request.ProductType %></span>
+                            <span class="meta-tag"><%= request.GradeLevel %></span>
+                            <span class="price-tag"><%= request.Price %></span>
+                        </div>
+                        
+                        <% if (request.SupportedLanguages) { %>
+                            <div class="resource-meta">
+                                <% request.SupportedLanguages.split(',').forEach(lang => { %>
+                                    <span class="meta-tag"><%= lang.trim() %></span>
+                                <% }) %>
+                            </div>
+                        <% } %>
+
+                        <% if (request.StandardAlignment) { %>
+                            <div class="standard-alignment">
+                                <strong>Standards:</strong> <%= request.StandardAlignment %>
+                            </div>
+                        <% } %>
+
+                        <div class="card-actions">
+                            <a href="/indy/<%= request._id %>" class="btn btn-primary">Learn More</a>
+                            <a href="<%= request.Website %>" target="_blank" class="btn btn-outline">Visit Website</a>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            <h3>No resources found</h3>
+            <p>Try adjusting your filters to see more results.</p>
+        </div>
+    </div>
+
 </body>
 </html>

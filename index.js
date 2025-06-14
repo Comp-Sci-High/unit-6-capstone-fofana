@@ -58,7 +58,7 @@ app.patch("/disapprove/:_id", async (req, res) => {
     res.json(response);
 })
 
-app.get("/indy", async (req, res) => {
+app.get("/indy/:id", async (req, res) => {
     const Requests = await Request.find({});
     res.render("indy.ejs", { Requests });
 });
@@ -91,7 +91,7 @@ app.post("/request", async (req, res) => {
     }
 });
 
-app.delete("/delTool/:_id", async (req, res) => {
+app.delete("/delete/:_id", async (req, res) => {
     const response = await Request.findOneAndDelete({ _id: req.params._id })
     res.json(response);
     });
@@ -103,17 +103,16 @@ app.delete("/delTool/:_id", async (req, res) => {
     });
 
 
-const insideSchema = new mongoose.Schema(
-    {
+const insideSchema = new mongoose.Schema({
+    RequestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Request' }, // Add this
     username: { type: String },
     comment: { type: String },
     rating: { type: Number },
-        }
-);
+});
 
 const Inside = mongoose.model("Inside", insideSchema, "Insides");
 
-app.post("/add/comment", async (req, res) => {
+app.post("/tool/:id", async (req, res) => {
   const newComment = await new Inside({
     username: req.body.username,
     comment: req.body.comment,

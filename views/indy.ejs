@@ -3,219 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CS Unplugged | CSTA Request Library</title>
-      <link rel="stylesheet" href="indy.css" />
-        <script src="indy.js" defer></script>
+    <title>Tool Details - CSTA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
- <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Icon imports -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #e91e63;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-login {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #e91e63;
+            background: transparent;
+            color: #e91e63;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #e91e63;
+            color: white;
+        }
+
+        .btn-join {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+
+        .btn-join:hover {
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            color: #e91e63;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .tool-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tool-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .tool-website {
+            color: #e91e63;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .tool-website:hover {
+            text-decoration: underline;
+        }
+
+        .tool-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #e91e63;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .tool-description {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .comments-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .comment-form {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #e91e63;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star:hover, .star.active {
+            color: #ffc107;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        .comment-item {
+            border-bottom: 1px solid #e1e5e9;
+            padding: 1.5rem 0;
+        }
+
+        .comment-item:last-child {
+            border-bottom: none;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-username {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-rating {
+            display: flex;
+            gap: 0.2rem;
+        }
+
+        .comment-star {
+            color: #ffc107;
+            font-size: 1rem;
+        }
+
+        .comment-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .tool-title {
+                font-size: 2rem;
+            }
+            
+            .tool-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-   
-    <!-- Header -->
-    <header>
-        <div class="container header-container">
-            <a href="/" class="logo">
-                <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
-                    <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
-                    <path d="M60 5H45V20H60V5Z" fill="#1A1A1A"/>
-                    <path d="M80 5H65V20H80V5Z" fill="#1A1A1A"/>
-                    <path d="M95 20H80V35H95V20Z" fill="#1A1A1A"/>
-                    <path d="M60 20H45V35H60V20Z" fill="#1A1A1A"/>
-                    <path d="M40 20H25V35H40V20Z" fill="#1A1A1A"/>
-                    <path d="M20 20H5V35H20V20Z" fill="#1A1A1A"/>
-                </svg>
-                CSTA
-            </a>
-            <nav class="main-nav">
-                <ul>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">■■■■ CSTA</div>
+            <nav>
+                <ul class="nav-links">
                     <li><a href="/">Home</a></li>
                     <li><a href="/library">Resources</a></li>
                     <li><a href="/request">Submit</a></li>
-                                        <li><a href="/indy">Submit</a></li>
-
                 </ul>
             </nav>
-            <div class="header-actions">
-                <button class="btn btn-outline login-btn">Log In</button>
-                <button class="btn">Join CSTA</button>
-                <button class="mobile-menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
+            <div class="auth-buttons">
+                <a href="#" class="btn-login">Log In</a>
+                <a href="#" class="btn-join">Join CSTA</a>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <button class="close-btn">
-            <i class="fas fa-times"></i>
-        </button>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/library">Resources</a></li>
-            <li><a href="/request">Submit</a></li>
-        </ul>
-    </div>
-       
-<div class="Request-detail">
     <div class="container">
-        <div class="Request-header">
-            <div class="breadcrumb">
-                <a href="/library"><i class="fas fa-arrow-left"></i> Back to Library</a>
-            </div>
-            
-            <div class="Request-title">
-                <h1><%= Request.ProductName %></h1>
-                <div class="badges">
-                    <span class="badge grade"><%= Request.GradeLevel %></span>
-                    <span class="badge type"><%= Request.ProductType %></span>
-                    <span class="badge price <%= Request.Price === 'Free' ? 'free' : 'paid' %>">
-                        <%= Request.Price %>
-                    </span>
-                </div>
-            </div>
-            
-            <div class="Request-actions">
-                <a href="<%= Request.Website %>" target="_blank" class="btn btn-primary">
-                    <i class="fas fa-external-link-alt"></i> Visit Request
-                </a>
-                <button class="btn btn-outline save-Request" data-id="<%= Request._id %>">
-                    <i class="far fa-bookmark"></i> Save
-                </button>
-            </div>
-        </div>
+        <a href="/library" class="back-link">← Back to Resources</a>
         
-        <div class="Request-content">
-            <div class="main-content">
-                <div class="section">
-                    <h2>Description</h2>
-                    <p><%= Request.Description %></p>
-                </div>
-                
-                <div class="section">
-                    <h2>Details</h2>
-                    <div class="details-grid">
-                        <div class="detail-item">
-                            <h3>Grade Levels</h3>
-                            <p><%= Request.GradeLevel %></p>
-                        </div>
-                        <div class="detail-item">
-                            <h3>Supported Languages</h3>
-                            <p><%= Request.SupportedLanguages %></p>
-                        </div>
-                        <div class="detail-item">
-                            <h3>Standards Alignment</h3>
-                            <p><%= Request.StandardAlignment %></p>
-                        </div>
-                        <div class="detail-item">
-                            <h3>Request Type</h3>
-                            <p><%= Request.ProductType %></p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="section reviews-section">
-                    <h2>Reviews</h2>
-                    <div class="review-form">
-                        <h3>Add Your Review</h3>
-                        <form id="review-form">
-                            <div class="form-group">
-                                <label>Rating</label>
-                                <div class="star-rating">
-                                    <% for(let i=1; i<=5; i++) { %>
-                                        <i class="far fa-star" data-rating="<%= i %>"></i>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <textarea placeholder="Share your experience..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit Review</button>
-                        </form>
-                    </div>
-                    
-                    <div class="reviews-list">
-                        <!-- Reviews would be populated here -->
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar">
-                <div class="Request-image">
-                    <img src="<%= Request.image || '/images/default-Request.jpg' %>" alt="<%= Request.ProductName %>">
-                </div>
-                
-                <div class="similar-Requests">
-                    <h3>Similar Requests</h3>
-                    <% Requests.filter(r => r.ProductType === Request.ProductType && r._id !== Request._id).slice(0, 3).forEach(similar => { %>
-                        <div class="similar-item">
-                            <a href="/Request/<%= similar._id %>">
-                                <h4><%= similar.ProductName %></h4>
-                                <p><%= similar.GradeLevel %></p>
-                            </a>
-                        </div>
-                    <% }); %>
-                </div>
-            </div>
+        <div id="tool-content">
+            <!-- Tool content will be loaded here -->
         </div>
     </div>
-</div>
-        </section>
-    </main>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>About CSTA</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Mission & Vision</a></li>
-                        <li><a href="#">Board of Directors</a></li>
-                        <li><a href="#">Staff</a></li>
-                        <li><a href="#">Annual Report</a></li>
-                        <li><a href="#">Sponsorship Opportunities</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Requests</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Browse Library</a></li>
-                        <li><a href="#">Teaching Standards</a></li>
-                        <li><a href="#">Submit Request</a></li>
-                        <li><a href="#">Featured Collections</a></li>
-                        <li><a href="#">Professional Development</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Community</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Membership</a></li>
-                        <li><a href="#">Chapters</a></li>
-                        <li><a href="#">Events & Conferences</a></li>
-                        <li><a href="#">Awards</a></li>
-                        <li><a href="#">Forum</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Get in Touch</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Computer Science Teachers Association. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 </body>
 </html>

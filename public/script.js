@@ -6,7 +6,6 @@
                 loader.classList.add('hidden');
             }, 1000);
 
-            // Header scroll effect
             const header = document.querySelector('header');
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 50) {
@@ -16,7 +15,6 @@
                 }
             });
 
-            // Mobile menu toggle
             const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
             const mobileMenu = document.querySelector('.mobile-menu');
             const closeBtn = document.querySelector('.close-btn');
@@ -29,7 +27,6 @@
                 mobileMenu.classList.remove('active');
             });
 
-            // Login modal
             const loginBtn = document.querySelector('.login-btn');
             const loginModal = document.getElementById('login-modal');
             const closeModal = document.querySelector('.modal-close');
@@ -42,14 +39,12 @@
                 loginModal.classList.remove('active');
             });
 
-            // Close modal when clicking outside
             window.addEventListener('click', function(e) {
                 if (e.target === loginModal) {
                     loginModal.classList.remove('active');
                 }
             });
 
-            // Animate elements on scroll
             const animateOnScroll = function() {
                 const featureCards = document.querySelectorAll('.feature-card');
                 const steps = document.querySelectorAll('.step');
@@ -73,15 +68,12 @@
                     }, index * 100);
                 });
 
-                // Resource card animation
                 const resourceCard = document.getElementById('resource-card');
                 resourceCard.style.animation = `fadeUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
             };
 
-            // Trigger animations after a delay
             setTimeout(animateOnScroll, 500);
 
-            // Interactive WebGL background for hero section
             const createHeroBackground = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = window.innerWidth;
@@ -91,7 +83,6 @@
                 const ctx = canvas.getContext('2d');
                 const circles = [];
                 
-                // Create initial circles
                 for (let i = 0; i < 20; i++) {
                     circles.push({
                         x: Math.random() * canvas.width,
@@ -103,18 +94,14 @@
                     });
                 }
                 
-                // Animation loop
                 function animate() {
                     requestAnimationFrame(animate);
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    // Update and draw circles
                     circles.forEach(circle => {
-                        // Update position
                         circle.x += circle.dx;
                         circle.y += circle.dy;
                         
-                        // Bounce off edges
                         if (circle.x + circle.radius > canvas.width || circle.x - circle.radius < 0) {
                             circle.dx = -circle.dx;
                         }
@@ -123,7 +110,6 @@
                             circle.dy = -circle.dy;
                         }
                         
-                        // Draw circle
                         ctx.beginPath();
                         ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
                         ctx.fillStyle = circle.color;
@@ -134,14 +120,12 @@
                 
                 animate();
                 
-                // Resize handler
                 window.addEventListener('resize', () => {
                     canvas.width = window.innerWidth;
                     canvas.height = window.innerHeight;
                 });
             };
             
-            // Initialize hero background
             createHeroBackground();
         });
 
@@ -149,7 +133,7 @@
 
   const ADMIN_CREDENTIALS = {
     username: "admin",
-    password: "admin123" // In real-world apps, NEVER do this
+    password: "admin123"
   };
 
   document.getElementById('login-form').addEventListener('submit', function (e) {
@@ -161,14 +145,13 @@
 
     if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
       sessionStorage.setItem('isAuthenticated', 'true');
-      // Redirect to /admin
+
       window.location.href = '/admin';
     } else {
       errorElement.textContent = 'Invalid username or password';
     }
   });
 
-  // Optional: auto redirect if already logged in
   window.addEventListener('DOMContentLoaded', function () {
     if (sessionStorage.getItem('isAuthenticated') === 'true') {
       window.location.href = '/admin'; // Automatically redirect if already logged in
