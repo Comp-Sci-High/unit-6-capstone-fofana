@@ -4,322 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tool Details - CSTA</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .header {
-            background: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #666;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #e91e63;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-login {
-            padding: 0.5rem 1.5rem;
-            border: 2px solid #e91e63;
-            background: transparent;
-            color: #e91e63;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-login:hover {
-            background: #e91e63;
-            color: white;
-        }
-
-        .btn-join {
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(135deg, #e91e63, #9c27b0);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: transform 0.3s;
-        }
-
-        .btn-join:hover {
-            transform: translateY(-2px);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .back-link {
-            color: #e91e63;
-            text-decoration: none;
-            margin-bottom: 2rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        .tool-header {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .tool-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .tool-website {
-            color: #e91e63;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            display: inline-block;
-        }
-
-        .tool-website:hover {
-            text-decoration: underline;
-        }
-
-        .tool-meta {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .meta-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #e91e63;
-        }
-
-        .meta-label {
-            font-weight: 600;
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .meta-value {
-            color: #333;
-            font-weight: 500;
-        }
-
-        .tool-description {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 1rem;
-        }
-
-        .comments-section {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .comment-form {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: #e91e63;
-        }
-
-        .rating-input {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .star {
-            font-size: 1.5rem;
-            color: #ddd;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .star:hover, .star.active {
-            color: #ffc107;
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #e91e63, #9c27b0);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-        }
-
-        .comment-item {
-            border-bottom: 1px solid #e1e5e9;
-            padding: 1.5rem 0;
-        }
-
-        .comment-item:last-child {
-            border-bottom: none;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .comment-username {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .comment-rating {
-            display: flex;
-            gap: 0.2rem;
-        }
-
-        .comment-star {
-            color: #ffc107;
-            font-size: 1rem;
-        }
-
-        .comment-text {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .no-comments {
-            text-align: center;
-            color: #666;
-            font-style: italic;
-            padding: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .container {
-                padding: 1rem;
-            }
-            
-            .tool-title {
-                font-size: 2rem;
-            }
-            
-            .tool-meta {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="indy.css" />
+    <script src="indy.js" defer></script>
 </head>
 <body>
     <header class="header">
         <div class="nav-container">
-            <div class="logo">■■■■ CSTA</div>
-            <nav>
+            <a href="/" class="logo">
+                <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
+                    <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
+                    <path d="M60 5H45V20H60V5Z" fill="#1A1A1A"/>
+                    <path d="M80 5H65V20H80V5Z" fill="#1A1A1A"/>
+                    <path d="M95 20H80V35H95V20Z" fill="#1A1A1A"/>
+                    <path d="M60 20H45V35H60V20Z" fill="#1A1A1A"/>
+                    <path d="M40 20H25V35H40V20Z" fill="#1A1A1A"/>
+                    <path d="M20 20H5V35H20V20Z" fill="#1A1A1A"/>
+                </svg>
+                CSTA
+            </a>            <nav>
                 <ul class="nav-links">
                     <li><a href="/">Home</a></li>
                     <li><a href="/library">Resources</a></li>
@@ -327,8 +30,7 @@
                 </ul>
             </nav>
             <div class="auth-buttons">
-                <a href="#" class="btn-login">Log In</a>
-                <a href="#" class="btn-join">Join CSTA</a>
+                <a href="#" class="btn-login">Log In At The Home Page</a>
             </div>
         </div>
     </header>
@@ -336,10 +38,143 @@
     <div class="container">
         <a href="/library" class="back-link">← Back to Resources</a>
         
-        <div id="tool-content">
-            <!-- Tool content will be loaded here -->
+        <% 
+        // Find the current tool based on the URL parameter
+        const currentTool = Requests.find(req => req._id.toString() === request.params.id);
+        %>
+        
+        <% if (currentTool) { %>
+        <div class="tool-header">
+            <h1 class="tool-title"><%= currentTool.ProductName %></h1>
+            <a href="<%= currentTool.Website %>" target="_blank" class="tool-website"><%= currentTool.Website %></a>
+            
+            <div class="tool-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Product Type</div>
+                    <div class="meta-value"><%= currentTool.ProductType %></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Price</div>
+                    <div class="meta-value"><%= currentTool.Price %></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Grade Level</div>
+                    <div class="meta-value"><%= currentTool.GradeLevel %></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Standards</div>
+                    <div class="meta-value"><%= currentTool.StandardAlignment || 'Not specified' %></div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Languages</div>
+                    <div class="meta-value"><%= currentTool.SupportedLanguages || 'Not specified' %></div>
+                </div>
+            </div>
         </div>
+
+        <div class="tool-description">
+            <h2 class="section-title">Description</h2>
+            <p><%= currentTool.Description %></p>
+        </div>
+
+        <div class="comments-section">
+            <h2 class="section-title">Reviews & Comments</h2>
+            
+            <div id="average-rating"></div>
+            
+            <div class="comment-form">
+                <h3 style="margin-bottom: 1rem; color: #333;">Share Your Experience</h3>
+                <div class="error-message" id="error-message"></div>
+                <div class="success-message" id="success-message">Review submitted successfully!</div>
+                
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rating</label>
+                        <div class="rating-input">
+                            <span class="star" onclick="setRating(1)">★</span>
+                            <span class="star" onclick="setRating(2)">★</span>
+                            <span class="star" onclick="setRating(3)">★</span>
+                            <span class="star" onclick="setRating(4)">★</span>
+                            <span class="star" onclick="setRating(5)">★</span>
+                            <span style="margin-left: 1rem; color: #666;" id="rating-text">Click to rate</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Review</label>
+                        <textarea class="form-textarea" id="comment" rows="4" placeholder="Share your thoughts about this tool..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Submit Review</button>
+                </form>
+            </div>
+
+            <div id="comments-list">
+                <% if (Comments && Comments.length > 0) { %>
+                    <% Comments.forEach(comment => { %>
+                    <div class="comment-item" data-comment-id="<%= comment._id %>" data-rating="<%= comment.rating %>">
+                        <div class="comment-header">
+                            <span class="comment-username"><%= comment.username %></span>
+                            <div class="comment-actions">
+                                <div class="comment-rating">
+                                    <% for(let i = 0; i < comment.rating; i++) { %>
+                                        <span class="comment-star">★</span>
+                                    <% } %>
+                                </div>
+                                <div class="comment-buttons">
+                                    <button class="btn-edit" onclick="editComment('<%= comment._id %>')">Edit</button>
+                                    <button class="btn-delete" onclick="deleteComment('<%= comment._id %>')">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            <div class="comment-text"><%= comment.comment %></div>
+                            <div class="comment-edit-form" style="display: none;">
+                                <textarea class="edit-textarea"><%= comment.comment %></textarea>
+                                <div class="edit-rating">
+                                    <span>Rating: </span>
+                                    <span class="edit-star" data-rating="1" onclick="setEditRating('<%= comment._id %>', 1)">★</span>
+                                    <span class="edit-star" data-rating="2" onclick="setEditRating('<%= comment._id %>', 2)">★</span>
+                                    <span class="edit-star" data-rating="3" onclick="setEditRating('<%= comment._id %>', 3)">★</span>
+                                    <span class="edit-star" data-rating="4" onclick="setEditRating('<%= comment._id %>', 4)">★</span>
+                                    <span class="edit-star" data-rating="5" onclick="setEditRating('<%= comment._id %>', 5)">★</span>
+                                </div>
+                                <div class="edit-buttons">
+                                    <button class="btn-save" onclick="saveComment('<%= comment._id %>')">Save</button>
+                                    <button class="btn-cancel" onclick="cancelEdit('<%= comment._id %>')">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-comments">No reviews yet. Be the first to share your experience!</div>
+                <% } %>
+            </div>
+        </div>
+        <% } else { %>
+        <div class="tool-header">
+            <h1 class="tool-title">Tool Not Found</h1>
+            <p>Sorry, the requested tool could not be found.</p>
+        </div>
+        <% } %>
     </div>
 
+    <!-- Initialize edit ratings after page loads -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize edit ratings for existing comments
+            const existingComments = document.querySelectorAll('[data-comment-id][data-rating]');
+            existingComments.forEach(commentElement => {
+                const commentId = commentElement.getAttribute('data-comment-id');
+                const rating = parseInt(commentElement.getAttribute('data-rating'));
+                if (commentId && rating) {
+                    setEditRating(commentId, rating);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
