@@ -11,6 +11,7 @@
             --primary-color: #e91e63;
             --primary-dark: #c2185b;
             --secondary-color: #ff6b9d;
+            --secondary-color-purple: #651fff;
             --success-color: #4caf50;
             --warning-color: #ff9800;
             --error-color: #f44336;
@@ -73,12 +74,11 @@
             color: #222;
         }
 
-        .logo svg {
-            width: 40px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
+.logo svg {
+    width: 52px;
+    height: 48px;
+    margin-right: 10px;
+}
         .main-nav ul {
             display: flex;
             list-style: none;

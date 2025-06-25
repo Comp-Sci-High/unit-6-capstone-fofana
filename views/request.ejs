@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSTA Request Submission</title>
+<title>CS Match - Submit Resource</title>
        <link rel="stylesheet" href="request.css" />
   <script src="request.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,19 +17,29 @@
 <body>
     <header>
         <div class="container header-container">
-            <a href="/" class="logo">
-                <svg viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 5H5V20H20V5Z" fill="#1A1A1A"/>
-                    <path d="M40 5H25V20H40V5Z" fill="#1A1A1A"/>
-                    <path d="M60 5H45V20H60V5Z" fill="#1A1A1A"/>
-                    <path d="M80 5H65V20H80V5Z" fill="#1A1A1A"/>
-                    <path d="M95 20H80V35H95V20Z" fill="#1A1A1A"/>
-                    <path d="M60 20H45V35H60V20Z" fill="#1A1A1A"/>
-                    <path d="M40 20H25V35H40V20Z" fill="#1A1A1A"/>
-                    <path d="M20 20H5V35H20V20Z" fill="#1A1A1A"/>
-                </svg>
-                CSTA
-            </a>
+           <a href="/" class="logo">
+    <svg viewBox="0 0 52 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Brain/Knowledge symbol -->
+        <path d="M12 8C8 8 6 12 6 16C6 20 8 22 10 24C8 26 6 28 6 32C6 36 8 40 12 40C14 40 15.5 39 16.5 37.5" stroke="#e91e63" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M16.5 37.5C17.5 39 19 40 21 40C25 40 27 36 27 32C27 28 25 26 23 24C25 22 27 20 27 16C27 12 25 8 21 8C19 8 17.5 9 16.5 10.5" stroke="#e91e63" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Connection lines with pulse effect -->
+        <path d="M27 24L32 24" stroke="#651fff" stroke-width="2" stroke-linecap="round" opacity="0.8">
+            <animate attributeName="opacity" values="0.4;1;0.4" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <circle cx="29.5" cy="24" r="1.5" fill="#651fff">
+            <animate attributeName="r" values="1;2;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Target/Match symbol -->
+        <circle cx="42" cy="24" r="8" stroke="#e91e63" stroke-width="2.5" fill="none"/>
+        <circle cx="42" cy="24" r="5" stroke="#651fff" stroke-width="2" fill="none"/>
+        <circle cx="42" cy="24" r="2" fill="#e91e63"/>
+        <!-- Perfect match indicator -->
+        <path d="M38 20L40.5 22.5L46 17" stroke="#00c853" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <animate attributeName="stroke-dasharray" values="0 12;12 0;0 12" dur="3s" repeatCount="indefinite"/>
+        </path>
+    </svg>
+    CS Match
+</a>
             <nav class="main-nav">
                 <ul>
                     <li><a href="/">Home</a></li>
@@ -59,9 +69,9 @@
 
     <div class="submission-page">
         <div class="container">
-            <h1>Submit a New Resource</h1>
-            <p>Share your favorite CS teaching resource with the community</p>
-            
+          <h1>Submit a New Resource</h1>
+<p>Help others find their perfect CS teaching match</p>
+
             <form id="resource-submission-form">
                 <div class="form-section">
                     <h2>Basic Information</h2>
