@@ -133,7 +133,7 @@
 
   const ADMIN_CREDENTIALS = {
     username: "admin",
-    password: "admin123"
+    password: "bobanafofana"
   };
 
   document.getElementById('login-form').addEventListener('submit', function (e) {

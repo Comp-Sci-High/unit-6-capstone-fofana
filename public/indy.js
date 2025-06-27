@@ -466,3 +466,95 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+
+// Header scroll effect
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50; // Trigger after 50px of scrolling
+    
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+
+// Alternative: using requestAnimationFrame for better performance
+let ticking = false;
+
+function updateHeader() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50;
+    
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+    ticking = false;
+}
+
+window.addEventListener('scroll', function() {
+    if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+    }
+});
+
+    // Login Modal Functions
+const loginBtn = document.querySelector('.login-btn');
+const loginModal = document.getElementById('login-modal');
+const closeModal = document.querySelector('.modal-close');
+
+// Open login modal
+loginBtn.addEventListener('click', function() {
+    loginModal.classList.add('active');
+});
+
+// Close login modal
+closeModal.addEventListener('click', function() {
+    loginModal.classList.remove('active');
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', function(e) {
+    if (e.target === loginModal) {
+        loginModal.classList.remove('active');
+    }
+});
+
+// Admin credentials
+const ADMIN_CREDENTIALS = {
+    username: "admin",
+    password: "bobanafofana"
+};
+
+// Login form submission
+document.getElementById('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    
+    // Use the correct IDs for login form
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    const errorElement = document.getElementById('login-error-message');
+    
+    console.log('Login attempt:', { username, password }); // Debug log
+    
+    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+        console.log('Login successful'); // Debug log
+        sessionStorage.setItem('isAuthenticated', 'true');
+        window.location.href = '/admin';
+    } else {
+        console.log('Login failed'); // Debug log
+        errorElement.textContent = 'Invalid username or password';
+        errorElement.style.display = 'block';
+    }
+});
+
+// Auto-redirect if already authenticated
+window.addEventListener('DOMContentLoaded', function () {
+    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+        window.location.href = '/admin';
+    }
+});
