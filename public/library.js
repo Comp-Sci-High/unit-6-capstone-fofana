@@ -1,5 +1,69 @@
-// Wait for DOM to be fully loaded
+// Combined JavaScript for Login and Resource Filtering
 document.addEventListener('DOMContentLoaded', function() {
+    // ========================
+    // LOGIN MODAL FUNCTIONALITY
+    // ========================
+   
+    // ========================
+    // RESOURCE FILTERING FUNCTIONALITY
+    // ========================
+    initializeResourceFiltering();
+    
+    // ========================
+    // MOBILE MENU FUNCTIONALITY
+    // ========================
+    initializeMobileMenu();
+});
+
+
+            const loginBtn = document.querySelector('.login-btn');
+            const loginModal = document.getElementById('login-modal');
+            const closeModal = document.querySelector('.modal-close');
+
+            loginBtn.addEventListener('click', function() {
+                loginModal.classList.add('active');
+            });
+
+            closeModal.addEventListener('click', function() {
+                loginModal.classList.remove('active');
+            });
+
+            window.addEventListener('click', function(e) {
+                if (e.target === loginModal) {
+                    loginModal.classList.remove('active');
+                }
+            });
+
+
+
+  const ADMIN_CREDENTIALS = {
+    username: "admin",
+    password: "admin123"
+  };
+
+  document.getElementById('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorElement = document.getElementById('error-message');
+
+    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+      sessionStorage.setItem('isAuthenticated', 'true');
+
+      window.location.href = '/admin';
+    } else {
+      errorElement.textContent = 'Invalid username or password';
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', function () {
+    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+      window.location.href = '/admin'; // Automatically redirect if already logged in
+    }
+  });
+// Resource Filtering Functions
+function initializeResourceFiltering() {
     // Get all resources from the rendered page
     const allResourceElements = document.querySelectorAll('.resource-card');
     const allResources = Array.from(allResourceElements).map(card => {
@@ -56,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function applyFilters() {
         const searchInput = document.getElementById('searchInput');
-        const productTypeFilter = document.getElementById('productTypeFilter'); // This element doesn't exist in your HTML
+        const productTypeFilter = document.getElementById('productTypeFilter');
         const priceFilter = document.getElementById('priceFilter');
         
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
@@ -160,7 +224,14 @@ document.addEventListener('DOMContentLoaded', function() {
         cb.addEventListener('change', applyFilters);
     });
 
-    // Mobile menu functionality
+    // Initial load - show all resources
+    displayResources(allResources);
+    
+    console.log('Filter system initialized with', allResources.length, 'resources');
+}
+
+// Mobile Menu Functions
+function initializeMobileMenu() {
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mobileMenu = document.querySelector('.mobile-menu');
     const closeBtn = document.querySelector('.close-btn');
@@ -178,16 +249,44 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Close mobile menu when clicking outside
-    if (mobileMenu) {
+    if (mobileMenu && mobileMenuBtn) {
         document.addEventListener('click', function(e) {
             if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
                 mobileMenu.classList.remove('active');
             }
         });
     }
-
-    // Initial load - show all resources
-    displayResources(allResources);
+}
+// Header scroll effect
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50; // Trigger after 50px of scrolling
     
-    console.log('Filter system initialized with', allResources.length, 'resources');
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+
+// Alternative: using requestAnimationFrame for better performance
+let ticking = false;
+
+function updateHeader() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50;
+    
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+    ticking = false;
+}
+
+window.addEventListener('scroll', function() {
+    if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+    }
 });

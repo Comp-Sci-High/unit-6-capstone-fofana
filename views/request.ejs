@@ -70,8 +70,8 @@
                     <li><a href="/request">Submit</a></li>
                 </ul>
             </nav>
-            <div class="header-actions">
-                <button class="btn btn-outline login-btn">Log In At The Home Page</button>
+             <div class="header-actions">
+                <button class="btn btn-outline login-btn">Log In</button>
                 <button class="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -197,6 +197,28 @@
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary" id="submit-btn">Submit Resource</button>
                     <button type="reset" class="btn btn-outline">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Log In</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">username</label>
+                    <input type="text" id="username" name="username"class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" required>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn">Log In</button>
                 </div>
             </form>
         </div>
