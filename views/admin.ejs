@@ -117,13 +117,70 @@
                                     <button class="action-btn delete-btn" onclick="deleteRequest('<%= Request._id %>')">
                                         🗑️ Delete
                                     </button>
+                                    <% if (Request.isApproved === true) { %>
+                                        <button class="action-btn comments-btn" onclick="toggleComments('<%= Request._id %>')">
+                                            💬 Manage Comments
+                                        </button>
+                                    <% } %>
                                 </div>
+
+                                <!-- Comments Section (initially hidden) -->
+                                <% if (Request.isApproved === true) { %>
+                                    <div class="comments-section" id="comments-<%= Request._id %>" style="display: none;">
+                                        <div class="comments-header">
+                                            <h4>Comments for <%= Request.ProductName %></h4>
+                                            <div class="comments-stats">
+                                                <span class="comment-count" id="comment-count-<%= Request._id %>">Loading...</span>
+                                                <span class="average-rating" id="average-rating-<%= Request._id %>">Rating: Loading...</span>
+                                            </div>
+                                        </div>
+                                        <div class="comments-list" id="comments-list-<%= Request._id %>">
+                                            <div class="loading-comments">Loading comments...</div>
+                                        </div>
+                                    </div>
+                                <% } %>
                             </div>
                         <% } %>         
                             <% } %>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Edit Comment Modal -->
+    <div id="editCommentModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Comment</h3>
+                <span class="close" onclick="closeEditCommentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editCommentForm">
+                    <div class="form-group">
+                        <label for="editUsername">Username:</label>
+                        <input type="text" id="editUsername" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editComment">Comment:</label>
+                        <textarea id="editComment" name="comment" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRating">Rating:</label>
+                        <select id="editRating" name="rating" required>
+                            <option value="1">1 Star</option>
+                            <option value="2">2 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="5">5 Stars</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn cancel-btn" onclick="closeEditCommentModal()">Cancel</button>
+                <button class="action-btn save-btn" onclick="saveCommentEdit()">Save Changes</button>
+            </div>
+        </div>
     </div>
 
 </body>

@@ -1,157 +1,150 @@
-        let currentFilter = 'all';
+let currentFilter = 'all';
+let currentEditingCommentId = null;
+let currentEditingToolId = null; // Add this to track which tool's comments we're editing
 
-        function filterSubmissions(event, filter) {
-            event.preventDefault();
-            currentFilter = filter;
-            
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            const submissions = document.querySelectorAll('.submission-card');
-            submissions.forEach(card => {
-                const status = card.getAttribute('data-status');
-                if (filter === 'all' || status === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+// ... (keep all your existing functions until editComment)
 
-            const visibleSubmissions = Array.from(submissions).filter(card => 
-                card.style.display !== 'none'
-            );
-
-            const submissionsList = document.getElementById('submissionsList');
-            if (visibleSubmissions.length === 0) {
-                submissions.forEach(card => card.style.display = 'none');
-                
-                const existingEmptyState = submissionsList.querySelector('.empty-state');
-                if (existingEmptyState) {
-                    existingEmptyState.remove();
-                }
-                
-                const emptyState = document.createElement('div');
-                emptyState.className = 'empty-state';
-                emptyState.innerHTML = `
-                    <h3>No submissions found</h3>
-                    <p>There are no ${filter === 'all' ? '' : filter} submissions at the moment.</p>
-                `;
-                submissionsList.appendChild(emptyState);
-            } else {
-                const existingEmptyState = submissionsList.querySelector('.empty-state');
-                if (existingEmptyState) {
-                    existingEmptyState.remove();
-                }
-            }
+async function editComment(commentId) {
+    try {
+        // Get comment data from the DOM
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        if (!commentElement) {
+            throw new Error('Comment element not found');
         }
+        
+        const username = commentElement.querySelector('.comment-user').textContent;
+        const commentText = commentElement.querySelector('.comment-text').textContent;
+        const stars = commentElement.querySelector('.stars').textContent;
+        const rating = stars.split('★').length - 1;
+        
+        // Find the tool ID by looking for the parent comments section
+        const commentsSection = commentElement.closest('.comments-section');
+        const toolId = commentsSection.id.replace('comments-', '');
+        
+        // Populate the edit form
+        document.getElementById('editUsername').value = username;
+        document.getElementById('editComment').value = commentText;
+        document.getElementById('editRating').value = rating;
+        
+        currentEditingCommentId = commentId;
+        currentEditingToolId = toolId; // Store the tool ID
+        
+        // Show the modal
+        document.getElementById('editCommentModal').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error preparing comment edit:', error);
+        showNotification('Failed to load comment for editing', 'error');
+    }
+}
 
-        async function approveSubmission(id) {
-            try {
-                const response = await fetch(`/approve/${id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+function closeEditCommentModal() {
+    document.getElementById('editCommentModal').style.display = 'none';
+    currentEditingCommentId = null;
+    currentEditingToolId = null; // Clear the tool ID
+}
 
-                if (!response.ok) throw new Error('Failed to approve submission');
-
-                const card = document.querySelector(`[onclick*="${id}"]`).closest('.submission-card');
-                const statusBadge = card.querySelector('.status-badge');
-                statusBadge.textContent = 'Approved';
-                statusBadge.className = 'status-badge status-approved';
-                card.setAttribute('data-status', 'approved');
-
-                updateStatsAfterAction();
-                showNotification('Submission approved successfully!', 'success');
-            } catch (error) {
-                console.error('Error approving submission:', error);
-                showNotification('Failed to approve submission', 'error');
-            }
+async function saveCommentEdit() {
+    if (!currentEditingCommentId || !currentEditingToolId) {
+        showNotification('Error: Missing comment or tool information', 'error');
+        return;
+    }
+    
+    const username = document.getElementById('editUsername').value.trim();
+    const comment = document.getElementById('editComment').value.trim();
+    const rating = document.getElementById('editRating').value;
+    
+    if (!username || !comment || !rating) {
+        showNotification('All fields are required', 'error');
+        return;
+    }
+    
+    if (rating < 1 || rating > 5) {
+        showNotification('Rating must be between 1 and 5', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/comment/${currentEditingCommentId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                comment: comment,
+                rating: parseInt(rating)
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Server error: ${response.status}`);
         }
+        
+        closeEditCommentModal();
+        showNotification('Comment updated successfully!', 'success');
+        
+        // Reload comments and rating for the tool
+        await loadComments(currentEditingToolId);
+        await loadRating(currentEditingToolId);
+        
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        showNotification(`Failed to update comment: ${error.message}`, 'error');
+    }
+}
 
-        async function rejectSubmission(id) {
-            try {
-                const response = await fetch(`/disapprove/${id}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) throw new Error('Failed to reject submission');
-
-                const card = document.querySelector(`[onclick*="${id}"]`).closest('.submission-card');
-                const statusBadge = card.querySelector('.status-badge');
-                statusBadge.textContent = 'Rejected';
-                statusBadge.className = 'status-badge status-rejected';
-                card.setAttribute('data-status', 'rejected');
-
-                updateStatsAfterAction();
-                showNotification('Submission rejected successfully!', 'success');
-            } catch (error) {
-                console.error('Error rejecting submission:', error);
-                showNotification('Failed to reject submission', 'error');
-            }
+// Also update the loadComments function to pass toolId to editComment
+async function loadComments(toolId) {
+    const commentsList = document.getElementById(`comments-list-${toolId}`);
+    const commentCount = document.getElementById(`comment-count-${toolId}`);
+    
+    try {
+        const response = await fetch(`/comments/${toolId}`);
+        if (!response.ok) throw new Error('Failed to load comments');
+        
+        const comments = await response.json();
+        
+        commentCount.textContent = `${comments.length} Comments`;
+        
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<div class="no-comments">No comments yet for this resource.</div>';
+            return;
         }
-
-        function updateStatsAfterAction() {
-            const allCards = document.querySelectorAll('.submission-card');
-            const pending = Array.from(allCards).filter(card => card.getAttribute('data-status') === 'pending').length;
-            const approved = Array.from(allCards).filter(card => card.getAttribute('data-status') === 'approved').length;
-            const rejected = Array.from(allCards).filter(card => card.getAttribute('data-status') === 'rejected').length;
-            
-            document.getElementById('pendingCount').textContent = pending;
-            document.getElementById('approvedCount').textContent = approved;
-            document.getElementById('rejectedCount').textContent = rejected;
-        }
-
-        function viewResource(url) {
-            window.open(url, '_blank');
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                border-radius: 10px;
-                color: white;
-                font-weight: 600;
-                z-index: 1000;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-                ${type === 'success' ? 'background: #10b981;' : 'background: #ef4444;'}
-            `;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
+        
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="comment-item" id="comment-${comment._id}">
+                <div class="comment-header">
+                    <div>
+                        <span class="comment-user">${escapeHtml(comment.username)}</span>
+                        <div class="comment-rating">
+                            <span class="stars">${'★'.repeat(comment.rating)}${'☆'.repeat(5 - comment.rating)}</span>
+                            <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-text">${escapeHtml(comment.comment)}</div>
+                <div class="comment-actions">
+                    <button class="action-btn edit-comment-btn" onclick="editComment('${comment._id}')">
+                        ✏️ Edit
+                    </button>
+                    <button class="action-btn delete-comment-btn" onclick="deleteComment('${comment._id}', '${toolId}')">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        commentsList.innerHTML = '<div class="no-comments">Failed to load comments.</div>';
+        commentCount.textContent = 'Error loading count';
+    }
+}
         function logout() {
     localStorage.clear();
     sessionStorage.clear();
     
     window.location.href = '/';
 }
-        async function deleteRequest(id) {
-    await fetch('/delete/' + id, {method: 'DELETE'});
-    window.location.href = "/"
-   }
