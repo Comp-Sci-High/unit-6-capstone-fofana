@@ -50,20 +50,29 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.classList.add('loading');
             submitBtn.textContent = 'Submitting...';
+       
             
-            const formData = {
-                ProductName: document.getElementById('product-name').value,
-                Website: document.getElementById('website-url').value,
-                ProductType: document.getElementById('product-type').value,
-                Description: document.getElementById('description').value,
-                Price: document.getElementById('price-model').value,
-                GradeLevel: Array.from(document.querySelectorAll('input[name="gradeLevel"]:checked')).map(el => el.value).join(', '),
-                StandardAlignment: document.getElementById('standard-alignment').value,
-                SupportedLanguages: Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(el => el.value).join(', '),
-                isApproved: false
-            };
+            const resourceTypes = Array.from(document.querySelectorAll('input[name="resourceType"]:checked')).map(el => el.value);
+if (document.getElementById('other-checkbox').checked) {
+    const otherValue = document.querySelector('input[name="otherResourceType"]').value;
+    if (otherValue) {
+        resourceTypes.push(otherValue);
+    }
+}
 
-            try {
+          
+const formData = {
+    ProductName: document.getElementById('product-name').value,
+    Website: document.getElementById('website-url').value,
+    ProductType: resourceTypes.join(', '), // Convert array to comma-separated string
+    Description: document.getElementById('description').value,
+    Price: document.getElementById('price-model').value,
+    GradeLevel: Array.from(document.querySelectorAll('input[name="gradeLevel"]:checked')).map(el => el.value).join(', '),
+    StandardAlignment: document.getElementById('standard-alignment').value,
+    SupportedLanguages: Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(el => el.value).join(', '),
+    isApproved: false
+};
+  try {
                 const response = await fetch('/request', {
                     method: 'POST',
                     headers: {

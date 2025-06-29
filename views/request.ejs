@@ -79,7 +79,7 @@
         </div>
     </header>
 
-    <div class="mobile-menu">
+       <div class="mobile-menu">
         <button class="close-btn">
             <i class="fas fa-times"></i>
         </button>
@@ -116,8 +116,48 @@
                 
                 <div class="form-section">
                     <div class="form-group">
-                        <label for="product-type">Resource Type *</label>
-                        <input type="text" id="product-type" name="productType" required>
+                        <label>Resource Type *</label>
+                        <div class="resource-type-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Curriculum">
+                                Curriculum
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Coding Platform">
+                                Coding Platform
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Assessment Tool">
+                                Assessment Tool
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Game/Activity">
+                                Game/Activity
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Lesson Plans">
+                                Lesson Plans
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Professional Development">
+                                Professional Development
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Hardware/Robotics">
+                                Hardware/Robotics
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Online Course">
+                                Online Course
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="resourceType" value="Other" id="other-checkbox">
+                                Other
+                            </label>
+                        </div>
+                        <div class="other-input" id="other-input">
+                            <input type="text" name="otherResourceType" placeholder="Please specify..." maxlength="100">
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -223,6 +263,28 @@
             </form>
         </div>
     </div>
+
+    <script>
+        // Show/hide "Other" input field
+        document.getElementById('other-checkbox').addEventListener('change', function() {
+            const otherInput = document.getElementById('other-input');
+            if (this.checked) {
+                otherInput.classList.add('show');
+                otherInput.querySelector('input').focus();
+            } else {
+                otherInput.classList.remove('show');
+                otherInput.querySelector('input').value = '';
+            }
+        });
+
+        // Clear "Other" input when form is reset
+        document.querySelector('button[type="reset"]').addEventListener('click', function() {
+            setTimeout(() => {
+                document.getElementById('other-input').classList.remove('show');
+            }, 0);
+        });
+    </script>
+
 
 </body>
 </html>

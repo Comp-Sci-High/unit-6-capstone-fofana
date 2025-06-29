@@ -645,3 +645,27 @@ header.scrolled {
         padding: 1.5rem 1rem;
     }
 }
+
+.resource-type-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.other-input {
+    margin-top: 0.75rem;
+    display: none;
+}
+
+.other-input.show {
+    display: block;
+}
+
+.other-input input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
