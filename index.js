@@ -58,6 +58,55 @@ app.get("/library", async (req, res) => {
     res.render("library.ejs", { Requests });
 });
 
+// FIXED: Admin-specific routes with /admin prefix
+app.patch("/admin/approve/:_id", async (req, res) => {
+    try {
+        const response = await Request.findOneAndUpdate(
+            {_id: req.params._id}, 
+            {isApproved: true}, 
+            {new: true}
+        );
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        res.json(response);
+    } catch (error) {
+        console.error('Error approving request:', error);
+        res.status(500).json({ error: 'Failed to approve request' });
+    }
+});
+
+app.patch("/admin/reject/:_id", async (req, res) => {
+    try {
+        const response = await Request.findOneAndUpdate(
+            {_id: req.params._id}, 
+            {isApproved: false}, 
+            {new: true}
+        );
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        res.json(response);
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        res.status(500).json({ error: 'Failed to reject request' });
+    }
+});
+
+app.delete("/admin/delete/:_id", async (req, res) => {
+    try {
+        const response = await Request.findOneAndDelete({ _id: req.params._id });
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        res.json(response);
+    } catch (error) {
+        console.error('Error deleting request:', error);
+        res.status(500).json({ error: 'Failed to delete request' });
+    }
+});
+
+// Keep the old routes for backward compatibility
 app.patch("/approve/:_id", async (req, res) => {
     const response = await Request.findOneAndUpdate({_id: req.params._id}, {isApproved: true}, {new: true}
     )
@@ -179,34 +228,65 @@ app.get("/comments/:id", async (req, res) => {
     }
 });
 
-// Delete comment route
+// ENHANCED: Delete comment route with better error handling
 app.delete("/comment/:_id", async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
+            return res.status(400).json({ error: 'Invalid comment ID format' });
+        }
+
         const response = await Comment.findOneAndDelete({ _id: req.params._id });
         if (!response) {
             return res.status(404).json({ error: 'Comment not found' });
         }
-        res.json(response);
+        res.json({ message: 'Comment deleted successfully', comment: response });
     } catch (error) {
         console.error('Error deleting comment:', error);
         res.status(500).json({ error: 'Failed to delete comment' });
     }
 });
 
-// Update comment route
+// ENHANCED: Update comment route with validation
 app.patch("/comment/:_id", async (req, res) => {
     try {
+        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
+            return res.status(400).json({ error: 'Invalid comment ID format' });
+        }
+
+        const { username, comment, rating } = req.body;
+        
+        // Validate required fields
+        if (!username || !comment || !rating) {
+            return res.status(400).json({ error: 'All fields (username, comment, rating) are required' });
+        }
+
+        // Validate rating range
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        }
+
+        const updateData = {
+            username: username.trim(),
+            comment: comment.trim(),
+            rating: parseInt(rating)
+        };
+
         const response = await Comment.findOneAndUpdate(
             { _id: req.params._id }, 
-            req.body, 
-            { new: true }
+            updateData, 
+            { new: true, runValidators: true }
         );
+        
         if (!response) {
             return res.status(404).json({ error: 'Comment not found' });
         }
-        res.json(response);
+        
+        res.json({ message: 'Comment updated successfully', comment: response });
     } catch (error) {
         console.error('Error updating comment:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: 'Invalid data provided' });
+        }
         res.status(500).json({ error: 'Failed to update comment' });
     }
 });
@@ -241,6 +321,18 @@ app.get("/rating/:id", async (req, res) => {
         console.error('Error calculating rating:', error);
         res.status(500).json({ error: 'Failed to calculate rating' });
     }
+});
+
+// ADDED: Logout route for admin
+app.post("/admin/logout", (req, res) => {
+    // Clear any session data if you're using sessions
+    // For now, just redirect to home
+    res.redirect('/');
+});
+
+app.get("/admin/logout", (req, res) => {
+    // Handle GET request for logout as well
+    res.redirect('/');
 });
 
 app.use((req, res) => {

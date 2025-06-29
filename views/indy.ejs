@@ -159,31 +159,14 @@
                     <div class="comment-item" data-comment-id="<%= comment._id %>" data-rating="<%= comment.rating %>">
                         <div class="comment-header">
                             <span class="comment-username"><%= comment.username %></span>
-                            <div class="comment-actions">
-                                <div class="comment-rating">
-                                    <% for(let i = 0; i < comment.rating; i++) { %>
-                                        <span class="comment-star">★</span>
-                                    <% } %>
-                                </div>
+                            <div class="comment-rating">
+                                <% for(let i = 0; i < comment.rating; i++) { %>
+                                    <span class="comment-star">★</span>
+                                <% } %>
                             </div>
                         </div>
                         <div class="comment-content">
                             <div class="comment-text"><%= comment.comment %></div>
-                            <div class="comment-edit-form" style="display: none;">
-                                <textarea class="edit-textarea"><%= comment.comment %></textarea>
-                                <div class="edit-rating">
-                                    <span>Rating: </span>
-                                    <span class="edit-star" data-rating="1" onclick="setEditRating('<%= comment._id %>', 1)">★</span>
-                                    <span class="edit-star" data-rating="2" onclick="setEditRating('<%= comment._id %>', 2)">★</span>
-                                    <span class="edit-star" data-rating="3" onclick="setEditRating('<%= comment._id %>', 3)">★</span>
-                                    <span class="edit-star" data-rating="4" onclick="setEditRating('<%= comment._id %>', 4)">★</span>
-                                    <span class="edit-star" data-rating="5" onclick="setEditRating('<%= comment._id %>', 5)">★</span>
-                                </div>
-                                <div class="edit-buttons">
-                                    <button class="btn-save" onclick="saveComment('<%= comment._id %>')">Save</button>
-                                    <button class="btn-cancel" onclick="cancelEdit('<%= comment._id %>')">Cancel</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <% }); %>
@@ -200,20 +183,6 @@
         <% } %>
     </div>
 
-    <!-- Initialize edit ratings after page loads -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize edit ratings for existing comments
-            const existingComments = document.querySelectorAll('[data-comment-id][data-rating]');
-            existingComments.forEach(commentElement => {
-                const commentId = commentElement.getAttribute('data-comment-id');
-                const rating = parseInt(commentElement.getAttribute('data-rating'));
-                if (commentId && rating) {
-                    setEditRating(commentId, rating);
-                }
-            });
-        });
-    </script>
   <!-- Login Modal -->
   <div class="modal" id="login-modal">
     <div class="modal-content">
