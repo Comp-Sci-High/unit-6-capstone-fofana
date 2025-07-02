@@ -135,6 +135,14 @@
                         <input type="text" class="form-input" id="username" required>
                     </div>
                     <div class="form-group">
+    <label class="form-label">Organization</label>
+    <input type="text" class="form-input" id="organization" placeholder="e.g., ABC Elementary School">
+</div>
+<div class="form-group">
+    <label class="form-label">Role</label>
+    <input type="text" class="form-input" id="role" placeholder="e.g., Teacher, Administrator, Parent">
+</div>
+                    <div class="form-group">
                         <label class="form-label">Rating</label>
                         <div class="rating-input">
                             <span class="star" onclick="setRating(1)">★</span>
@@ -157,17 +165,26 @@
                 <% if (Comments && Comments.length > 0) { %>
                     <% Comments.forEach(comment => { %>
                     <div class="comment-item" data-comment-id="<%= comment._id %>" data-rating="<%= comment.rating %>">
-                   <div class="comment-header">
+           <div class="comment-header">
     <div class="comment-user-info">
         <span class="comment-username"><%= comment.username %></span>
-        <span class="comment-date"><%= new Date(comment.createdAt || comment.timestamp || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span>
-    </div>
+      <% if (comment.organization || comment.role) { %>
+    <span class="comment-details">
+        <% if (comment.organization) { %><span class="comment-organization"><%= comment.organization %></span><% } %>
+        <% if (comment.organization && comment.role) { %> • <% } %>
+        <% if (comment.role) { %><span class="comment-role"><%= comment.role %></span><% } %>
+    </span>
+<% } %>
+<span class="comment-date-full">
+    <span class="date-part"><%= new Date(comment.createdAt || comment.timestamp || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+    <span class="time-part"><%= new Date(comment.createdAt || comment.timestamp || Date.now()).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %></span>
+</span>    </div>
     <div class="comment-rating">
         <% for(let i = 0; i < comment.rating; i++) { %>
             <span class="comment-star">★</span>
         <% } %>
     </div>
-</div>     <div class="comment-content">
+</div>    <div class="comment-content">
                             <div class="comment-text"><%= comment.comment %></div>
                         </div>
                     </div>

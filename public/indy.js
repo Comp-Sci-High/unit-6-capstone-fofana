@@ -54,17 +54,25 @@ function addCommentToList(comment, commentId = null) {
     const commentItem = document.createElement('div');
     commentItem.className = 'comment-item';
     commentItem.setAttribute('data-comment-id', id);
-    commentItem.innerHTML = `
-        <div class="comment-header">
+  commentItem.innerHTML = `
+    <div class="comment-header">
+        <div class="comment-user-info">
             <span class="comment-username">${comment.username}</span>
-            <div class="comment-rating">
-                ${'★'.repeat(comment.rating)}
-            </div>
+            ${(comment.organization || comment.role) ? `
+                <span class="comment-details">
+                    ${comment.organization || ''}${comment.organization && comment.role ? ' • ' : ''}${comment.role || ''}
+                </span>
+            ` : ''}
+            <span class="comment-date">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
         </div>
-        <div class="comment-content">
-            <div class="comment-text">${comment.comment}</div>
+        <div class="comment-rating">
+            ${'★'.repeat(comment.rating)}
         </div>
-    `;
+    </div>
+    <div class="comment-content">
+        <div class="comment-text">${comment.comment}</div>
+    </div>
+`;
     
     // Add to the top of the comments list
     commentsList.insertBefore(commentItem, commentsList.firstChild);
@@ -74,6 +82,8 @@ async function submitComment(event) {
     event.preventDefault();
     
     const username = document.getElementById('username').value.trim();
+    const organization = document.getElementById('organization').value.trim();
+const role = document.getElementById('role').value.trim();
     const commentText = document.getElementById('comment').value.trim();
     
     // Debug: Log the toolId
@@ -94,11 +104,13 @@ async function submitComment(event) {
         return;
     }
 
-    const requestData = {
-        username: username,
-        comment: commentText,
-        rating: currentRating
-    };
+   const requestData = {
+    username: username,
+    comment: commentText,
+    rating: currentRating,
+    organization: organization,
+    role: role
+};
     
     // Debug: Log request data
     console.log('Request data:', requestData);
@@ -122,15 +134,19 @@ async function submitComment(event) {
             console.log('New comment response:', newComment);
             
             // Add comment to the list immediately with the real ID from server
-            addCommentToList({
-                username: username,
-                comment: commentText,
-                rating: currentRating
-            }, newComment.id || newComment._id);
+           addCommentToList({
+    username: username,
+    comment: commentText,
+    rating: currentRating,
+    organization: organization,
+    role: role
+}, newComment.id || newComment._id);
             
             // Reset form
             document.getElementById('username').value = '';
             document.getElementById('comment').value = '';
+            document.getElementById('organization').value = '';
+document.getElementById('role').value = '';
             currentRating = 0;
             
             // Reset rating stars
@@ -265,6 +281,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     const password = document.getElementById('login-password').value;
     const errorElement = document.getElementById('login-error-message');
     
+    
     console.log('Login attempt:', { username, password }); // Debug log
     
     if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
@@ -285,17 +302,3 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-commentItem.innerHTML = `
-    <div class="comment-header">
-        <div class="comment-user-info">
-            <span class="comment-username">${comment.username}</span>
-            <span class="comment-date">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-        </div>
-        <div class="comment-rating">
-            ${'★'.repeat(comment.rating)}
-        </div>
-    </div>
-    <div class="comment-content">
-        <div class="comment-text">${comment.comment}</div>
-    </div>
-`;

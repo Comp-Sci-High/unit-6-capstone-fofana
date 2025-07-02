@@ -98,31 +98,36 @@ async function deleteRequest(requestId) {
     }
 }
 
-// Toggle comments section
-async function toggleComments(toolId) {
-    const commentsSection = document.getElementById(`comments-${toolId}`);
+// Toggle comments section - Fixed to use requestId instead of toolId
+async function toggleComments(requestId) {
+    const commentsSection = document.getElementById(`comments-${requestId}`);
+    
+    if (!commentsSection) {
+        console.error('Comments section not found for request:', requestId);
+        return;
+    }
     
     if (commentsSection.style.display === 'none' || commentsSection.style.display === '') {
         commentsSection.style.display = 'block';
-        await loadComments(toolId);
-        await loadRating(toolId);
+        await loadComments(requestId);
+        await loadRating(requestId);
     } else {
         commentsSection.style.display = 'none';
     }
 }
 
-// Load comments for a tool
-async function loadComments(toolId) {
-    const commentsList = document.getElementById(`comments-list-${toolId}`);
-    const commentCount = document.getElementById(`comment-count-${toolId}`);
+// Load comments for a request - Fixed to use requestId
+async function loadComments(requestId) {
+    const commentsList = document.getElementById(`comments-list-${requestId}`);
+    const commentCount = document.getElementById(`comment-count-${requestId}`);
     
     if (!commentsList || !commentCount) {
-        console.error('Comments elements not found for tool:', toolId);
+        console.error('Comments elements not found for request:', requestId);
         return;
     }
     
     try {
-        const response = await fetch(`/comments/${toolId}`);
+        const response = await fetch(`/comments/${requestId}`);
         if (!response.ok) throw new Error('Failed to load comments');
         
         const comments = await response.json();
@@ -142,22 +147,40 @@ async function loadComments(toolId) {
             commentDiv.className = 'comment-item';
             commentDiv.id = `comment-${comment._id}`;
             
+            // Build organization and role display
+            let orgRoleDisplay = '';
+            if (comment.organization || comment.role) {
+                const parts = [];
+                if (comment.organization) parts.push(`<span class="comment-organization">${escapeHtml(comment.organization)}</span>`);
+                if (comment.role) parts.push(`<span class="comment-role">${escapeHtml(comment.role)}</span>`);
+                orgRoleDisplay = `<div class="comment-details">${parts.join(' • ')}</div>`;
+            }
+            
+            // Format date - Fixed to handle different date field names
+            const commentDate = new Date(comment.createdAt || comment.timestamp || comment.date || Date.now());
+            const dateString = commentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            const timeString = commentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
             commentDiv.innerHTML = `
                 <div class="comment-header">
-                    <div>
-                        <span class="comment-user">${escapeHtml(comment.username)}</span>
-                        <div class="comment-rating">
-                            <span class="stars">${'★'.repeat(comment.rating)}${'☆'.repeat(5 - comment.rating)}</span>
-                            <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString()}</span>
-                        </div>
+                    <div class="comment-user-info">
+                        <span class="comment-username">${escapeHtml(comment.username || comment.name || 'Anonymous')}</span>
+                        ${orgRoleDisplay}
+                        <span class="comment-date-full">
+                            <span class="date-part">${dateString}</span>
+                            <span class="time-part">${timeString}</span>
+                        </span>
+                    </div>
+                    <div class="comment-rating">
+                        <span class="stars">${'★'.repeat(comment.rating || 0)}${'☆'.repeat(5 - (comment.rating || 0))}</span>
                     </div>
                 </div>
-                <div class="comment-text">${escapeHtml(comment.comment)}</div>
+                <div class="comment-text">${escapeHtml(comment.comment || comment.text || '')}</div>
                 <div class="comment-actions">
-                    <button class="action-btn edit-comment-btn" onclick="toggleEditComment('${comment._id}', '${toolId}')">
+                    <button class="action-btn edit-comment-btn" onclick="toggleEditComment('${comment._id}', '${requestId}')">
                         ✏️ Edit
                     </button>
-                    <button class="action-btn delete-comment-btn" onclick="deleteComment('${comment._id}', '${toolId}')">
+                    <button class="action-btn delete-comment-btn" onclick="deleteComment('${comment._id}', '${requestId}')">
                         🗑️ Delete
                     </button>
                 </div>
@@ -166,24 +189,32 @@ async function loadComments(toolId) {
                 <div class="inline-edit-form" id="edit-form-${comment._id}" style="display: none;">
                     <div class="form-group">
                         <label for="edit-username-${comment._id}">Username:</label>
-                        <input type="text" id="edit-username-${comment._id}" value="${escapeHtml(comment.username)}" required>
+                        <input type="text" id="edit-username-${comment._id}" value="${escapeHtml(comment.username || comment.name || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-organization-${comment._id}">Organization:</label>
+                        <input type="text" id="edit-organization-${comment._id}" value="${escapeHtml(comment.organization || '')}" placeholder="e.g., ABC Elementary School">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-role-${comment._id}">Role:</label>
+                        <input type="text" id="edit-role-${comment._id}" value="${escapeHtml(comment.role || '')}" placeholder="e.g., Teacher, Administrator, Parent">
                     </div>
                     <div class="form-group">
                         <label for="edit-comment-${comment._id}">Comment:</label>
-                        <textarea id="edit-comment-${comment._id}" rows="3" required>${escapeHtml(comment.comment)}</textarea>
+                        <textarea id="edit-comment-${comment._id}" rows="3" required>${escapeHtml(comment.comment || comment.text || '')}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="edit-rating-${comment._id}">Rating:</label>
                         <select id="edit-rating-${comment._id}" required>
-                            <option value="1" ${comment.rating === 1 ? 'selected' : ''}>1 Star</option>
-                            <option value="2" ${comment.rating === 2 ? 'selected' : ''}>2 Stars</option>
-                            <option value="3" ${comment.rating === 3 ? 'selected' : ''}>3 Stars</option>
-                            <option value="4" ${comment.rating === 4 ? 'selected' : ''}>4 Stars</option>
-                            <option value="5" ${comment.rating === 5 ? 'selected' : ''}>5 Stars</option>
+                            <option value="1" ${(comment.rating || 0) === 1 ? 'selected' : ''}>1 Star</option>
+                            <option value="2" ${(comment.rating || 0) === 2 ? 'selected' : ''}>2 Stars</option>
+                            <option value="3" ${(comment.rating || 0) === 3 ? 'selected' : ''}>3 Stars</option>
+                            <option value="4" ${(comment.rating || 0) === 4 ? 'selected' : ''}>4 Stars</option>
+                            <option value="5" ${(comment.rating || 0) === 5 ? 'selected' : ''}>5 Stars</option>
                         </select>
                     </div>
                     <div class="inline-edit-actions">
-                        <button class="action-btn save-btn" onclick="saveCommentEdit('${comment._id}', '${toolId}')">
+                        <button class="action-btn save-btn" onclick="saveCommentEdit('${comment._id}', '${requestId}')">
                             ✅ Save
                         </button>
                         <button class="action-btn cancel-btn" onclick="cancelEditComment('${comment._id}')">
@@ -207,25 +238,25 @@ async function loadComments(toolId) {
     }
 }
 
-// Load rating for a tool
-async function loadRating(toolId) {
-    const averageRatingElement = document.getElementById(`average-rating-${toolId}`);
+// Load rating for a request - Fixed to use requestId
+async function loadRating(requestId) {
+    const averageRatingElement = document.getElementById(`average-rating-${requestId}`);
     
     if (!averageRatingElement) {
-        console.error('Rating element not found for tool:', toolId);
+        console.error('Rating element not found for request:', requestId);
         return;
     }
     
     try {
-        const response = await fetch(`/rating/${toolId}`);
+        const response = await fetch(`/rating/${requestId}`);
         if (!response.ok) throw new Error('Failed to load rating');
         
         const data = await response.json();
         
-        if (data.averageRating) {
+        if (data.averageRating && data.averageRating > 0) {
             const avgRating = parseFloat(data.averageRating).toFixed(1);
             const stars = '★'.repeat(Math.floor(avgRating)) + '☆'.repeat(5 - Math.floor(avgRating));
-            averageRatingElement.textContent = `Rating: ${avgRating}/5 ${stars} (${data.totalRatings} reviews)`;
+            averageRatingElement.textContent = `Rating: ${avgRating}/5 ${stars} (${data.totalRatings || 0} reviews)`;
         } else {
             averageRatingElement.textContent = 'Rating: No ratings yet';
         }
@@ -236,28 +267,29 @@ async function loadRating(toolId) {
     }
 }
 
-// Toggle inline edit form
-function toggleEditComment(commentId, toolId) {
+// Toggle inline edit form - Fixed parameter name
+function toggleEditComment(commentId, requestId) {
     const commentItem = document.getElementById(`comment-${commentId}`);
     const editForm = document.getElementById(`edit-form-${commentId}`);
-    const commentText = commentItem.querySelector('.comment-text');
-    const commentActions = commentItem.querySelector('.comment-actions');
     
     if (!commentItem || !editForm) {
         console.error('Comment elements not found:', commentId);
         return;
     }
     
+    const commentText = commentItem.querySelector('.comment-text');
+    const commentActions = commentItem.querySelector('.comment-actions');
+    
     if (editForm.style.display === 'none' || editForm.style.display === '') {
         // Show edit form, hide comment text and actions
         editForm.style.display = 'block';
-        commentText.style.display = 'none';
-        commentActions.style.display = 'none';
+        if (commentText) commentText.style.display = 'none';
+        if (commentActions) commentActions.style.display = 'none';
     } else {
         // Hide edit form, show comment text and actions
         editForm.style.display = 'none';
-        commentText.style.display = 'block';
-        commentActions.style.display = 'flex';
+        if (commentText) commentText.style.display = 'block';
+        if (commentActions) commentActions.style.display = 'flex';
     }
 }
 
@@ -265,23 +297,26 @@ function toggleEditComment(commentId, toolId) {
 function cancelEditComment(commentId) {
     const editForm = document.getElementById(`edit-form-${commentId}`);
     const commentItem = document.getElementById(`comment-${commentId}`);
-    const commentText = commentItem.querySelector('.comment-text');
-    const commentActions = commentItem.querySelector('.comment-actions');
     
-    if (!editForm || !commentText || !commentActions) {
+    if (!editForm || !commentItem) {
         console.error('Comment elements not found for cancel:', commentId);
         return;
     }
     
+    const commentText = commentItem.querySelector('.comment-text');
+    const commentActions = commentItem.querySelector('.comment-actions');
+    
     // Hide edit form, show comment text and actions
     editForm.style.display = 'none';
-    commentText.style.display = 'block';
-    commentActions.style.display = 'flex';
+    if (commentText) commentText.style.display = 'block';
+    if (commentActions) commentActions.style.display = 'flex';
 }
 
-// Save comment edit
-async function saveCommentEdit(commentId, toolId) {
+// Save comment edit - Fixed parameter name
+async function saveCommentEdit(commentId, requestId) {
     const usernameInput = document.getElementById(`edit-username-${commentId}`);
+    const organizationInput = document.getElementById(`edit-organization-${commentId}`);
+    const roleInput = document.getElementById(`edit-role-${commentId}`);
     const commentInput = document.getElementById(`edit-comment-${commentId}`);
     const ratingInput = document.getElementById(`edit-rating-${commentId}`);
     
@@ -291,11 +326,13 @@ async function saveCommentEdit(commentId, toolId) {
     }
     
     const username = usernameInput.value.trim();
+    const organization = organizationInput ? organizationInput.value.trim() : '';
+    const role = roleInput ? roleInput.value.trim() : '';
     const comment = commentInput.value.trim();
     const rating = ratingInput.value;
     
     if (!username || !comment || !rating) {
-        showNotification('All fields are required', 'error');
+        showNotification('Username, comment, and rating are required', 'error');
         return;
     }
     
@@ -312,6 +349,8 @@ async function saveCommentEdit(commentId, toolId) {
             },
             body: JSON.stringify({
                 username: username,
+                organization: organization,
+                role: role,
                 comment: comment,
                 rating: parseInt(rating)
             })
@@ -323,10 +362,13 @@ async function saveCommentEdit(commentId, toolId) {
         }
         
         showNotification('Comment updated successfully!', 'success');
-        
-        // Reload comments and rating for the tool
-        await loadComments(toolId);
-        await loadRating(toolId);
+
+        // Hide the edit form and show the comment content
+        cancelEditComment(commentId);
+
+        // Reload comments and rating for the request
+        await loadComments(requestId);
+        await loadRating(requestId);
         
     } catch (error) {
         console.error('Error updating comment:', error);
@@ -334,8 +376,8 @@ async function saveCommentEdit(commentId, toolId) {
     }
 }
 
-// Delete comment function
-async function deleteComment(commentId, toolId) {
+// Delete comment function - Fixed parameter name
+async function deleteComment(commentId, requestId) {
     if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
         return;
     }
@@ -352,9 +394,9 @@ async function deleteComment(commentId, toolId) {
         
         showNotification('Comment deleted successfully!', 'success');
         
-        // Reload comments and rating for the tool
-        await loadComments(toolId);
-        await loadRating(toolId);
+        // Reload comments and rating for the request
+        await loadComments(requestId);
+        await loadRating(requestId);
         
     } catch (error) {
         console.error('Error deleting comment:', error);
@@ -433,14 +475,228 @@ function escapeHtml(text) {
     return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-        function logout() {
-    localStorage.clear();
-    sessionStorage.clear();
+// Logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        // Clear any stored data
+        try {
+            localStorage.clear();
+            sessionStorage.clear();
+        } catch (e) {
+            console.warn('Could not clear storage:', e);
+        }
+        
+        // Redirect to home page
+        window.location.href = '/';
+    }
+}
+
+// Toggle edit submission form
+function toggleEditSubmission(requestId) {
+    const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
     
-    window.location.href = '/';
+    if (!submissionCard) {
+        console.error('Submission card not found for request:', requestId);
+        return;
+    }
+    
+    const detailsSection = submissionCard.querySelector('.submission-details');
+    const editForm = submissionCard.querySelector('.edit-submission-form');
+    const editBtn = submissionCard.querySelector('.edit-submission-btn');
+    
+    if (!detailsSection || !editForm || !editBtn) {
+        console.error('Required elements not found in submission card');
+        return;
+    }
+    
+    if (editForm.style.display === 'none' || editForm.style.display === '') {
+        // Show edit form, hide details
+        editForm.style.display = 'block';
+        detailsSection.style.display = 'none';
+        editBtn.textContent = '❌ Cancel Edit';
+        editBtn.onclick = () => cancelEditSubmission(requestId);
+    } else {
+        // Hide edit form, show details
+        editForm.style.display = 'none';
+        detailsSection.style.display = 'grid';
+        editBtn.textContent = '✏️ Edit Details';
+        editBtn.onclick = () => toggleEditSubmission(requestId);
+    }
+}
+
+// Cancel edit submission
+function cancelEditSubmission(requestId) {
+    const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
+    
+    if (!submissionCard) {
+        console.error('Submission card not found for request:', requestId);
+        return;
+    }
+    
+    const detailsSection = submissionCard.querySelector('.submission-details');
+    const editForm = submissionCard.querySelector('.edit-submission-form');
+    const editBtn = submissionCard.querySelector('.edit-submission-btn');
+    
+    if (!detailsSection || !editForm || !editBtn) {
+        console.error('Required elements not found in submission card');
+        return;
+    }
+    
+    // Hide edit form, show details
+    editForm.style.display = 'none';
+    detailsSection.style.display = 'grid';
+    editBtn.textContent = '✏️ Edit Details';
+    editBtn.onclick = () => toggleEditSubmission(requestId);
+}
+
+// Save submission edit
+async function saveSubmissionEdit(requestId) {
+    const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
+    
+    if (!submissionCard) {
+        console.error('Submission card not found for request:', requestId);
+        showNotification('Error: Submission not found', 'error');
+        return;
+    }
+    
+    // Get form values with error checking
+    const getFormValue = (selector) => {
+        const element = submissionCard.querySelector(selector);
+        return element ? element.value.trim() : '';
+    };
+    
+    const productName = getFormValue(`#edit-productname-${requestId}`);
+    const description = getFormValue(`#edit-description-${requestId}`);
+    const productType = getFormValue(`#edit-producttype-${requestId}`);
+    const price = getFormValue(`#edit-price-${requestId}`);
+    const gradeLevel = getFormValue(`#edit-gradelevel-${requestId}`);
+    const standardAlignment = getFormValue(`#edit-standardalignment-${requestId}`);
+    const supportedLanguages = getFormValue(`#edit-supportedlanguages-${requestId}`);
+    const website = getFormValue(`#edit-website-${requestId}`);
+    
+    // Validation
+    if (!productName || !description || !productType || !price || !gradeLevel || !website) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    // Validate URL
+    try {
+        new URL(website);
+    } catch (e) {
+        showNotification('Please enter a valid website URL', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/edit/${requestId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ProductName: productName,
+                Description: description,
+                ProductType: productType,
+                Price: price,
+                GradeLevel: gradeLevel,
+                StandardAlignment: standardAlignment,
+                SupportedLanguages: supportedLanguages,
+                Website: website
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
+        
+        showNotification('Submission updated successfully!', 'success');
+        
+        // Update the display with new values
+        updateSubmissionDisplay(requestId, {
+            ProductName: productName,
+            Description: description,
+            ProductType: productType,
+            Price: price,
+            GradeLevel: gradeLevel,
+            StandardAlignment: standardAlignment,
+            SupportedLanguages: supportedLanguages,
+            Website: website
+        });
+        
+        // Hide edit form and show details
+        cancelEditSubmission(requestId);
+        
+    } catch (error) {
+        console.error('Error updating submission:', error);
+        showNotification(`Failed to update submission: ${error.message}`, 'error');
+    }
+}
+
+// Update submission display with new values
+function updateSubmissionDisplay(requestId, data) {
+    const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
+    
+    if (!submissionCard) {
+        console.error('Submission card not found for request:', requestId);
+        return;
+    }
+    
+    try {
+        // Update title
+        const titleElement = submissionCard.querySelector('.submission-title');
+        if (titleElement) titleElement.textContent = data.ProductName;
+        
+        // Update description
+        const descriptionElement = submissionCard.querySelector('.submission-description');
+        if (descriptionElement) descriptionElement.textContent = data.Description;
+        
+        // Update detail values - Fixed to match EJS structure
+        const detailValues = submissionCard.querySelectorAll('.detail-value');
+        if (detailValues.length >= 6) {
+            detailValues[0].innerHTML = `<a href="${data.Website}" target="_blank">${data.Website}</a>`;
+            detailValues[1].textContent = data.ProductType;
+            detailValues[2].textContent = data.Price;
+            detailValues[3].textContent = data.GradeLevel;
+            detailValues[4].textContent = data.StandardAlignment || 'N/A';
+            detailValues[5].textContent = data.SupportedLanguages || 'N/A';
+        }
+        
+        // Update view resource button
+        const viewBtn = submissionCard.querySelector('.view-btn');
+        if (viewBtn) {
+            viewBtn.onclick = () => viewResource(data.Website);
+        }
+        
+    } catch (error) {
+        console.error('Error updating submission display:', error);
+    }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin portal initialized');
+    
+    // Initialize any default states
+    try {
+        // Set initial filter if needed
+        const activeTab = document.querySelector('.filter-tab.active');
+        if (activeTab) {
+            currentFilter = activeTab.textContent.toLowerCase();
+        }
+        
+        // Hide all edit forms initially
+        document.querySelectorAll('.edit-submission-form').forEach(form => {
+            form.style.display = 'none';
+        });
+        
+        // Hide all comments sections initially
+        document.querySelectorAll('.comments-section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
 });

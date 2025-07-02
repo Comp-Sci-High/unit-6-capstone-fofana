@@ -35,6 +35,8 @@ const commentSchema = new mongoose.Schema({
     RequestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Request', required: true },
     username: { type: String, required: true },
     comment: { type: String, required: true },
+    organization: {type: String, required: false},
+    role: {type: String, required: false},
     rating: { type: Number, required: true, min: 1, max: 5 },
 }, { timestamps: true });
 
@@ -188,9 +190,10 @@ app.post("/indy/:id", async (req, res) => {
             return res.status(404).json({ error: 'Tool not found' });
         }
 
-        const { username, comment, rating } = req.body;
+        // FIXED: Include organization and role in destructuring
+        const { username, comment, rating, organization, role } = req.body;
         if (!username || !comment || !rating) {
-            return res.status(400).json({ error: 'All fields are required' });
+            return res.status(400).json({ error: 'All required fields (username, comment, rating) are required' });
         }
 
         if (rating < 1 || rating > 5) {
@@ -200,6 +203,8 @@ app.post("/indy/:id", async (req, res) => {
         const newComment = await new Comment({
             RequestId: req.params.id,
             username: username,
+            organization: organization || '', // FIXED: Use the destructured variable
+            role: role || '', // FIXED: Use the destructured variable
             comment: comment,
             rating: parseInt(rating),
         }).save();
@@ -210,7 +215,6 @@ app.post("/indy/:id", async (req, res) => {
         res.status(500).json({ error: 'Failed to add comment' });
     }
 });
-
 // Route to get comments for a specific tool
 app.get("/comments/:id", async (req, res) => {
     try {
@@ -225,6 +229,111 @@ app.get("/comments/:id", async (req, res) => {
     } catch (error) {
         console.error('Error fetching comments:', error);
         res.status(500).json({ error: 'Failed to fetch comments' });
+    }
+});
+
+app.patch("/admin/edit/:_id", async (req, res) => {
+    try {
+        const {
+            ProductName,
+            Description,
+            ProductType,
+            Price,
+            GradeLevel,
+            StandardAlignment,
+            SupportedLanguages,
+            Website
+        } = req.body;
+        
+        // Validate required fields
+        if (!ProductName || !Description || !ProductType || !Price || !GradeLevel || !Website) {
+            return res.status(400).json({ error: 'All required fields must be provided' });
+        }
+        
+        // Validate URL format
+        try {
+            new URL(Website);
+        } catch (e) {
+            return res.status(400).json({ error: 'Invalid website URL format' });
+        }
+        
+        const updateData = {
+            ProductName: ProductName.trim(),
+            Description: Description.trim(),
+            ProductType: ProductType.trim(),
+            Price: Price.trim(),
+            GradeLevel: GradeLevel.trim(),
+            StandardAlignment: StandardAlignment ? StandardAlignment.trim() : '',
+            SupportedLanguages: SupportedLanguages ? SupportedLanguages.trim() : '',
+            Website: Website.trim()
+        };
+        
+        const response = await Request.findOneAndUpdate(
+            { _id: req.params._id },
+            updateData,
+            { new: true, runValidators: true }
+        );
+        
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        
+        res.json({ message: 'Submission updated successfully', request: response });
+        
+    } catch (error) {
+        console.error('Error updating submission:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: 'Invalid data provided' });
+        }
+        res.status(500).json({ error: 'Failed to update submission' });
+    }
+});
+
+// ENHANCED: Update the existing comment PATCH route to include organization and role
+// Replace your existing app.patch("/comment/:_id", ...) route with this:
+app.patch("/comment/:_id", async (req, res) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
+            return res.status(400).json({ error: 'Invalid comment ID format' });
+        }
+
+        const { username, comment, rating, organization, role } = req.body;
+        
+        // Validate required fields
+        if (!username || !comment || !rating) {
+            return res.status(400).json({ error: 'All fields (username, comment, rating) are required' });
+        }
+
+        // Validate rating range
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+        }
+
+        const updateData = {
+            username: username.trim(),
+            comment: comment.trim(),
+            rating: parseInt(rating),
+            organization: organization ? organization.trim() : '',
+            role: role ? role.trim() : ''
+        };
+
+        const response = await Comment.findOneAndUpdate(
+            { _id: req.params._id }, 
+            updateData, 
+            { new: true, runValidators: true }
+        );
+        
+        if (!response) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        res.json({ message: 'Comment updated successfully', comment: response });
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: 'Invalid data provided' });
+        }
+        res.status(500).json({ error: 'Failed to update comment' });
     }
 });
 

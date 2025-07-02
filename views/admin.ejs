@@ -4,20 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CS Match Admin Portal</title>
-      <link rel="stylesheet" href="admin.css" />
-  <script src="admin.js" defer></script>
+    <link rel="stylesheet" href="admin.css" />
+    <script src="admin.js" defer></script>
 </head>
 <body>
     <div class="admin-container">
         <header class="header">
             <div class="header-content">
-<h1>🛠 CS Match Admin Portal</h1>
+                <h1>🛠 CS Match Admin Portal</h1>
                 <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </header>
 
         <main class="main-content">
-
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number" id="pendingCount">
@@ -62,10 +61,10 @@
                             <h3>No submissions found</h3>
                             <p>There are no requests at the moment.</p>
                         </div>
-                  <% } else { %>
+                    <% } else { %>
                         <% for (let i = 0; i < Requests.length; i++) { %>
                             <% const Request = Requests[i]; %>
-                            <div class="submission-card" data-status="<%= Request.isApproved === true ? 'approved' : Request.isApproved === false ? 'rejected' : 'pending' %>">
+                            <div class="submission-card" data-status="<%= Request.isApproved === true ? 'approved' : Request.isApproved === false ? 'rejected' : 'pending' %>" data-request-id="<%= Request._id %>">
                                 <div class="submission-header">
                                     <h3 class="submission-title"><%= Request.ProductName %></h3>
                                     <span class="status-badge <%= Request.isApproved === true ? 'status-approved' : Request.isApproved === false ? 'status-rejected' : 'status-pending' %>">
@@ -104,6 +103,63 @@
                                     </div>
                                 </div>
                                 
+                                <% if (Request.isApproved === true) { %>
+                                    <div class="edit-submission-form">
+                                        <h4 class="edit-form-title">Edit Resource Details</h4>
+                                        
+                                        <div class="edit-form-grid">
+                                            <div class="edit-form-group">
+                                                <label for="edit-productname-<%= Request._id %>">Product Name *</label>
+                                                <input type="text" id="edit-productname-<%= Request._id %>" value="<%= Request.ProductName %>" required>
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-website-<%= Request._id %>">Website URL *</label>
+                                                <input type="url" id="edit-website-<%= Request._id %>" value="<%= Request.Website %>" required>
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-producttype-<%= Request._id %>">Product Type *</label>
+                                                <input type="text" id="edit-producttype-<%= Request._id %>" value="<%= Request.ProductType %>" required>
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-price-<%= Request._id %>">Price *</label>
+                                                <input type="text" id="edit-price-<%= Request._id %>" value="<%= Request.Price %>" required>
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-gradelevel-<%= Request._id %>">Grade Level *</label>
+                                                <input type="text" id="edit-gradelevel-<%= Request._id %>" value="<%= Request.GradeLevel %>" required>
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-standardalignment-<%= Request._id %>">Standard Alignment</label>
+                                                <input type="text" id="edit-standardalignment-<%= Request._id %>" value="<%= Request.StandardAlignment || '' %>" placeholder="e.g., Common Core, NGSS">
+                                            </div>
+                                            
+                                            <div class="edit-form-group">
+                                                <label for="edit-supportedlanguages-<%= Request._id %>">Languages/Tools</label>
+                                                <input type="text" id="edit-supportedlanguages-<%= Request._id %>" value="<%= Request.SupportedLanguages || '' %>" placeholder="e.g., Python, JavaScript, Scratch">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="edit-form-group-full">
+                                            <label for="edit-description-<%= Request._id %>">Description *</label>
+                                            <textarea id="edit-description-<%= Request._id %>" rows="4" required><%= Request.Description %></textarea>
+                                        </div>
+                                        
+                                        <div class="edit-form-actions">
+                                            <button class="action-btn cancel-btn" onclick="cancelEditSubmission('<%= Request._id %>')">
+                                                ❌ Cancel
+                                            </button>
+                                            <button class="action-btn save-btn" onclick="saveSubmissionEdit('<%= Request._id %>')">
+                                                ✅ Save Changes
+                                            </button>
+                                        </div>
+                                    </div>
+                                <% } %>
+
                                 <div class="submission-actions">
                                     <button class="action-btn view-btn" onclick="viewResource('<%= Request.Website %>')">
                                         🌐 View Resource
@@ -118,15 +174,17 @@
                                         🗑️ Delete
                                     </button>
                                     <% if (Request.isApproved === true) { %>
+                                        <button class="action-btn edit-submission-btn" onclick="toggleEditSubmission('<%= Request._id %>')">
+                                            ✏️ Edit Details
+                                        </button>
                                         <button class="action-btn comments-btn" onclick="toggleComments('<%= Request._id %>')">
                                             💬 Manage Comments
                                         </button>
                                     <% } %>
                                 </div>
 
-                                <!-- Comments Section (initially hidden) -->
                                 <% if (Request.isApproved === true) { %>
-                                    <div class="comments-section" id="comments-<%= Request._id %>" style="display: none;">
+                                    <div class="comments-section" id="comments-<%= Request._id %>">
                                         <div class="comments-header">
                                             <h4>Comments for <%= Request.ProductName %></h4>
                                             <div class="comments-stats">
@@ -141,47 +199,10 @@
                                 <% } %>
                             </div>
                         <% } %>         
-                            <% } %>
+                    <% } %>
                 </div>
             </div>
         </main>
     </div>
-
-    <!-- Edit Comment Modal -->
-    <div id="editCommentModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Edit Comment</h3>
-                <span class="close" onclick="closeEditCommentModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="editCommentForm">
-                    <div class="form-group">
-                        <label for="editUsername">Username:</label>
-                        <input type="text" id="editUsername" name="username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editComment">Comment:</label>
-                        <textarea id="editComment" name="comment" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="editRating">Rating:</label>
-                        <select id="editRating" name="rating" required>
-                            <option value="1">1 Star</option>
-                            <option value="2">2 Stars</option>
-                            <option value="3">3 Stars</option>
-                            <option value="4">4 Stars</option>
-                            <option value="5">5 Stars</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="action-btn cancel-btn" onclick="closeEditCommentModal()">Cancel</button>
-                <button class="action-btn save-btn" onclick="saveCommentEdit()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
