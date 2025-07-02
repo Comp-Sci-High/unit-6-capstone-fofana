@@ -799,3 +799,45 @@ h1, h2, h3, h4, h5, h6 {
         font-size: 14px;
     }
 }
+.comment-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.comment-date {
+    font-size: 0.8rem;
+    color: var(--gray);
+    font-weight: 400;
+}
+
+/* Update the existing comment-header rule */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    min-width: 0;
+}
+
+/* Update mobile responsive styles */
+@media (max-width: 768px) {
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .comment-user-info {
+        width: 100%;
+    }
+    
+    .comment-username {
+        max-width: none;
+        white-space: normal;
+    }
+}

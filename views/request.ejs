@@ -171,12 +171,22 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="standard-alignment">Standards Alignment</label>
-                        <input type="text" id="standard-alignment" name="standardAlignment" 
-                               placeholder="e.g., CSTA K-12 CS Standards">
-                    </div>
-
+                   <div class="form-group">
+    <label for="standard-alignment">Standards Alignment</label>
+    <select id="standard-alignment" name="standardAlignment">
+        <option value="">Select standards alignment</option>
+        <option value="CSTA K–12 Computer Science Standards">CSTA K–12 Computer Science Standards</option>
+        <option value="K–12 Computer Science Framework">K–12 Computer Science Framework</option>
+        <option value="AP Computer Science Principles Framework">AP Computer Science Principles Framework</option>
+        <option value="AP Computer Science A Framework">AP Computer Science A Framework</option>
+        <option value="ISTE Standards for Students">ISTE Standards for Students</option>
+        <option value="Next Generation Science Standards (NGSS)">Next Generation Science Standards (NGSS)</option>
+        <option value="Other" id="other-standards-option">Other</option>
+    </select>
+    <div class="other-input" id="other-standards-input">
+        <input type="text" name="otherStandardAlignment" placeholder="Please specify..." maxlength="100">
+    </div>
+</div>
                     <div class="form-group">
                         <label>Grade Levels *</label>
                         <div class="checkbox-group">

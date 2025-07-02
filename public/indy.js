@@ -284,3 +284,18 @@ window.addEventListener('DOMContentLoaded', function () {
         window.location.href = '/admin';
     }
 });
+
+commentItem.innerHTML = `
+    <div class="comment-header">
+        <div class="comment-user-info">
+            <span class="comment-username">${comment.username}</span>
+            <span class="comment-date">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+        <div class="comment-rating">
+            ${'★'.repeat(comment.rating)}
+        </div>
+    </div>
+    <div class="comment-content">
+        <div class="comment-text">${comment.comment}</div>
+    </div>
+`;

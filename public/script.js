@@ -157,3 +157,17 @@
       window.location.href = '/admin'; // Automatically redirect if already logged in
     }
   });
+
+    document.addEventListener('DOMContentLoaded', function() {
+            const aboutImage = document.getElementById('aboutImage');
+            
+            // Replace 'your-image-url.jpg' with your actual image URL
+            const imageUrl = 'headshot.jpeg';
+            
+            
+            aboutImage.innerHTML = '';
+            aboutImage.style.backgroundImage = `url(${imageUrl})`;
+            aboutImage.style.backgroundSize = 'cover';
+            aboutImage.style.backgroundPosition = 'center';
+            
+        });

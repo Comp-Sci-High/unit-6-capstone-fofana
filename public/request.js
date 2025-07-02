@@ -68,8 +68,9 @@ const formData = {
     Description: document.getElementById('description').value,
     Price: document.getElementById('price-model').value,
     GradeLevel: Array.from(document.querySelectorAll('input[name="gradeLevel"]:checked')).map(el => el.value).join(', '),
-    StandardAlignment: document.getElementById('standard-alignment').value,
-    SupportedLanguages: Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(el => el.value).join(', '),
+StandardAlignment: document.getElementById('standard-alignment').value === 'Other' ? 
+    document.querySelector('input[name="otherStandardAlignment"]').value : 
+    document.getElementById('standard-alignment').value,    SupportedLanguages: Array.from(document.querySelectorAll('input[name="languages"]:checked')).map(el => el.value).join(', '),
     isApproved: false
 };
   try {
@@ -167,3 +168,56 @@ const formData = {
       window.location.href = '/admin'; // Automatically redirect if already logged in
     }
   });
+
+  document.getElementById('standard-alignment').addEventListener('change', function() {
+    const otherInput = document.getElementById('other-standards-input');
+    if (this.value === 'Other') {
+        otherInput.classList.add('show');
+        otherInput.querySelector('input').focus();
+    } else {
+        otherInput.classList.remove('show');
+        otherInput.querySelector('input').value = '';
+    }
+});
+
+// Clear "Other" standards input when form is reset
+document.querySelector('button[type="reset"]').addEventListener('click', function() {
+    setTimeout(() => {
+        document.getElementById('other-standards-input').classList.remove('show');
+    }, 0);
+});
+
+
+// Header scroll effect
+window.addEventListener('scroll', function() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50; // Trigger after 50px of scrolling
+    
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+
+// Alternative: using requestAnimationFrame for better performance
+let ticking = false;
+
+function updateHeader() {
+    const header = document.querySelector('header');
+    const scrolled = window.scrollY > 50;
+    
+    if (scrolled) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+    ticking = false;
+}
+
+window.addEventListener('scroll', function() {
+    if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+    }
+});
