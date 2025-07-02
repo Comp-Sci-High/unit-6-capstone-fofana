@@ -103,24 +103,36 @@
                     <input type="text" id="searchInput" placeholder="Search by name or description...">
                 </div>
                 
-              
+                <div class="filter-group">
+                    <label for="productTypeFilter" class="type-filter-label">Resource Type</label>
+                    <select id="productTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="Curriculum">Curriculum</option>
+                        <option value="Coding Platform">Coding Platform</option>
+                        <option value="Assessment Tool">Assessment Tool</option>
+                        <option value="Game/Activity">Game/Activity</option>
+                        <option value="Lesson Plans">Lesson Plans</option>
+                        <option value="Professional Development">Professional Development</option>
+                        <option value="Hardware/Robotics">Hardware/Robotics</option>
+                        <option value="Online Course">Online Course</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
                 <div class="filter-group">
-                    <label for="priceFilter">Price Model</label>
+                    <label for="priceFilter" class="cost-filter-label">Cost</label>
                     <select id="priceFilter">
                         <option value="">All Prices</option>
                         <option value="Free">Free</option>
                         <option value="Paid">Paid</option>
-                        <option value="Freemium">Freemium</option>
-                        <option value="Subscription">Subscription</option>
                     </select>
                 </div>
             </div>
 
             <div class="filter-row">
                 <div class="filter-group">
-                    <label>Grade Levels</label>
-                    <div class="checkbox-group">
+                    <label class="grade-filter-label">Grade Levels</label>
+                    <div class="checkbox-group grade-checkboxes">
                         <div class="checkbox-item">
                             <input type="checkbox" id="gradeK5" value="K-5">
                             <label for="gradeK5">K-5</label>
@@ -141,8 +153,8 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Supported Languages/Tools</label>
-                    <div class="checkbox-group">
+                    <label class="language-filter-label">Supported Languages/Tools</label>
+                    <div class="checkbox-group language-checkboxes">
                         <div class="checkbox-item">
                             <input type="checkbox" id="langScratch" value="Scratch">
                             <label for="langScratch">Scratch</label>

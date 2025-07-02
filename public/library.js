@@ -1,4 +1,3 @@
-// Combined JavaScript for Login and Resource Filtering
 document.addEventListener('DOMContentLoaded', function() {
     // ========================
     // LOGIN MODAL FUNCTIONALITY
@@ -49,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorElement = document.getElementById('error-message');
 
     if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-      sessionStorage.setItem('isAuthenticated', 'true');
+      // Using in-memory storage instead of sessionStorage
+      window.authState = { isAuthenticated: true };
 
       window.location.href = '/admin';
     } else {
@@ -58,10 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   window.addEventListener('DOMContentLoaded', function () {
-    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+    if (window.authState && window.authState.isAuthenticated) {
       window.location.href = '/admin'; // Automatically redirect if already logged in
     }
   });
+
 // Resource Filtering Functions
 function initializeResourceFiltering() {
     // Get all resources from the rendered page
@@ -149,14 +150,23 @@ function initializeResourceFiltering() {
                 }
             }
             
-            // Product type filter (only if the element exists)
+            // Product type filter
             if (productType && resource.ProductType && resource.ProductType !== productType) {
                 return false;
             }
             
-            // Price filter
-            if (priceFilterValue && resource.Price && resource.Price !== priceFilterValue) {
-                return false;
+            // Price filter - Updated logic to handle simplified price options
+            if (priceFilterValue && resource.Price) {
+                if (priceFilterValue === 'Free') {
+                    if (resource.Price !== 'Free') {
+                        return false;
+                    }
+                } else if (priceFilterValue === 'Paid') {
+                    // Treat Freemium, Subscription, and Paid as "Paid"
+                    if (!['Paid', 'Freemium', 'Subscription'].includes(resource.Price)) {
+                        return false;
+                    }
+                }
             }
             
             // Grade level filter
@@ -257,6 +267,7 @@ function initializeMobileMenu() {
         });
     }
 }
+
 // Header scroll effect
 window.addEventListener('scroll', function() {
     const header = document.querySelector('header');

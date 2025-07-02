@@ -21,6 +21,13 @@
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
     --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    
+    /* New filter colors */
+    --grade-color: #3f51b5;
+    --grade-color-light: #e8eaf6;
+    --language-color: #ff9800;
+    --language-color-light: #fff3e0;
+    --cost-color: #4caf50;
 }
 
 /* Global Reset and Base Styles */
@@ -396,7 +403,7 @@ header.scrolled {
     font-size: 1.1rem;
 }
 
-/* Filters */
+/* Filters - Enhanced with Visual Distinctions */
 .filters {
     background: white;
     padding: 2rem;
@@ -423,10 +430,43 @@ header.scrolled {
     flex-direction: column;
 }
 
+/* Enhanced Filter Labels with Visual Distinctions */
 .filter-group label {
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: var(--dark);
+}
+
+/* Type Filter - Bold styling */
+.filter-group label[for="searchInput"] {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--dark);
+    font-family: var(--font-secondary);
+}
+
+/* Cost Filter - Green styling on new line */
+.filter-group label[for="priceFilter"] {
+    font-weight: 600;
+    color: var(--cost-color);
+    font-size: 1.05rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid #e8f5e8;
+}
+
+/* Grade Levels - Special styling */
+.filter-group:has(label:contains("Grade Levels")) label,
+.filter-group label:contains("Grade Levels") {
+    color: var(--grade-color);
+    font-weight: 600;
+}
+
+/* Languages - Special styling */
+.filter-group:has(label:contains("Supported Languages")) label,
+.filter-group label:contains("Supported Languages") {
+    color: var(--language-color);
+    font-weight: 600;
 }
 
 .filter-group select, .filter-group input {
@@ -442,21 +482,89 @@ header.scrolled {
     border-color: var(--primary);
 }
 
+/* Enhanced Checkbox Groups */
 .checkbox-group {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .checkbox-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+/* Grade Level Checkboxes - Blue theme */
+.filter-group:has(label:contains("Grade Levels")) .checkbox-item,
+.checkbox-item:has(input[id^="grade"]) {
+    background: var(--grade-color-light);
+    border: 2px solid transparent;
+}
+
+.filter-group:has(label:contains("Grade Levels")) .checkbox-item:hover,
+.checkbox-item:has(input[id^="grade"]):hover {
+    background: #e3f2fd;
+    border-color: var(--grade-color);
+}
+
+.filter-group:has(label:contains("Grade Levels")) .checkbox-item:has(input:checked),
+.checkbox-item:has(input[id^="grade"]:checked) {
+    background: var(--grade-color);
+    color: white;
+}
+
+.filter-group:has(label:contains("Grade Levels")) .checkbox-item label,
+.checkbox-item:has(input[id^="grade"]) label {
+    color: var(--grade-color);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.filter-group:has(label:contains("Grade Levels")) .checkbox-item:has(input:checked) label,
+.checkbox-item:has(input[id^="grade"]:checked) label {
+    color: white;
+}
+
+/* Language/Tool Checkboxes - Orange theme */
+.filter-group:has(label:contains("Supported Languages")) .checkbox-item,
+.checkbox-item:has(input[id^="lang"]) {
+    background: var(--language-color-light);
+    border: 2px solid transparent;
+}
+
+.filter-group:has(label:contains("Supported Languages")) .checkbox-item:hover,
+.checkbox-item:has(input[id^="lang"]):hover {
+    background: #fff8e1;
+    border-color: var(--language-color);
+}
+
+.filter-group:has(label:contains("Supported Languages")) .checkbox-item:has(input:checked),
+.checkbox-item:has(input[id^="lang"]:checked) {
+    background: var(--language-color);
+    color: white;
+}
+
+.filter-group:has(label:contains("Supported Languages")) .checkbox-item label,
+.checkbox-item:has(input[id^="lang"]) label {
+    color: var(--language-color);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.filter-group:has(label:contains("Supported Languages")) .checkbox-item:has(input:checked) label,
+.checkbox-item:has(input[id^="lang"]:checked) label {
+    color: white;
 }
 
 .checkbox-item input[type="checkbox"] {
     width: auto;
+    margin: 0;
 }
 
 .clear-filters {
@@ -713,5 +821,245 @@ header.scrolled {
 
     .page-title {
         margin-top: 20px;
+    }
+
+    /* Mobile checkbox adjustments */
+    .checkbox-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkbox-item {
+        padding: 0.75rem 1rem;
+    }
+}
+
+
+/* Type Filter - Bold styling */
+.filter-group label[for="productTypeFilter"],
+.type-filter-label {
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    color: var(--dark) !important;
+    font-family: var(--font-secondary) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Cost Filter - Green styling on new line with spacing */
+.filter-group label[for="priceFilter"],
+.cost-filter-label {
+    font-weight: 600 !important;
+    color: var(--cost-color) !important;
+    font-size: 1.1rem !important;
+    margin-top: 1rem !important;
+    padding-top: 0.75rem !important;
+    border-top: 2px solid #e8f5e8 !important;
+    position: relative;
+}
+
+.cost-filter-label::before {
+    content: "💰";
+    margin-right: 0.5rem;
+}
+
+/* Grade Levels - Blue theme with enhanced styling */
+.filter-group .grade-filter-label,
+.grade-filter-label {
+    color: var(--grade-color) !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    margin-bottom: 1rem !important;
+    position: relative;
+}
+
+.grade-filter-label::before {
+    content: "🎓";
+    margin-right: 0.5rem;
+}
+
+/* Grade Level Checkboxes - Enhanced Blue theme */
+.grade-checkboxes .checkbox-item {
+    background: var(--grade-color-light) !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.grade-checkboxes .checkbox-item:hover {
+    background: #e3f2fd !important;
+    border-color: var(--grade-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.2);
+}
+
+.grade-checkboxes .checkbox-item:has(input:checked) {
+    background: var(--grade-color) !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
+}
+
+.grade-checkboxes .checkbox-item label {
+    color: var(--grade-color) !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: color 0.3s ease;
+}
+
+.grade-checkboxes .checkbox-item:has(input:checked) label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Language/Tool Filter - Orange theme with enhanced styling */
+.filter-group .language-filter-label,
+.language-filter-label {
+    color: var(--language-color) !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    margin-bottom: 1rem !important;
+    position: relative;
+}
+
+.language-filter-label::before {
+    content: "⚡";
+    margin-right: 0.5rem;
+}
+
+/* Language/Tool Checkboxes - Enhanced Orange theme */
+.language-checkboxes .checkbox-item {
+    background: var(--language-color-light) !important;
+    border: 2px solid transparent !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.language-checkboxes .checkbox-item:hover {
+    background: #fff8e1 !important;
+    border-color: var(--language-color) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+}
+
+.language-checkboxes .checkbox-item:has(input:checked) {
+    background: var(--language-color) !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.language-checkboxes .checkbox-item label {
+    color: var(--language-color) !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: color 0.3s ease;
+}
+
+.language-checkboxes .checkbox-item:has(input:checked) label {
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* Enhanced checkbox styling for better visual feedback */
+.checkbox-item input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+    cursor: pointer;
+    accent-color: currentColor;
+}
+
+/* Grade checkboxes - blue accent */
+.grade-checkboxes .checkbox-item input[type="checkbox"] {
+    accent-color: var(--grade-color);
+}
+
+/* Language checkboxes - orange accent */
+.language-checkboxes .checkbox-item input[type="checkbox"] {
+    accent-color: var(--language-color);
+}
+
+/* Filter group spacing improvements */
+.filter-group:has(.type-filter-label) {
+    margin-bottom: 0.5rem;
+}
+
+.filter-group:has(.cost-filter-label) {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-group:has(.grade-filter-label),
+.filter-group:has(.language-filter-label) {
+    margin-top: 1rem;
+}
+
+/* Search input styling to match the theme */
+.filter-group label[for="searchInput"] {
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: var(--dark) !important;
+    font-family: var(--font-secondary) !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.filter-group label[for="searchInput"]::before {
+    content: "🔍";
+    margin-right: 0.5rem;
+}
+
+/* Enhanced select dropdown styling */
+.filter-group select {
+    background-color: white;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Type filter select - enhanced styling */
+#productTypeFilter {
+    border-color: var(--dark) !important;
+    font-weight: 500;
+}
+
+#productTypeFilter:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+/* Cost filter select - green styling */
+#priceFilter {
+    border-color: var(--cost-color) !important;
+    font-weight: 500;
+}
+
+#priceFilter:focus {
+    border-color: var(--cost-color) !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+    .filter-group label {
+        font-size: 1rem !important;
+    }
+    
+    .type-filter-label {
+        font-size: 1.1rem !important;
+    }
+    
+    .cost-filter-label,
+    .grade-filter-label,
+    .language-filter-label {
+        font-size: 1rem !important;
+    }
+    
+    .checkbox-item {
+        padding: 0.75rem 1rem !important;
+        margin-bottom: 0.5rem;
     }
 }
