@@ -66,10 +66,9 @@ header {
     width: 100%;
     z-index: 1000;
     transition: var(--transition);
-    /* Remove background and box-shadow from here - matches styles.css */
 }
 
-.header.scrolled {
+header.scrolled {
     background: white;
     box-shadow: var(--shadow-md);
     padding: 12px 0;

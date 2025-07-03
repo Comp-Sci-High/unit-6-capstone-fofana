@@ -882,7 +882,6 @@ window.addEventListener('scroll', function() {
         ticking = true;
     }
 });
-
 // ========================
 // TAG CATEGORIZATION
 // ========================
