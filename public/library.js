@@ -449,6 +449,8 @@ function initializeResourceFiltering() {
     }
 
 }
+
+// Updated applyFilters function with "Other" categorization logic
 function applyFilters() {
     console.log('Applying filters...'); // Debug log
     
@@ -461,6 +463,13 @@ function applyFilters() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
     const productType = productTypeFilter ? productTypeFilter.value : '';
     const priceFilterValue = priceFilter ? priceFilter.value : '';
+    
+    // Define the valid resource types (excluding "Other")
+    const validResourceTypes = [
+        'Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity', 
+        'Lesson Plans', 'Professional Development', 'Hardware/Robotics', 
+        'Online Course'
+    ];
     
     // Get selected values from both old dropdowns and new autocomplete
     let selectedResourceTypes = getSelectedOptions(productTypeFilter);
@@ -519,18 +528,40 @@ function applyFilters() {
                 return false;
             }
         } else if (selectedResourceTypes.length > 0) {
-            // Multi-select logic: Resource must have ALL selected resource types
+            // Multi-select logic with "Other" categorization
             if (!resource.ProductType || resource.ProductType.trim() === '') {
-                return false;
-            }
-            
-            const resourceTypes = resource.ProductType.split(',').map(t => t.trim());
-            const hasAllResourceTypes = selectedResourceTypes.every(type => 
-                resourceTypes.includes(type)
-            );
-            if (!hasAllResourceTypes) {
-                console.log(`Resource ${resource.ProductName} filtered out - missing resource type. Has: ${resourceTypes.join(', ')}, Needs: ${selectedResourceTypes.join(', ')}`);
-                return false;
+                // If no ProductType is specified, treat as "Other"
+                if (!selectedResourceTypes.includes('Other')) {
+                    return false;
+                }
+            } else {
+                const resourceTypes = resource.ProductType.split(',').map(t => t.trim());
+                
+                // Check if this resource should be categorized as "Other"
+                const hasValidResourceType = resourceTypes.some(type => 
+                    validResourceTypes.includes(type)
+                );
+                
+                if (!hasValidResourceType) {
+                    // This resource doesn't match any valid types, so it's "Other"
+                    if (!selectedResourceTypes.includes('Other')) {
+                        console.log(`Resource ${resource.ProductName} filtered out - categorized as Other but Other not selected`);
+                        return false;
+                    }
+                } else {
+                    // This resource has valid types, check if user selected them
+                    const hasSelectedResourceTypes = selectedResourceTypes.some(selectedType => {
+                        if (selectedType === 'Other') {
+                            return false; // "Other" doesn't match valid types
+                        }
+                        return resourceTypes.includes(selectedType);
+                    });
+                    
+                    if (!hasSelectedResourceTypes) {
+                        console.log(`Resource ${resource.ProductName} filtered out - missing selected resource type. Has: ${resourceTypes.join(', ')}, Selected: ${selectedResourceTypes.join(', ')}`);
+                        return false;
+                    }
+                }
             }
         }
         
@@ -587,6 +618,57 @@ function applyFilters() {
     
     console.log('Filtered resources count:', filteredResources.length);
     displayResources(filteredResources);
+}
+
+// Updated tag categorization function
+function initializeTagCategorization() {
+    // Define category mappings - Updated with new options
+    const validResourceTypes = [
+        'Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity', 
+        'Lesson Plans', 'Professional Development', 'Hardware/Robotics', 
+        'Online Course', 'Educational'
+    ];
+    
+    const gradeLevels = [
+        'K-5', '6-8', '9-12', 'Higher Ed', 'Elementary', 
+        'Middle School', 'High School', 'College'
+    ];
+    
+    const languages = [
+        'Python', 'JavaScript', 'Java', 'Scratch', 'Block-based', 'HTML/CSS', 
+        'C++', 'C#', 'PHP', 'Ruby', 'Swift', 'Kotlin', 'Visual Programming',
+        'Go', 'SQL', 'R', 'Shell/Bash', 'PowerShell', 'Assembly', 'C',
+        'Unplugged', 'AI Skills'
+    ];
+    
+    const costs = ['Free', 'Paid', 'Freemium', 'Premium', 'Subscription'];
+    
+    // Get all meta tags
+    const metaTags = document.querySelectorAll('.meta-tag');
+    const priceTags = document.querySelectorAll('.price-tag');
+    
+    // Categorize meta tags
+    metaTags.forEach(tag => {
+        const text = tag.textContent.trim();
+        
+        if (validResourceTypes.some(type => text.includes(type))) {
+            tag.classList.add('tag-resource-type');
+        } else if (gradeLevels.some(grade => text.includes(grade))) {
+            tag.classList.add('tag-grade-level');
+        } else if (languages.some(lang => text.includes(lang))) {
+            tag.classList.add('tag-language');
+        } else if (costs.some(cost => text.includes(cost))) {
+            tag.classList.add('tag-cost');
+        } else {
+            // If it doesn't match any of the above categories, it might be "Other"
+            tag.classList.add('tag-other');
+        }
+    });
+    
+    // Ensure price tags have cost styling
+    priceTags.forEach(tag => {
+        tag.classList.add('tag-cost');
+    });
 }
 
 // Helper function to get selected options from multi-select dropdowns
