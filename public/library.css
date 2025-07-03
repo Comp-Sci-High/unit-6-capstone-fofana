@@ -832,234 +832,139 @@ header.scrolled {
         padding: 0.75rem 1rem;
     }
 }
+/* Enhanced Product Tag Styling - Category-Based Visual Distinctions */
 
+/* Base meta-tag styling - reset */
+.meta-tag {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+    margin: 0.2rem 0.3rem 0.2rem 0;
+    transition: all 0.3s ease;
+    background: #f1f3f4;
+    color: #666;
+}
 
-/* Type Filter - Bold styling */
-.filter-group label[for="productTypeFilter"],
-.type-filter-label {
-    font-weight: 700 !important;
-    font-size: 1.2rem !important;
-    color: var(--dark) !important;
-    font-family: var(--font-secondary) !important;
+/* RESOURCE TYPE TAGS - BOLD BLACK */
+/* Target all resource type categories */
+.meta-tag:is([class*="Curriculum"], [class*="curriculum"]),
+.meta-tag:contains("Curriculum"),
+.meta-tag:contains("Coding Platform"), 
+.meta-tag:contains("Assessment Tool"),
+.meta-tag:contains("Game/Activity"),
+.meta-tag:contains("Lesson Plans"),
+.meta-tag:contains("Professional Development"),
+.meta-tag:contains("Hardware/Robotics"),
+.meta-tag:contains("Online Course"),
+.meta-tag:contains("Educational"),
+.meta-tag:contains("Other") {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
+    color: white !important;
+    font-weight: 800 !important;
+    font-size: 0.9rem !important;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.75rem !important;
+    letter-spacing: 0.8px;
+    box-shadow: 0 3px 6px rgba(26, 26, 26, 0.4);
+    border: 2px solid #000;
 }
 
-/* Cost Filter - Green styling on new line with spacing */
-.filter-group label[for="priceFilter"],
-.cost-filter-label {
-    font-weight: 600 !important;
-    color: var(--cost-color) !important;
-    font-size: 1.1rem !important;
-    margin-top: 1rem !important;
-    padding-top: 0.75rem !important;
-    border-top: 2px solid #e8f5e8 !important;
-    position: relative;
-}
-
-.cost-filter-label::before {
-    content: "💰";
-    margin-right: 0.5rem;
-}
-
-/* Grade Levels - Blue theme with enhanced styling */
-.filter-group .grade-filter-label,
-.grade-filter-label {
-    color: var(--grade-color) !important;
-    font-weight: 600 !important;
-    font-size: 1.05rem !important;
-    margin-bottom: 1rem !important;
-    position: relative;
-}
-
-.grade-filter-label::before {
-    content: "🎓";
-    margin-right: 0.5rem;
-}
-
-/* Grade Level Checkboxes - Enhanced Blue theme */
-.grade-checkboxes .checkbox-item {
-    background: var(--grade-color-light) !important;
-    border: 2px solid transparent !important;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-.grade-checkboxes .checkbox-item:hover {
-    background: #e3f2fd !important;
-    border-color: var(--grade-color) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.2);
-}
-
-.grade-checkboxes .checkbox-item:has(input:checked) {
-    background: var(--grade-color) !important;
+/* GRADE LEVEL TAGS - BLUE */
+.meta-tag:contains("K-5"),
+.meta-tag:contains("6-8"), 
+.meta-tag:contains("9-12"),
+.meta-tag:contains("Higher Ed"),
+.meta-tag:contains("Elementary"),
+.meta-tag:contains("Middle School"),
+.meta-tag:contains("High School"),
+.meta-tag:contains("College") {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
     color: white !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3);
-}
-
-.grade-checkboxes .checkbox-item label {
-    color: var(--grade-color) !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: color 0.3s ease;
-}
-
-.grade-checkboxes .checkbox-item:has(input:checked) label {
-    color: white !important;
-    font-weight: 600 !important;
-}
-
-/* Language/Tool Filter - Orange theme with enhanced styling */
-.filter-group .language-filter-label,
-.language-filter-label {
-    color: var(--language-color) !important;
-    font-weight: 600 !important;
-    font-size: 1.05rem !important;
-    margin-bottom: 1rem !important;
-    position: relative;
-}
-
-.language-filter-label::before {
-    content: "⚡";
-    margin-right: 0.5rem;
-}
-
-/* Language/Tool Checkboxes - Enhanced Orange theme */
-.language-checkboxes .checkbox-item {
-    background: var(--language-color-light) !important;
-    border: 2px solid transparent !important;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-}
-
-.language-checkboxes .checkbox-item:hover {
-    background: #fff8e1 !important;
-    border-color: var(--language-color) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
-}
-
-.language-checkboxes .checkbox-item:has(input:checked) {
-    background: var(--language-color) !important;
-    color: white !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-}
-
-.language-checkboxes .checkbox-item label {
-    color: var(--language-color) !important;
-    font-weight: 500 !important;
-    cursor: pointer !important;
-    transition: color 0.3s ease;
-}
-
-.language-checkboxes .checkbox-item:has(input:checked) label {
-    color: white !important;
-    font-weight: 600 !important;
-}
-
-/* Enhanced checkbox styling for better visual feedback */
-.checkbox-item input[type="checkbox"] {
-    width: 18px !important;
-    height: 18px !important;
-    margin: 0 !important;
-    cursor: pointer;
-    accent-color: currentColor;
-}
-
-/* Grade checkboxes - blue accent */
-.grade-checkboxes .checkbox-item input[type="checkbox"] {
-    accent-color: var(--grade-color);
-}
-
-/* Language checkboxes - orange accent */
-.language-checkboxes .checkbox-item input[type="checkbox"] {
-    accent-color: var(--language-color);
-}
-
-/* Filter group spacing improvements */
-.filter-group:has(.type-filter-label) {
-    margin-bottom: 0.5rem;
-}
-
-.filter-group:has(.cost-filter-label) {
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.filter-group:has(.grade-filter-label),
-.filter-group:has(.language-filter-label) {
-    margin-top: 1rem;
-}
-
-/* Search input styling to match the theme */
-.filter-group label[for="searchInput"] {
     font-weight: 700 !important;
-    font-size: 1.1rem !important;
-    color: var(--dark) !important;
-    font-family: var(--font-secondary) !important;
-    margin-bottom: 0.75rem !important;
+    box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
+    border: 2px solid #1565c0;
 }
 
-.filter-group label[for="searchInput"]::before {
-    content: "🔍";
-    margin-right: 0.5rem;
+/* PROGRAMMING LANGUAGES/TOOLS - YELLOW/ORANGE */
+.meta-tag:contains("Python"),
+.meta-tag:contains("JavaScript"),
+.meta-tag:contains("Java"),
+.meta-tag:contains("Scratch"),
+.meta-tag:contains("Block-based"),
+.meta-tag:contains("HTML/CSS"),
+.meta-tag:contains("C++"),
+.meta-tag:contains("C#"),
+.meta-tag:contains("PHP"),
+.meta-tag:contains("Ruby"),
+.meta-tag:contains("Swift"),
+.meta-tag:contains("Kotlin"),
+.meta-tag:contains("Visual Programming") {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 6px rgba(255, 193, 7, 0.4);
+    border: 2px solid #f57c00;
 }
 
-/* Enhanced select dropdown styling */
-.filter-group select {
-    background-color: white;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+/* COST/PRICE TAGS - GREEN (Enhanced existing price-tag class) */
+.price-tag,
+.meta-tag:contains("Free"),
+.meta-tag:contains("Paid"), 
+.meta-tag:contains("Freemium"),
+.meta-tag:contains("Premium"),
+.meta-tag:contains("Subscription") {
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%) !important;
+    color: white !important;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
+    border: 2px solid #1b5e20;
+    transition: all 0.3s ease;
 }
 
-/* Type filter select - enhanced styling */
-#productTypeFilter {
-    border-color: var(--dark) !important;
-    font-weight: 500;
+/* JavaScript solution for content-based styling since CSS :contains() doesn't work */
+/* This will be handled by JavaScript to add appropriate classes */
+.tag-resource-type {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
+    color: white !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    box-shadow: 0 3px 6px rgba(26, 26, 26, 0.4);
+    border: 2px solid #000;
 }
 
-#productTypeFilter:focus {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+.tag-grade-level {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
+    border: 2px solid #1565c0;
 }
 
-/* Cost filter select - green styling */
-#priceFilter {
-    border-color: var(--cost-color) !important;
-    font-weight: 500;
+.tag-language {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 6px rgba(255, 193, 7, 0.4);
+    border: 2px solid #f57c00;
 }
 
-#priceFilter:focus {
-    border-color: var(--cost-color) !important;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+.tag-cost {
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
+    border: 2px solid #1b5e20;
 }
 
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
-    .filter-group label {
-        font-size: 1rem !important;
-    }
-    
-    .type-filter-label {
-        font-size: 1.1rem !important;
-    }
-    
-    .cost-filter-label,
-    .grade-filter-label,
-    .language-filter-label {
-        font-size: 1rem !important;
-    }
-    
-    .checkbox-item {
-        padding: 0.75rem 1rem !important;
-        margin-bottom: 0.5rem;
-    }
+/* Hover effects for all styled tags */
+.meta-tag:hover, .price-tag:hover,
+.tag-resource-type:hover, .tag-grade-level:hover, 
+.tag-language:hover, .tag-cost:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
 }

@@ -301,3 +301,36 @@ window.addEventListener('scroll', function() {
         ticking = true;
     }
 });
+
+/* JavaScript to categorize tags automatically */
+document.addEventListener('DOMContentLoaded', function() {
+    // Define category mappings
+    const resourceTypes = ['Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity', 'Lesson Plans', 'Professional Development', 'Hardware/Robotics', 'Online Course', 'Educational', 'Other'];
+    const gradeLevels = ['K-5', '6-8', '9-12', 'Higher Ed', 'Elementary', 'Middle School', 'High School', 'College'];
+    const languages = ['Python', 'JavaScript', 'Java', 'Scratch', 'Block-based', 'HTML/CSS', 'C++', 'C#', 'PHP', 'Ruby', 'Swift', 'Kotlin', 'Visual Programming'];
+    const costs = ['Free', 'Paid', 'Freemium', 'Premium', 'Subscription'];
+    
+    // Get all meta tags
+    const metaTags = document.querySelectorAll('.meta-tag');
+    const priceTags = document.querySelectorAll('.price-tag');
+    
+    // Categorize meta tags
+    metaTags.forEach(tag => {
+        const text = tag.textContent.trim();
+        
+        if (resourceTypes.some(type => text.includes(type))) {
+            tag.classList.add('tag-resource-type');
+        } else if (gradeLevels.some(grade => text.includes(grade))) {
+            tag.classList.add('tag-grade-level');
+        } else if (languages.some(lang => text.includes(lang))) {
+            tag.classList.add('tag-language');
+        } else if (costs.some(cost => text.includes(cost))) {
+            tag.classList.add('tag-cost');
+        }
+    });
+    
+    // Ensure price tags have cost styling
+    priceTags.forEach(tag => {
+        tag.classList.add('tag-cost');
+    });
+});
