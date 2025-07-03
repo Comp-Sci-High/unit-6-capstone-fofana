@@ -24,7 +24,8 @@ const requestSchema = new mongoose.Schema(
         GradeLevel: { type: String, required: true },
         StandardAlignment: { type: String, required: false },
         SupportedLanguages: { type: String, required: false },
-        isApproved: {type: Boolean, required: true, default: false},
+        // UPDATED: Allow null for pending status
+        isApproved: { type: Boolean, required: false, default: null }, // null = pending, true = approved, false = rejected
     },
     { timestamps: true }
 );
@@ -146,6 +147,7 @@ app.get("/request", async (req, res) => {
     res.render("request.ejs", { Requests });
 });
 
+
 app.post("/request", async (req, res) => {
     try {
         const newRequest = await new Request({
@@ -157,7 +159,8 @@ app.post("/request", async (req, res) => {
             GradeLevel: req.body.GradeLevel,
             StandardAlignment: req.body.StandardAlignment,
             SupportedLanguages: req.body.SupportedLanguages,
-            isApproved: req.body.isApproved || false
+            // FIXED: Remove the typo 'f' and set to null for pending status
+            isApproved: null  // null = pending, true = approved, false = rejected
         }).save();
 
         res.status(201).json(newRequest);

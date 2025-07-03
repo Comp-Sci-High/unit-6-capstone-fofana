@@ -1,5 +1,272 @@
 let currentFilter = 'all';
 
+// Multi-select chip functionality
+class MultiSelectChips {
+    constructor(containerId, options = {}) {
+        this.container = document.getElementById(containerId);
+        if (!this.container) {
+            console.error(`Container with id ${containerId} not found`);
+            return;
+        }
+        
+        this.options = options;
+        this.selectedValues = new Set();
+        this.filteredOptions = [];
+        this.isOtherSelected = false;
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+        this.input = this.container.querySelector('.multi-select-search');
+        this.chipsContainer = this.container.querySelector('.selected-chips');
+        this.dropdown = this.container.querySelector('.multi-select-dropdown');
+        this.otherInput = document.getElementById(options.otherInputId);
+        
+        this.init();
+    }
+    
+    init() {
+        if (!this.input || !this.chipsContainer || !this.dropdown) {
+            console.error('Required elements not found in multi-select container');
+            return;
+        }
+        
+        this.setupEventListeners();
+        this.updateFilteredOptions();
+        this.updateOtherInputVisibility();
+    }
+    
+   setupEventListeners() {
+    // Input focus event
+    this.input.addEventListener('focus', () => this.showDropdown());
+    
+    // Remove the problematic blur event listener and use document click instead
+    document.addEventListener('click', this.handleDocumentClick);
+    
+    // Input search
+    this.input.addEventListener('input', (e) => {
+        this.handleSearch(e.target.value);
+    });
+    
+    // Dropdown option clicks
+    this.dropdown.addEventListener('click', (e) => {
+        if (e.target.classList.contains('dropdown-option')) {
+            e.stopPropagation(); // Prevent document click from hiding dropdown
+            this.selectOption(e.target.dataset.value);
+            this.input.focus();
+        }
+    });
+    
+    // Container click to focus input
+    this.container.addEventListener('click', (e) => {
+        if (e.target === this.container || e.target === this.chipsContainer) {
+            this.input.focus();
+        }
+    });
+    
+    // Other input handling
+    if (this.otherInput) {
+        this.otherInput.addEventListener('input', () => {
+            this.updateOtherInputVisibility();
+        });
+    }
+}
+    
+handleDocumentClick(e) {
+    // Check if click is outside the multi-select container
+    if (!this.container.contains(e.target)) {
+        this.hideDropdown();
+    }
+}
+ handleSearch(searchTerm) {
+    const hasSearchTerm = searchTerm && searchTerm.trim().length > 0;
+    
+    if (hasSearchTerm) {
+        const filtered = Array.from(this.dropdown.querySelectorAll('.dropdown-option'))
+            .filter(option => {
+                const text = option.textContent.toLowerCase();
+                const value = option.dataset.value.toLowerCase();
+                const search = searchTerm.toLowerCase();
+                return text.includes(search) || value.includes(search);
+            });
+        
+        // Show/hide options based on search
+        this.dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+            const shouldShow = filtered.includes(option);
+            option.style.display = shouldShow ? 'block' : 'none';
+        });
+        
+        this.showDropdown();
+    } else {
+        // Reset all options to be visible when no search term
+        this.dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+            option.style.display = 'block';
+        });
+        
+        // Don't automatically show dropdown when search is cleared
+        // Only show if input is focused
+        if (document.activeElement === this.input) {
+            this.showDropdown();
+        }
+    }
+}
+    selectOption(value) {
+        if (this.selectedValues.has(value)) {
+            this.removeValue(value);
+        } else {
+            this.addValue(value);
+        }
+        
+        this.input.value = '';
+        this.updateFilteredOptions();
+        this.updateOtherInputVisibility();
+    }
+    
+    addValue(value) {
+        this.selectedValues.add(value);
+        this.updateChipsDisplay();
+        
+        if (value === 'Other') {
+            this.isOtherSelected = true;
+        }
+    }
+    
+    removeValue(value) {
+        this.selectedValues.delete(value);
+        this.updateChipsDisplay();
+        
+        if (value === 'Other') {
+            this.isOtherSelected = false;
+            if (this.otherInput) {
+                this.otherInput.value = '';
+            }
+        }
+    }
+    
+    updateChipsDisplay() {
+        this.chipsContainer.innerHTML = '';
+        
+        this.selectedValues.forEach(value => {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerHTML = `
+                <span class="chip-text">${value}</span>
+                <span class="chip-remove" data-value="${value}">×</span>
+            `;
+            
+            chip.querySelector('.chip-remove').addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeValue(value);
+                this.updateFilteredOptions();
+                this.updateOtherInputVisibility();
+            });
+            
+            this.chipsContainer.appendChild(chip);
+        });
+    }
+    
+    updateFilteredOptions() {
+        this.dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+            const isSelected = this.selectedValues.has(option.dataset.value);
+            option.classList.toggle('selected', isSelected);
+        });
+    }
+    
+    updateOtherInputVisibility() {
+        if (this.otherInput) {
+            this.otherInput.parentElement.style.display = this.isOtherSelected ? 'block' : 'none';
+        }
+    }
+    
+    showDropdown() {
+        this.dropdown.style.display = 'block';
+        this.container.classList.add('dropdown-open');
+    }
+    
+   hideDropdown() {
+    this.dropdown.style.display = 'none';
+    this.container.classList.remove('dropdown-open');
+    this.input.value = '';
+    // Reset all options to be visible when dropdown is hidden
+    this.dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+        option.style.display = 'block';
+    });
+}
+    
+    setValues(values) {
+        this.selectedValues.clear();
+        this.isOtherSelected = false;
+        
+        if (Array.isArray(values)) {
+            values.forEach(value => {
+                if (value && value.trim()) {
+                    this.selectedValues.add(value.trim());
+                    if (value === 'Other') {
+                        this.isOtherSelected = true;
+                    }
+                }
+            });
+        } else if (typeof values === 'string' && values.trim()) {
+            values.split(',').forEach(value => {
+                if (value && value.trim()) {
+                    this.selectedValues.add(value.trim());
+                    if (value.trim() === 'Other') {
+                        this.isOtherSelected = true;
+                    }
+                }
+            });
+        }
+        
+        this.updateChipsDisplay();
+        this.updateFilteredOptions();
+        this.updateOtherInputVisibility();
+    }
+    
+    getValues() {
+        return Array.from(this.selectedValues);
+    }
+    
+    getOtherValue() {
+        return this.otherInput ? this.otherInput.value.trim() : '';
+    }
+    destroy() {
+    document.removeEventListener('click', this.handleDocumentClick);
+}
+}
+
+// Store multi-select instances
+const multiSelectInstances = new Map();
+
+// Initialize multi-select for a specific request
+function initializeMultiSelect(requestId) {
+    const selectors = [
+        {
+            id: `resourcetype-container-${requestId}`,
+            otherInputId: `other-resourcetype-${requestId}`,
+            key: `resourcetype-${requestId}`
+        },
+        {
+            id: `gradelevel-container-${requestId}`,
+            key: `gradelevel-${requestId}`
+        },
+        {
+            id: `standardalignment-container-${requestId}`,
+            otherInputId: `other-standardalignment-${requestId}`,
+            key: `standardalignment-${requestId}`
+        },
+        {
+            id: `supportedlanguages-container-${requestId}`,
+            key: `supportedlanguages-${requestId}`
+        }
+    ];
+    
+    selectors.forEach(selector => {
+        const instance = new MultiSelectChips(selector.id, {
+            otherInputId: selector.otherInputId
+        });
+        if (instance.container) {
+            multiSelectInstances.set(selector.key, instance);
+        }
+    });
+}
+
 // Filter submissions function
 function filterSubmissions(event, filter) {
     // Remove active class from all tabs
@@ -27,6 +294,13 @@ function filterSubmissions(event, filter) {
 // View resource function
 function viewResource(url) {
     window.open(url, '_blank');
+}
+
+function getFormValue(selector, submissionCard = null) {
+    const element = submissionCard ? 
+        submissionCard.querySelector(selector) : 
+        document.querySelector(selector);
+    return element ? element.value.trim() : '';
 }
 
 // Approve submission
@@ -98,7 +372,7 @@ async function deleteRequest(requestId) {
     }
 }
 
-// Toggle comments section - Fixed to use requestId instead of toolId
+// Toggle comments section
 async function toggleComments(requestId) {
     const commentsSection = document.getElementById(`comments-${requestId}`);
     
@@ -116,7 +390,7 @@ async function toggleComments(requestId) {
     }
 }
 
-// Load comments for a request - Fixed to use requestId
+// Load comments for a request
 async function loadComments(requestId) {
     const commentsList = document.getElementById(`comments-list-${requestId}`);
     const commentCount = document.getElementById(`comment-count-${requestId}`);
@@ -156,7 +430,7 @@ async function loadComments(requestId) {
                 orgRoleDisplay = `<div class="comment-details">${parts.join(' • ')}</div>`;
             }
             
-            // Format date - Fixed to handle different date field names
+            // Format date
             const commentDate = new Date(comment.createdAt || comment.timestamp || comment.date || Date.now());
             const dateString = commentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
             const timeString = commentDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -238,7 +512,7 @@ async function loadComments(requestId) {
     }
 }
 
-// Load rating for a request - Fixed to use requestId
+// Load rating for a request
 async function loadRating(requestId) {
     const averageRatingElement = document.getElementById(`average-rating-${requestId}`);
     
@@ -267,7 +541,7 @@ async function loadRating(requestId) {
     }
 }
 
-// Toggle inline edit form - Fixed parameter name
+// Toggle inline edit form
 function toggleEditComment(commentId, requestId) {
     const commentItem = document.getElementById(`comment-${commentId}`);
     const editForm = document.getElementById(`edit-form-${commentId}`);
@@ -312,7 +586,7 @@ function cancelEditComment(commentId) {
     if (commentActions) commentActions.style.display = 'flex';
 }
 
-// Save comment edit - Fixed parameter name
+// Save comment edit
 async function saveCommentEdit(commentId, requestId) {
     const usernameInput = document.getElementById(`edit-username-${commentId}`);
     const organizationInput = document.getElementById(`edit-organization-${commentId}`);
@@ -376,7 +650,7 @@ async function saveCommentEdit(commentId, requestId) {
     }
 }
 
-// Delete comment function - Fixed parameter name
+// Delete comment function
 async function deleteComment(commentId, requestId) {
     if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
         return;
@@ -476,7 +750,7 @@ function escapeHtml(text) {
 }
 
 // Logout function
-function logout() {
+    function logout() {
     if (confirm('Are you sure you want to logout?')) {
         // Clear any stored data
         try {
@@ -510,6 +784,12 @@ function toggleEditSubmission(requestId) {
     }
     
     if (editForm.style.display === 'none' || editForm.style.display === '') {
+        // Initialize multi-select for this request
+        initializeMultiSelect(requestId);
+        
+        // Populate existing values
+        populateEditForm(requestId);
+        
         // Show edit form, hide details
         editForm.style.display = 'block';
         detailsSection.style.display = 'none';
@@ -521,6 +801,40 @@ function toggleEditSubmission(requestId) {
         detailsSection.style.display = 'grid';
         editBtn.textContent = '✏️ Edit Details';
         editBtn.onclick = () => toggleEditSubmission(requestId);
+    }
+}
+
+// Populate edit form with existing values
+function populateEditForm(requestId) {
+    const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
+    if (!submissionCard) return;
+    
+    // Get existing values from the display
+    const detailValues = submissionCard.querySelectorAll('.detail-value');
+    if (detailValues.length >= 6) {
+        // Resource Type
+        const resourceTypeInstance = multiSelectInstances.get(`resourcetype-${requestId}`);
+        if (resourceTypeInstance) {
+            resourceTypeInstance.setValues(detailValues[1].textContent);
+        }
+        
+        // Grade Level
+        const gradeLevelInstance = multiSelectInstances.get(`gradelevel-${requestId}`);
+        if (gradeLevelInstance) {
+            gradeLevelInstance.setValues(detailValues[3].textContent);
+        }
+        
+        // Standard Alignment
+        const standardAlignmentInstance = multiSelectInstances.get(`standardalignment-${requestId}`);
+        if (standardAlignmentInstance) {
+            standardAlignmentInstance.setValues(detailValues[4].textContent);
+        }
+        
+        // Supported Languages
+        const supportedLanguagesInstance = multiSelectInstances.get(`supportedlanguages-${requestId}`);
+        if (supportedLanguagesInstance) {
+            supportedLanguagesInstance.setValues(detailValues[5].textContent);
+        }
     }
 }
 
@@ -550,6 +864,7 @@ function cancelEditSubmission(requestId) {
 }
 
 // Save submission edit
+// Save submission edit
 async function saveSubmissionEdit(requestId) {
     const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);
     
@@ -559,21 +874,49 @@ async function saveSubmissionEdit(requestId) {
         return;
     }
     
-    // Get form values with error checking
-    const getFormValue = (selector) => {
-        const element = submissionCard.querySelector(selector);
-        return element ? element.value.trim() : '';
-    };
-    
-    const productName = getFormValue(`#edit-productname-${requestId}`);
-    const description = getFormValue(`#edit-description-${requestId}`);
-    const productType = getFormValue(`#edit-producttype-${requestId}`);
-    const price = getFormValue(`#edit-price-${requestId}`);
-    const gradeLevel = getFormValue(`#edit-gradelevel-${requestId}`);
-    const standardAlignment = getFormValue(`#edit-standardalignment-${requestId}`);
-    const supportedLanguages = getFormValue(`#edit-supportedlanguages-${requestId}`);
-    const website = getFormValue(`#edit-website-${requestId}`);
-    
+    // Get form values with proper multi-select handling
+    const productName = getFormValue(`#edit-productname-${requestId}`, submissionCard);
+    const description = getFormValue(`#edit-description-${requestId}`, submissionCard);
+    const website = getFormValue(`#edit-website-${requestId}`, submissionCard);
+    const price = getFormValue(`#edit-price-${requestId}`, submissionCard);
+
+    // Get multi-select values
+    const resourceTypeInstance = multiSelectInstances.get(`resourcetype-${requestId}`);
+    const gradeLevelInstance = multiSelectInstances.get(`gradelevel-${requestId}`);
+    const standardAlignmentInstance = multiSelectInstances.get(`standardalignment-${requestId}`);
+    const supportedLanguagesInstance = multiSelectInstances.get(`supportedlanguages-${requestId}`);
+
+    // Handle resource types
+    let productType = '';
+    if (resourceTypeInstance) {
+        const resourceTypes = resourceTypeInstance.getValues();
+        const otherResourceType = resourceTypeInstance.getOtherValue();
+        productType = resourceTypes.includes('Other') && otherResourceType ? 
+            [...resourceTypes.filter(t => t !== 'Other'), otherResourceType].join(', ') : 
+            resourceTypes.join(', ');
+    }
+
+    // Handle grade levels
+    let gradeLevel = '';
+    if (gradeLevelInstance) {
+        gradeLevel = gradeLevelInstance.getValues().join(', ');
+    }
+
+    // Handle standard alignment
+    let finalStandardAlignment = '';
+    if (standardAlignmentInstance) {
+        const standardValues = standardAlignmentInstance.getValues();
+        const otherStandardAlignment = standardAlignmentInstance.getOtherValue();
+        finalStandardAlignment = standardValues.includes('Other') && otherStandardAlignment ? 
+            otherStandardAlignment : standardValues.join(', ');
+    }
+
+    // Handle supported languages
+    let supportedLanguages = '';
+    if (supportedLanguagesInstance) {
+        supportedLanguages = supportedLanguagesInstance.getValues().join(', ');
+    }
+
     // Validation
     if (!productName || !description || !productType || !price || !gradeLevel || !website) {
         showNotification('Please fill in all required fields', 'error');
@@ -600,7 +943,7 @@ async function saveSubmissionEdit(requestId) {
                 ProductType: productType,
                 Price: price,
                 GradeLevel: gradeLevel,
-                StandardAlignment: standardAlignment,
+                StandardAlignment: finalStandardAlignment,
                 SupportedLanguages: supportedLanguages,
                 Website: website
             })
@@ -620,7 +963,7 @@ async function saveSubmissionEdit(requestId) {
             ProductType: productType,
             Price: price,
             GradeLevel: gradeLevel,
-            StandardAlignment: standardAlignment,
+            StandardAlignment: finalStandardAlignment,
             SupportedLanguages: supportedLanguages,
             Website: website
         });
@@ -633,7 +976,6 @@ async function saveSubmissionEdit(requestId) {
         showNotification(`Failed to update submission: ${error.message}`, 'error');
     }
 }
-
 // Update submission display with new values
 function updateSubmissionDisplay(requestId, data) {
     const submissionCard = document.querySelector(`[data-request-id="${requestId}"]`);

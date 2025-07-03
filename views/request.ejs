@@ -11,8 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Icon imports -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    
-
 </head>
 <body>
     <header>
@@ -115,47 +113,28 @@
                 </div>
                 
                 <div class="form-section">
+                    <!-- Resource Type Multi-Select -->
                     <div class="form-group">
-                        <label>Resource Type *</label>
-                        <div class="resource-type-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Curriculum">
-                                Curriculum
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Coding Platform">
-                                Coding Platform
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Assessment Tool">
-                                Assessment Tool
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Game/Activity">
-                                Game/Activity
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Lesson Plans">
-                                Lesson Plans
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Professional Development">
-                                Professional Development
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Hardware/Robotics">
-                                Hardware/Robotics
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Online Course">
-                                Online Course
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="resourceType" value="Other" id="other-checkbox">
-                                Other
-                            </label>
+                        <label for="resource-type">Resource Type *</label>
+                        <div class="multi-select-container" id="resource-type-container">
+                            <div class="selected-chips" id="resource-type-chips"></div>
+                            <div class="input-container">
+                                <input type="text" id="resource-type-input" class="multi-select-input" placeholder="Type to search resource types...">
+                                <i class="fas fa-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="dropdown-menu" id="resource-type-dropdown">
+                                <div class="dropdown-item" data-value="Curriculum">Curriculum</div>
+                                <div class="dropdown-item" data-value="Coding Platform">Coding Platform</div>
+                                <div class="dropdown-item" data-value="Assessment Tool">Assessment Tool</div>
+                                <div class="dropdown-item" data-value="Game/Activity">Game/Activity</div>
+                                <div class="dropdown-item" data-value="Lesson Plans">Lesson Plans</div>
+                                <div class="dropdown-item" data-value="Professional Development">Professional Development</div>
+                                <div class="dropdown-item" data-value="Hardware/Robotics">Hardware/Robotics</div>
+                                <div class="dropdown-item" data-value="Online Course">Online Course</div>
+                                <div class="dropdown-item" data-value="Other">Other</div>
+                            </div>
                         </div>
-                        <div class="other-input" id="other-input">
+                        <div class="other-input" id="resource-type-other">
                             <input type="text" name="otherResourceType" placeholder="Please specify..." maxlength="100">
                         </div>
                     </div>
@@ -170,75 +149,78 @@
                         </select>
                     </div>
 
-                   <div class="form-group">
-    <label for="standard-alignment">Standards Alignment</label>
-    <select id="standard-alignment" name="standardAlignment">
-        <option value="">Select standards alignment</option>
-        <option value="CSTA K–12 Computer Science Standards">CSTA K–12 Computer Science Standards</option>
-        <option value="K–12 Computer Science Framework">K–12 Computer Science Framework</option>
-        <option value="AP Computer Science Principles Framework">AP Computer Science Principles Framework</option>
-        <option value="AP Computer Science A Framework">AP Computer Science A Framework</option>
-        <option value="ISTE Standards for Students">ISTE Standards for Students</option>
-        <option value="Next Generation Science Standards (NGSS)">Next Generation Science Standards (NGSS)</option>
-        <option value="Other" id="other-standards-option">Other</option>
-    </select>
-    <div class="other-input" id="other-standards-input">
-        <input type="text" name="otherStandardAlignment" placeholder="Please specify..." maxlength="100">
-    </div>
-</div>
+                    <!-- Standards Alignment Multi-Select -->
                     <div class="form-group">
-                        <label>Grade Levels *</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="gradeLevel" value="K-5">
-                                K-5
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="gradeLevel" value="6-8">
-                                6-8
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="gradeLevel" value="9-12">
-                                9-12
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="gradeLevel" value="Higher Ed">
-                                Higher Ed
-                            </label>
+                        <label for="standard-alignment">Standards Alignment</label>
+                        <div class="multi-select-container" id="standard-alignment-container">
+                            <div class="selected-chips" id="standard-alignment-chips"></div>
+                            <div class="input-container">
+                                <input type="text" id="standard-alignment-input" class="multi-select-input" placeholder="Type to search standards...">
+                                <i class="fas fa-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="dropdown-menu" id="standard-alignment-dropdown">
+                                <div class="dropdown-item" data-value="CSTA K–12 Computer Science Standards">CSTA K–12 Computer Science Standards</div>
+                                <div class="dropdown-item" data-value="K–12 Computer Science Framework">K–12 Computer Science Framework</div>
+                                <div class="dropdown-item" data-value="AP Computer Science Principles Framework">AP Computer Science Principles Framework</div>
+                                <div class="dropdown-item" data-value="AP Computer Science A Framework">AP Computer Science A Framework</div>
+                                <div class="dropdown-item" data-value="ISTE Standards for Students">ISTE Standards for Students</div>
+                                <div class="dropdown-item" data-value="Next Generation Science Standards (NGSS)">Next Generation Science Standards (NGSS)</div>
+                                <div class="dropdown-item" data-value="Other">Other</div>
+                            </div>
+                        </div>
+                        <div class="other-input" id="standard-alignment-other">
+                            <input type="text" name="otherStandardAlignment" placeholder="Please specify..." maxlength="100">
+                        </div>
+                    </div>
+
+                    <!-- Grade Levels Multi-Select -->
+                    <div class="form-group">
+                        <label for="grade-level">Grade Levels *</label>
+                        <div class="multi-select-container" id="grade-level-container">
+                            <div class="selected-chips" id="grade-level-chips"></div>
+                            <div class="input-container">
+                                <input type="text" id="grade-level-input" class="multi-select-input" placeholder="Type to search grade levels...">
+                                <i class="fas fa-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="dropdown-menu" id="grade-level-dropdown">
+                                <div class="dropdown-item" data-value="K-5">K-5</div>
+                                <div class="dropdown-item" data-value="6-8">6-8</div>
+                                <div class="dropdown-item" data-value="9-12">9-12</div>
+                                <div class="dropdown-item" data-value="Higher Ed">Higher Ed</div>
+                            </div>
                         </div>
                     </div>
                     
+                    <!-- Supported Languages Multi-Select -->
                     <div class="form-group">
-                        <label>Supported Languages/Tools</label>
-                        <div class="checkbox-grid">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="Scratch">
-                                Scratch
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="Python">
-                                Python
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="JavaScript">
-                                JavaScript
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="Java">
-                                Java
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="Block-based">
-                                Block-based
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="HTML/CSS">
-                                HTML/CSS
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="languages" value="Unplugged">
-                                Unplugged
-                            </label>
+                        <label for="languages">Supported Languages/Tools</label>
+                        <div class="multi-select-container" id="languages-container">
+                            <div class="selected-chips" id="languages-chips"></div>
+                            <div class="input-container">
+                                <input type="text" id="languages-input" class="multi-select-input" placeholder="Type to search languages/tools...">
+                                <i class="fas fa-chevron-down dropdown-icon"></i>
+                            </div>
+                            <div class="dropdown-menu" id="languages-dropdown">
+                                <div class="dropdown-item" data-value="Python">Python</div>
+                                <div class="dropdown-item" data-value="Java">Java</div>
+                                <div class="dropdown-item" data-value="JavaScript">JavaScript</div>
+                                <div class="dropdown-item" data-value="C++">C++</div>
+                                <div class="dropdown-item" data-value="C#">C#</div>
+                                <div class="dropdown-item" data-value="Swift">Swift</div>
+                                <div class="dropdown-item" data-value="Ruby">Ruby</div>
+                                <div class="dropdown-item" data-value="Go">Go</div>
+                                <div class="dropdown-item" data-value="HTML/CSS">HTML/CSS</div>
+                                <div class="dropdown-item" data-value="SQL">SQL</div>
+                                <div class="dropdown-item" data-value="R">R</div>
+                                <div class="dropdown-item" data-value="Shell/Bash">Shell/Bash</div>
+                                <div class="dropdown-item" data-value="PowerShell">PowerShell</div>
+                                <div class="dropdown-item" data-value="Assembly">Assembly</div>
+                                <div class="dropdown-item" data-value="C">C</div>
+                                <div class="dropdown-item" data-value="Scratch">Scratch</div>
+                                <div class="dropdown-item" data-value="Block-based">Block-based</div>
+                                <div class="dropdown-item" data-value="Unplugged">Unplugged</div>
+                                <div class="dropdown-item" data-value="AI Skills">AI Skills</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,7 +232,8 @@
             </form>
         </div>
     </div>
-  <!-- Login Modal -->
+
+    <!-- Login Modal -->
     <div class="modal" id="login-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -272,28 +255,5 @@
             </form>
         </div>
     </div>
-
-    <script>
-        // Show/hide "Other" input field
-        document.getElementById('other-checkbox').addEventListener('change', function() {
-            const otherInput = document.getElementById('other-input');
-            if (this.checked) {
-                otherInput.classList.add('show');
-                otherInput.querySelector('input').focus();
-            } else {
-                otherInput.classList.remove('show');
-                otherInput.querySelector('input').value = '';
-            }
-        });
-
-        // Clear "Other" input when form is reset
-        document.querySelector('button[type="reset"]').addEventListener('click', function() {
-            setTimeout(() => {
-                document.getElementById('other-input').classList.remove('show');
-            }, 0);
-        });
-    </script>
-
-
 </body>
 </html>

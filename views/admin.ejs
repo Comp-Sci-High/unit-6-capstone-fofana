@@ -117,30 +117,130 @@
                                                 <label for="edit-website-<%= Request._id %>">Website URL *</label>
                                                 <input type="url" id="edit-website-<%= Request._id %>" value="<%= Request.Website %>" required>
                                             </div>
-                                            
+
                                             <div class="edit-form-group">
-                                                <label for="edit-producttype-<%= Request._id %>">Product Type *</label>
-                                                <input type="text" id="edit-producttype-<%= Request._id %>" value="<%= Request.ProductType %>" required>
+                                                <label for="edit-producttype-<%= Request._id %>">Resource Type *</label>
+                                                <div class="multi-select-container" id="resourcetype-container-<%= Request._id %>">
+                                                    <div class="multi-select-input">
+                                                        <div class="selected-chips" id="resourcetype-chips-<%= Request._id %>"></div>
+                                                        <input type="text" 
+                                                               class="multi-select-search" 
+                                                               id="resourcetype-search-<%= Request._id %>" 
+                                                               placeholder="Search resource types..."
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="multi-select-dropdown" id="resourcetype-dropdown-<%= Request._id %>">
+                                                        <div class="dropdown-option" data-value="Curriculum">Curriculum</div>
+                                                        <div class="dropdown-option" data-value="Coding Platform">Coding Platform</div>
+                                                        <div class="dropdown-option" data-value="Assessment Tool">Assessment Tool</div>
+                                                        <div class="dropdown-option" data-value="Game/Activity">Game/Activity</div>
+                                                        <div class="dropdown-option" data-value="Lesson Plans">Lesson Plans</div>
+                                                        <div class="dropdown-option" data-value="Professional Development">Professional Development</div>
+                                                        <div class="dropdown-option" data-value="Hardware/Robotics">Hardware/Robotics</div>
+                                                        <div class="dropdown-option" data-value="Online Course">Online Course</div>
+                                                        <div class="dropdown-option" data-value="Other">Other</div>
+                                                    </div>
+                                                </div>
+                                                <div class="other-input" id="other-producttype-<%= Request._id %>">
+                                                    <input type="text" 
+                                                           id="other-resourcetype-<%= Request._id %>" 
+                                                           placeholder="Please specify other resource type..." 
+                                                           maxlength="100">
+                                                </div>
                                             </div>
-                                            
+
                                             <div class="edit-form-group">
-                                                <label for="edit-price-<%= Request._id %>">Price *</label>
-                                                <input type="text" id="edit-price-<%= Request._id %>" value="<%= Request.Price %>" required>
+                                                <label for="edit-price-<%= Request._id %>">Price Model *</label>
+                                                <select id="edit-price-<%= Request._id %>" required>
+                                                    <option value="">Select price model</option>
+                                                    <option value="Free" <%= Request.Price === 'Free' ? 'selected' : '' %>>Free</option>
+                                                    <option value="Paid" <%= Request.Price === 'Paid' ? 'selected' : '' %>>Paid</option>
+                                                    <option value="Freemium" <%= Request.Price === 'Freemium' ? 'selected' : '' %>>Freemium</option>
+                                                </select>
                                             </div>
-                                            
+
                                             <div class="edit-form-group">
-                                                <label for="edit-gradelevel-<%= Request._id %>">Grade Level *</label>
-                                                <input type="text" id="edit-gradelevel-<%= Request._id %>" value="<%= Request.GradeLevel %>" required>
+                                                <label for="edit-gradelevel-<%= Request._id %>">Grade Levels *</label>
+                                                <div class="multi-select-container" id="gradelevel-container-<%= Request._id %>">
+                                                    <div class="multi-select-input">
+                                                        <div class="selected-chips" id="gradelevel-chips-<%= Request._id %>"></div>
+                                                        <input type="text" 
+                                                               class="multi-select-search" 
+                                                               id="gradelevel-search-<%= Request._id %>" 
+                                                               placeholder="Search grade levels..."
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="multi-select-dropdown" id="gradelevel-dropdown-<%= Request._id %>">
+                                                        <div class="dropdown-option" data-value="K-5">K-5</div>
+                                                        <div class="dropdown-option" data-value="6-8">6-8</div>
+                                                        <div class="dropdown-option" data-value="9-12">9-12</div>
+                                                        <div class="dropdown-option" data-value="Higher Ed">Higher Ed</div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            
+
                                             <div class="edit-form-group">
-                                                <label for="edit-standardalignment-<%= Request._id %>">Standard Alignment</label>
-                                                <input type="text" id="edit-standardalignment-<%= Request._id %>" value="<%= Request.StandardAlignment || '' %>" placeholder="e.g., Common Core, NGSS">
+                                                <label for="edit-standardalignment-<%= Request._id %>">Standards Alignment</label>
+                                                <div class="multi-select-container" id="standardalignment-container-<%= Request._id %>">
+                                                    <div class="multi-select-input">
+                                                        <div class="selected-chips" id="standardalignment-chips-<%= Request._id %>"></div>
+                                                        <input type="text" 
+                                                               class="multi-select-search" 
+                                                               id="standardalignment-search-<%= Request._id %>" 
+                                                               placeholder="Search standards alignment..."
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="multi-select-dropdown" id="standardalignment-dropdown-<%= Request._id %>">
+                                                        <div class="dropdown-option" data-value="CSTA K–12 Computer Science Standards">CSTA K–12 Computer Science Standards</div>
+                                                        <div class="dropdown-option" data-value="K–12 Computer Science Framework">K–12 Computer Science Framework</div>
+                                                        <div class="dropdown-option" data-value="AP Computer Science Principles Framework">AP Computer Science Principles Framework</div>
+                                                        <div class="dropdown-option" data-value="AP Computer Science A Framework">AP Computer Science A Framework</div>
+                                                        <div class="dropdown-option" data-value="ISTE Standards for Students">ISTE Standards for Students</div>
+                                                        <div class="dropdown-option" data-value="Next Generation Science Standards (NGSS)">Next Generation Science Standards (NGSS)</div>
+                                                        <div class="dropdown-option" data-value="Other">Other</div>
+                                                    </div>
+                                                </div>
+                                                <div class="other-input" id="other-standards-<%= Request._id %>">
+                                                    <input type="text" 
+                                                           id="other-standardalignment-<%= Request._id %>" 
+                                                           placeholder="Please specify other standards alignment..." 
+                                                           maxlength="100">
+                                                </div>
                                             </div>
-                                            
+
                                             <div class="edit-form-group">
-                                                <label for="edit-supportedlanguages-<%= Request._id %>">Languages/Tools</label>
-                                                <input type="text" id="edit-supportedlanguages-<%= Request._id %>" value="<%= Request.SupportedLanguages || '' %>" placeholder="e.g., Python, JavaScript, Scratch">
+                                                <label for="edit-supportedlanguages-<%= Request._id %>">Supported Languages/Tools</label>
+                                                <div class="multi-select-container" id="supportedlanguages-container-<%= Request._id %>">
+                                                    <div class="multi-select-input">
+                                                        <div class="selected-chips" id="supportedlanguages-chips-<%= Request._id %>"></div>
+                                                        <input type="text" 
+                                                               class="multi-select-search" 
+                                                               id="supportedlanguages-search-<%= Request._id %>" 
+                                                               placeholder="Search languages/tools..."
+                                                               autocomplete="off">
+                                                    </div>
+                                                    <div class="multi-select-dropdown" id="supportedlanguages-dropdown-<%= Request._id %>">
+                                                        <div class="dropdown-option" data-value="Python">Python</div>
+                                                        <div class="dropdown-option" data-value="Java">Java</div>
+                                                        <div class="dropdown-option" data-value="JavaScript">JavaScript</div>
+                                                        <div class="dropdown-option" data-value="C++">C++</div>
+                                                        <div class="dropdown-option" data-value="C#">C#</div>
+                                                        <div class="dropdown-option" data-value="Swift">Swift</div>
+                                                        <div class="dropdown-option" data-value="Ruby">Ruby</div>
+                                                        <div class="dropdown-option" data-value="Go">Go</div>
+                                                        <div class="dropdown-option" data-value="HTML/CSS">HTML/CSS</div>
+                                                        <div class="dropdown-option" data-value="SQL">SQL</div>
+                                                        <div class="dropdown-option" data-value="R">R</div>
+                                                        <div class="dropdown-option" data-value="Shell/Bash">Shell/Bash</div>
+                                                        <div class="dropdown-option" data-value="PowerShell">PowerShell</div>
+                                                        <div class="dropdown-option" data-value="Assembly">Assembly</div>
+                                                        <div class="dropdown-option" data-value="C">C</div>
+                                                        <div class="dropdown-option" data-value="Scratch">Scratch</div>
+                                                        <div class="dropdown-option" data-value="Block-based">Block-based</div>
+                                                        <div class="dropdown-option" data-value="Unplugged">Unplugged</div>
+                                                        <div class="dropdown-option" data-value="AI Skills">AI Skills</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         

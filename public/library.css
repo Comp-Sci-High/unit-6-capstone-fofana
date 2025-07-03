@@ -69,9 +69,9 @@ header {
     /* Remove background and box-shadow from here - matches styles.css */
 }
 
-header.scrolled {
-    background: white;  /* Only apply background when scrolled */
-    box-shadow: var(--shadow-md);  /* Only apply shadow when scrolled */
+.header.scrolled {
+    background: white;
+    box-shadow: var(--shadow-md);
     padding: 12px 0;
 }
 
@@ -448,11 +448,7 @@ header.scrolled {
 /* Cost Filter - Green styling on new line */
 .filter-group label[for="priceFilter"] {
     font-weight: 600;
-    color: var(--cost-color);
     font-size: 1.05rem;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 2px solid #e8f5e8;
 }
 
 /* Grade Levels - Special styling */
@@ -490,6 +486,182 @@ header.scrolled {
     margin-top: 0.75rem;
 }
 
+/* Autocomplete Multi-Select Styles */
+.autocomplete-container {
+    position: relative;
+    width: 100%;
+}
+
+.autocomplete-input-container {
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    min-height: 45px;
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    cursor: text;
+    transition: border-color 0.2s ease;
+}
+
+.autocomplete-input-container:hover {
+    border-color: #7c4dff;
+}
+
+.autocomplete-input-container.focused {
+    border-color: #7c4dff;
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+}
+
+.autocomplete-chip {
+    background: linear-gradient(135deg, #7c4dff, #00d4ff);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    animation: chipSlideIn 0.2s ease-out;
+}
+
+@keyframes chipSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.autocomplete-chip-remove {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    color: white;
+    transition: background 0.2s ease;
+}
+
+.autocomplete-chip-remove:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.autocomplete-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    min-width: 120px;
+    font-size: 14px;
+    padding: 4px 0;
+}
+
+.autocomplete-input::placeholder {
+    color: #9ca3af;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e1e5e9;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-option {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.2s ease;
+    font-size: 14px;
+}
+
+.autocomplete-option:hover {
+    background: #f8fafc;
+}
+
+.autocomplete-option.highlighted {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.autocomplete-option.selected {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 500;
+}
+
+.autocomplete-option:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-no-results {
+    padding: 12px;
+    color: #6b7280;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Scrollbar styling for dropdown */
+.autocomplete-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .autocomplete-input-container {
+        min-height: 40px;
+        padding: 6px 10px;
+    }
+
+    .autocomplete-chip {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+
+    .autocomplete-input {
+        min-width: 100px;
+        font-size: 13px;
+    }
+
+    .autocomplete-option {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
 .checkbox-item {
     display: flex;
     align-items: center;
