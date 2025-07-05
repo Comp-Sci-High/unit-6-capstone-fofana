@@ -210,6 +210,11 @@ document.addEventListener('DOMContentLoaded', function() {
         required: true
     });
 
+const topicsDropdown = new MultiSelectDropdown('topics-container', {
+    allowOther: true,
+    otherContainerId: 'topics-other'
+});
+
     const languagesDropdown = new MultiSelectDropdown('languages-container');
 
     // Mobile menu functionality
@@ -335,18 +340,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     finalStandardAlignment.push(otherValue);
                 }
             }
+let finalTopics = topicsDropdown.getSelectedValues();
+if (finalTopics.includes('Other')) {
+    const otherValue = document.querySelector('input[name="otherTopics"]').value;
+    if (otherValue) {
+        finalTopics = finalTopics.filter(topic => topic !== 'Other');
+        finalTopics.push(otherValue);
+    }
+}
 
-            const formData = {
-                ProductName: document.getElementById('product-name').value,
-                Website: document.getElementById('website-url').value,
-                ProductType: finalResourceTypes.join(', '),
-                Description: document.getElementById('description').value,
-                Price: document.getElementById('price-model').value,
-                GradeLevel: gradeLevels.join(', '),
-                StandardAlignment: finalStandardAlignment.join(', '),
-                SupportedLanguages: languagesDropdown.getSelectedValues().join(', '),
-                isApproved: false
-            };
+          const formData = {
+    ProductName: document.getElementById('product-name').value,
+    Website: document.getElementById('website-url').value,
+    ProductType: finalResourceTypes.join(', '),
+    Description: document.getElementById('description').value,
+    Price: document.getElementById('price-model').value,
+    GradeLevel: gradeLevels.join(', '),
+    Topic: finalTopics.join(', '),  // ← CHANGED: "Topics" to "Topic"
+    StandardAlignment: finalStandardAlignment.join(', '),
+    SupportedLanguages: languagesDropdown.getSelectedValues().join(', '),
+    isApproved: false
+};
 
             try {
                 const response = await fetch('/request', {
@@ -365,8 +379,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     resourceTypeDropdown.reset();
                     standardAlignmentDropdown.reset();
                     gradeLevelDropdown.reset();
+                    topicsDropdown.reset();
                     languagesDropdown.reset();
-                    
+                
+                
                 } else {
                     const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
                     alert(`Submission failed: ${errorData.message || 'Please try again.'}`);
@@ -390,6 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     standardAlignmentDropdown.reset();
                     gradeLevelDropdown.reset();
                     languagesDropdown.reset();
+                    topicsDropdown.reset();
                 }, 0);
             });
         }

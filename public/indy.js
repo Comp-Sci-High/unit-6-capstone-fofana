@@ -54,25 +54,25 @@ function addCommentToList(comment, commentId = null) {
     const commentItem = document.createElement('div');
     commentItem.className = 'comment-item';
     commentItem.setAttribute('data-comment-id', id);
-  commentItem.innerHTML = `
-    <div class="comment-header">
-        <div class="comment-user-info">
-            <span class="comment-username">${comment.username}</span>
-            ${(comment.organization || comment.role) ? `
-                <span class="comment-details">
-                    ${comment.organization || ''}${comment.organization && comment.role ? ' • ' : ''}${comment.role || ''}
-                </span>
-            ` : ''}
-            <span class="comment-date">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+    commentItem.innerHTML = `
+        <div class="comment-header">
+            <div class="comment-user-info">
+                <span class="comment-username">${comment.username}</span>
+                ${(comment.organization || comment.role) ? `
+                    <span class="comment-details">
+                        ${comment.organization || ''}${comment.organization && comment.role ? ' • ' : ''}${comment.role || ''}
+                    </span>
+                ` : ''}
+                <span class="comment-date">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <div class="comment-rating">
+                ${'★'.repeat(comment.rating)}
+            </div>
         </div>
-        <div class="comment-rating">
-            ${'★'.repeat(comment.rating)}
+        <div class="comment-content">
+            <div class="comment-text">${comment.comment}</div>
         </div>
-    </div>
-    <div class="comment-content">
-        <div class="comment-text">${comment.comment}</div>
-    </div>
-`;
+    `;
     
     // Add to the top of the comments list
     commentsList.insertBefore(commentItem, commentsList.firstChild);
@@ -83,7 +83,7 @@ async function submitComment(event) {
     
     const username = document.getElementById('username').value.trim();
     const organization = document.getElementById('organization').value.trim();
-const role = document.getElementById('role').value.trim();
+    const role = document.getElementById('role').value.trim();
     const commentText = document.getElementById('comment').value.trim();
     
     // Debug: Log the toolId
@@ -104,13 +104,13 @@ const role = document.getElementById('role').value.trim();
         return;
     }
 
-   const requestData = {
-    username: username,
-    comment: commentText,
-    rating: currentRating,
-    organization: organization,
-    role: role
-};
+    const requestData = {
+        username: username,
+        comment: commentText,
+        rating: currentRating,
+        organization: organization,
+        role: role
+    };
     
     // Debug: Log request data
     console.log('Request data:', requestData);
@@ -134,19 +134,19 @@ const role = document.getElementById('role').value.trim();
             console.log('New comment response:', newComment);
             
             // Add comment to the list immediately with the real ID from server
-           addCommentToList({
-    username: username,
-    comment: commentText,
-    rating: currentRating,
-    organization: organization,
-    role: role
-}, newComment.id || newComment._id);
+            addCommentToList({
+                username: username,
+                comment: commentText,
+                rating: currentRating,
+                organization: organization,
+                role: role
+            }, newComment.id || newComment._id);
             
             // Reset form
             document.getElementById('username').value = '';
             document.getElementById('comment').value = '';
             document.getElementById('organization').value = '';
-document.getElementById('role').value = '';
+            document.getElementById('role').value = '';
             currentRating = 0;
             
             // Reset rating stars
@@ -198,6 +198,40 @@ async function loadAverageRating() {
     }
 }
 
+// Topic filtering functionality
+function filterByTopic(topic) {
+    const currentUrl = new URL(window.location.href);
+    
+    if (topic === 'all') {
+        // Remove topic filter
+        currentUrl.searchParams.delete('topic');
+    } else {
+        // Add topic filter
+        currentUrl.searchParams.set('topic', topic);
+    }
+    
+    // Reload page with new filter
+    window.location.href = currentUrl.toString();
+}
+
+// Initialize topic filter on page load
+function initTopicFilter() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedTopic = urlParams.get('topic');
+    
+    if (selectedTopic) {
+        // Update active topic button
+        const topicButtons = document.querySelectorAll('.topic-filter-btn');
+        topicButtons.forEach(btn => {
+            if (btn.dataset.topic === selectedTopic) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     const commentForm = document.getElementById('comment-form');
@@ -208,6 +242,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (toolId) {
         loadAverageRating();
     }
+    
+    // Initialize topic filter if we're on a page that uses it
+    initTopicFilter();
+    
+    // Add topic filter event listeners
+    const topicButtons = document.querySelectorAll('.topic-filter-btn');
+    topicButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const topic = btn.dataset.topic;
+            filterByTopic(topic);
+        });
+    });
 });
 
 // Header scroll effect
@@ -249,22 +295,24 @@ const loginBtn = document.querySelector('.login-btn');
 const loginModal = document.getElementById('login-modal');
 const closeModal = document.querySelector('.modal-close');
 
-// Open login modal
-loginBtn.addEventListener('click', function() {
-    loginModal.classList.add('active');
-});
+if (loginBtn && loginModal && closeModal) {
+    // Open login modal
+    loginBtn.addEventListener('click', function() {
+        loginModal.classList.add('active');
+    });
 
-// Close login modal
-closeModal.addEventListener('click', function() {
-    loginModal.classList.remove('active');
-});
-
-// Close modal when clicking outside
-window.addEventListener('click', function(e) {
-    if (e.target === loginModal) {
+    // Close login modal
+    closeModal.addEventListener('click', function() {
         loginModal.classList.remove('active');
-    }
-});
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === loginModal) {
+            loginModal.classList.remove('active');
+        }
+    });
+}
 
 // Admin credentials
 const ADMIN_CREDENTIALS = {
@@ -273,27 +321,31 @@ const ADMIN_CREDENTIALS = {
 };
 
 // Login form submission
-document.getElementById('login-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    
-    // Use the correct IDs for login form
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-    const errorElement = document.getElementById('login-error-message');
-    
-    
-    console.log('Login attempt:', { username, password }); // Debug log
-    
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-        console.log('Login successful'); // Debug log
-        sessionStorage.setItem('isAuthenticated', 'true');
-        window.location.href = '/admin';
-    } else {
-        console.log('Login failed'); // Debug log
-        errorElement.textContent = 'Invalid username or password';
-        errorElement.style.display = 'block';
-    }
-});
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        // Use the correct IDs for login form
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const errorElement = document.getElementById('login-error-message');
+        
+        console.log('Login attempt:', { username, password }); // Debug log
+        
+        if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+            console.log('Login successful'); // Debug log
+            sessionStorage.setItem('isAuthenticated', 'true');
+            window.location.href = '/admin';
+        } else {
+            console.log('Login failed'); // Debug log
+            if (errorElement) {
+                errorElement.textContent = 'Invalid username or password';
+                errorElement.style.display = 'block';
+            }
+        }
+    });
+}
 
 // Auto-redirect if already authenticated
 window.addEventListener('DOMContentLoaded', function () {
@@ -301,4 +353,3 @@ window.addEventListener('DOMContentLoaded', function () {
         window.location.href = '/admin';
     }
 });
-

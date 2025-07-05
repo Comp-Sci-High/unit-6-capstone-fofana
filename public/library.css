@@ -1,14 +1,12 @@
-/* library.css */
+/* library.css - Cleaned Version */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
     --primary: #e91e63;
-    --primary-color: #e91e63;
     --primary-dark: #c2185b;
     --primary-light: #f48fb1;
     --secondary: #651fff;
-    --secondary-color: #651fff;
     --success-color: #00c853;
     --dark: #1a1a1a;
     --light: #f9f9f9;
@@ -22,7 +20,7 @@
     --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
     --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     
-    /* New filter colors */
+    /* Filter colors */
     --grade-color: #3f51b5;
     --grade-color-light: #e8eaf6;
     --language-color: #ff9800;
@@ -56,8 +54,45 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0 auto;
     padding: 0 20px;
 }
+.product-topic {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+    padding: 12px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+}
 
-/* Header Styles - Enhanced from styles.css */
+.topic-label {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.topic-value {
+    font-weight: 500;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+.resource-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+    max-width: 100%;
+}
+
+.meta-tag, .price-tag {
+    flex-shrink: 0; /* Prevent tags from shrinking */
+    max-width: 140px; /* Limit individual tag width */
+}
+
+/* Header Styles */
 header {
     padding: 20px 0;
     position: fixed;
@@ -94,7 +129,7 @@ header.scrolled {
     margin-right: 8px;
 }
 
-/* Navigation Styles - Enhanced from styles.css */
+/* Navigation Styles */
 .main-nav ul {
     display: flex;
     list-style: none;
@@ -149,31 +184,32 @@ header.scrolled {
     align-items: center;
     gap: 16px;
 }
-  .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 100px;
-            padding: 14px 32px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-        }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            background: var(--primary-dark);
-        }
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
 
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    background: var(--primary-dark);
+}
 
 .btn-secondary {
     background: var(--secondary);
@@ -194,20 +230,12 @@ header.scrolled {
     color: white;
 }
 
-
-
-.btn-primary:hover {
-    background-color: var(--primary-dark);
-}
-
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-
-
-/* Mobile Menu - Enhanced */
+/* Mobile Menu */
 .mobile-menu-btn {
     display: none;
     background: none;
@@ -268,7 +296,7 @@ header.scrolled {
     color: var(--primary);
 }
 
-/* Modal Styles - Enhanced from styles.css */
+/* Modal Styles */
 .modal {
     position: fixed;
     top: 0;
@@ -333,7 +361,7 @@ header.scrolled {
     color: var(--primary);
 }
 
-/* Form Styles - Enhanced */
+/* Form Styles */
 .form-group {
     margin-bottom: 24px;
 }
@@ -402,7 +430,7 @@ header.scrolled {
     font-size: 1.1rem;
 }
 
-/* Filters - Enhanced with Visual Distinctions */
+/* Filters */
 .filters {
     background: white;
     padding: 2rem;
@@ -429,14 +457,12 @@ header.scrolled {
     flex-direction: column;
 }
 
-/* Enhanced Filter Labels with Visual Distinctions */
 .filter-group label {
     font-weight: 500;
     margin-bottom: 0.5rem;
     color: var(--dark);
 }
 
-/* Type Filter - Bold styling */
 .filter-group label[for="searchInput"] {
     font-weight: 700;
     font-size: 1.1rem;
@@ -444,24 +470,9 @@ header.scrolled {
     font-family: var(--font-secondary);
 }
 
-/* Cost Filter - Green styling on new line */
 .filter-group label[for="priceFilter"] {
     font-weight: 600;
     font-size: 1.05rem;
-}
-
-/* Grade Levels - Special styling */
-.filter-group:has(label:contains("Grade Levels")) label,
-.filter-group label:contains("Grade Levels") {
-    color: var(--grade-color);
-    font-weight: 600;
-}
-
-/* Languages - Special styling */
-.filter-group:has(label:contains("Supported Languages")) label,
-.filter-group label:contains("Supported Languages") {
-    color: var(--language-color);
-    font-weight: 600;
 }
 
 .filter-group select, .filter-group input {
@@ -475,14 +486,6 @@ header.scrolled {
 .filter-group select:focus, .filter-group input:focus {
     outline: none;
     border-color: var(--primary);
-}
-
-/* Enhanced Checkbox Groups */
-.checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.75rem;
-    margin-top: 0.75rem;
 }
 
 /* Autocomplete Multi-Select Styles */
@@ -515,17 +518,20 @@ header.scrolled {
 }
 
 .autocomplete-chip {
-    background: linear-gradient(135deg, #7c4dff, #00d4ff);
-    color: white;
-    padding: 4px 8px;
+    background: #e5e7eb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 6px 10px;
     border-radius: 16px;
     font-size: 12px;
     font-weight: 500;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     white-space: nowrap;
     animation: chipSlideIn 0.2s ease-out;
+    line-height: 1;
 }
 
 @keyframes chipSlideIn {
@@ -639,105 +645,6 @@ header.scrolled {
     background: #a8a8a8;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .autocomplete-input-container {
-        min-height: 40px;
-        padding: 6px 10px;
-    }
-
-    .autocomplete-chip {
-        font-size: 11px;
-        padding: 3px 6px;
-    }
-
-    .autocomplete-input {
-        min-width: 100px;
-        font-size: 13px;
-    }
-
-    .autocomplete-option {
-        padding: 10px;
-        font-size: 13px;
-    }
-}
-.checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    transition: var(--transition);
-    cursor: pointer;
-}
-
-/* Grade Level Checkboxes - Blue theme */
-.filter-group:has(label:contains("Grade Levels")) .checkbox-item,
-.checkbox-item:has(input[id^="grade"]) {
-    background: var(--grade-color-light);
-    border: 2px solid transparent;
-}
-
-.filter-group:has(label:contains("Grade Levels")) .checkbox-item:hover,
-.checkbox-item:has(input[id^="grade"]):hover {
-    background: #e3f2fd;
-    border-color: var(--grade-color);
-}
-
-.filter-group:has(label:contains("Grade Levels")) .checkbox-item:has(input:checked),
-.checkbox-item:has(input[id^="grade"]:checked) {
-    background: var(--grade-color);
-    color: white;
-}
-
-.filter-group:has(label:contains("Grade Levels")) .checkbox-item label,
-.checkbox-item:has(input[id^="grade"]) label {
-    color: var(--grade-color);
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.filter-group:has(label:contains("Grade Levels")) .checkbox-item:has(input:checked) label,
-.checkbox-item:has(input[id^="grade"]:checked) label {
-    color: white;
-}
-
-/* Language/Tool Checkboxes - Orange theme */
-.filter-group:has(label:contains("Supported Languages")) .checkbox-item,
-.checkbox-item:has(input[id^="lang"]) {
-    background: var(--language-color-light);
-    border: 2px solid transparent;
-}
-
-.filter-group:has(label:contains("Supported Languages")) .checkbox-item:hover,
-.checkbox-item:has(input[id^="lang"]):hover {
-    background: #fff8e1;
-    border-color: var(--language-color);
-}
-
-.filter-group:has(label:contains("Supported Languages")) .checkbox-item:has(input:checked),
-.checkbox-item:has(input[id^="lang"]:checked) {
-    background: var(--language-color);
-    color: white;
-}
-
-.filter-group:has(label:contains("Supported Languages")) .checkbox-item label,
-.checkbox-item:has(input[id^="lang"]) label {
-    color: var(--language-color);
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.filter-group:has(label:contains("Supported Languages")) .checkbox-item:has(input:checked) label,
-.checkbox-item:has(input[id^="lang"]:checked) label {
-    color: white;
-}
-
-.checkbox-item input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
 .clear-filters {
     background: var(--primary);
     color: white;
@@ -774,6 +681,12 @@ header.scrolled {
     box-shadow: var(--shadow-md);
     transition: var(--transition);
     position: relative;
+    overflow: hidden;
+    word-wrap: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Add consistent spacing */
+    min-height: 400px; /* Ensure consistent card heights */
 }
 
 .resource-card:hover {
@@ -794,6 +707,7 @@ header.scrolled {
     font-weight: 500;
     margin-bottom: 1rem;
     display: inline-block;
+    font-size: 0.875rem;
 }
 
 .resource-card .website:hover {
@@ -809,25 +723,139 @@ header.scrolled {
 .resource-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 8px;
     margin-bottom: 1rem;
+    align-items: flex-start; /* Changed from center to flex-start */
+    max-width: 100%; /* Ensure it doesn't exceed card width */
 }
 
-.meta-tag {
-    background: #f1f3f4;
-    color: var(--gray);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-}
-
-.price-tag {
-    background: #e8f5e8;
-    color: #2e7d32;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
+/* Tag Styles - Basic styling without specific colors */
+.meta-tag, .price-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 16px;
+    font-size: 0.75rem;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    line-height: 1.1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid transparent;
+    min-height: 28px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #e5e7eb;
+    color: #374151;
+    border-color: #d1d5db;
+}
+
+.filter-label-with-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+}
+
+.filter-label-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    color: white;
+    font-weight: 600;
+}
+
+/* Resource Type - Dark Gray/Black */
+.filter-label-indicator.resource-type {
+    background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+}
+
+/* Cost - Green */
+.filter-label-indicator.cost {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+/* Grade Level - Blue */
+.filter-label-indicator.grade-level {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+/* Language - Orange */
+.filter-label-indicator.language {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* Standards - Purple */
+.filter-label-indicator.standards {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* Update resource meta container for better spacing */
+.resource-meta.collapsed {
+    max-height: 60px;
+    overflow: hidden;
+    position: relative;
+}
+
+.resource-meta.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: linear-gradient(transparent, white);
+}
+
+.meta-tag.long-tag, .price-tag.long-tag {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.show-more-tags {
+    color: var(--primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    text-decoration: underline;
+}
+
+.show-more-tags:hover {
+    color: var(--primary-dark);
+}
+
+/* Mobile responsive adjustments for bubbles */
+@media (max-width: 768px) {
+    .meta-tag, .price-tag {
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        min-height: 28px;
+        margin: 2px;
+    }
+    
+    .autocomplete-chip {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+        min-height: 24px;
+        border-radius: 15px;
+    }
+    
+    .resource-meta {
+        gap: 6px;
+    }
 }
 
 .standard-alignment {
@@ -843,9 +871,48 @@ header.scrolled {
 .card-actions {
     display: flex;
     gap: 1rem;
-    margin-top: 1.5rem;
+    margin-top: auto; /* Push to bottom of card */
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
 }
 
+    /* Gold Star Styling */
+        .rating-display {
+            margin-bottom: 1rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-star {
+            color: #ffd700; /* Gold color */
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .rating-star.empty {
+            color: #444;
+        }
+
+        .rating-text {
+            font-size: 0.9rem;
+            color: black;
+        }
+
+        .no-rating {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+
+.resource-card .description {
+    color: var(--gray);
+    line-height: 1.6;
+    flex-grow: 1; /* Allow description to take available space */
+}
 .no-results {
     text-align: center;
     padding: 3rem;
@@ -921,7 +988,6 @@ header.scrolled {
     100% { transform: translateX(100%) rotate(45deg); }
 }
 
-/* Animations */
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -994,148 +1060,219 @@ header.scrolled {
         margin-top: 20px;
     }
 
-    /* Mobile checkbox adjustments */
-    .checkbox-group {
-        grid-template-columns: 1fr;
+    .autocomplete-input-container {
+        min-height: 40px;
+        padding: 6px 10px;
+    }
+
+    .autocomplete-chip {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+
+    .autocomplete-input {
+        min-width: 100px;
+        font-size: 13px;
+    }
+
+    .autocomplete-option {
+        padding: 10px;
+        font-size: 13px;
+    }
+}
+
+
+/* Enhanced Tag Categorization with Background Colors */
+
+/* Base tag styling - keeping your existing styles */
+.meta-tag, .price-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    line-height: 1.1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid transparent;
+    min-height: 28px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Remove default background - will be set by category classes */
+}
+
+/* RESOURCE TYPE TAGS - Black/Dark Gray */
+.meta-tag.resource-type {
+    background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+    color: white;
+    border-color: #4a4a4a;
+}
+
+.meta-tag.resource-type:hover {
+    background: linear-gradient(135deg, #333333 0%, #1a1a1a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* COST/PRICE TAGS - Green */
+.price-tag,
+.meta-tag.cost {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border-color: #15803d;
+}
+
+.price-tag:hover,
+.meta-tag.cost:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Special styling for "Free" tags */
+.price-tag.free {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #047857;
+}
+
+.price-tag.free:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+/* GRADE LEVEL TAGS - Blue */
+.meta-tag.grade-level {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-color: #1d4ed8;
+}
+
+.meta-tag.grade-level:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* LANGUAGE/PROGRAMMING TAGS - Orange */
+.meta-tag.language {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+    border-color: #dc2626;
+}
+
+.meta-tag.language:hover {
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+/* STANDARDS TAGS - Purple */
+.meta-tag.standards {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    color: white;
+    border-color: #6d28d9;
+}
+
+.meta-tag.standards:hover {
+    background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+/* ADDITIONAL CATEGORY - If you have other types */
+.meta-tag.other {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+    color: white;
+    border-color: #374151;
+}
+
+.meta-tag.other:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+/* Enhanced filter label indicators to match tag colors */
+.filter-label-indicator.resource-type {
+    background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+}
+
+.filter-label-indicator.cost {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.filter-label-indicator.grade-level {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.filter-label-indicator.language {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+.filter-label-indicator.standards {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .meta-tag, .price-tag {
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        min-height: 28px;
+        margin: 2px;
     }
     
-    .checkbox-item {
-        padding: 0.75rem 1rem;
+    /* Maintain hover effects on mobile */
+    .meta-tag:active, .price-tag:active {
+        transform: translateY(-1px);
     }
 }
-/* Enhanced Product Tag Styling - Category-Based Visual Distinctions */
 
-/* Base meta-tag styling - reset */
-.meta-tag {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: inline-block;
-    margin: 0.2rem 0.3rem 0.2rem 0;
-    transition: all 0.3s ease;
-    background: #f1f3f4;
-    color: #666;
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    .meta-tag, .price-tag {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .meta-tag:hover, .price-tag:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
 }
 
-/* RESOURCE TYPE TAGS - BOLD BLACK */
-/* Target all resource type categories */
-.meta-tag:is([class*="Curriculum"], [class*="curriculum"]),
-.meta-tag:contains("Curriculum"),
-.meta-tag:contains("Coding Platform"), 
-.meta-tag:contains("Assessment Tool"),
-.meta-tag:contains("Game/Activity"),
-.meta-tag:contains("Lesson Plans"),
-.meta-tag:contains("Professional Development"),
-.meta-tag:contains("Hardware/Robotics"),
-.meta-tag:contains("Online Course"),
-.meta-tag:contains("Educational"),
-.meta-tag:contains("Other") {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
-    color: white !important;
-    font-weight: 800 !important;
-    font-size: 0.9rem !important;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 3px 6px rgba(26, 26, 26, 0.4);
-    border: 2px solid #000;
+/* Animation for tags when they appear */
+@keyframes tagFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-/* GRADE LEVEL TAGS - BLUE */
-.meta-tag:contains("K-5"),
-.meta-tag:contains("6-8"), 
-.meta-tag:contains("9-12"),
-.meta-tag:contains("Higher Ed"),
-.meta-tag:contains("Elementary"),
-.meta-tag:contains("Middle School"),
-.meta-tag:contains("High School"),
-.meta-tag:contains("College") {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
-    color: white !important;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
-    border: 2px solid #1565c0;
+.meta-tag, .price-tag {
+    animation: tagFadeIn 0.3s ease-out;
 }
 
-/* PROGRAMMING LANGUAGES/TOOLS - YELLOW/ORANGE */
-.meta-tag:contains("Python"),
-.meta-tag:contains("JavaScript"),
-.meta-tag:contains("Java"),
-.meta-tag:contains("Scratch"),
-.meta-tag:contains("Block-based"),
-.meta-tag:contains("HTML/CSS"),
-.meta-tag:contains("C++"),
-.meta-tag:contains("C#"),
-.meta-tag:contains("PHP"),
-.meta-tag:contains("Ruby"),
-.meta-tag:contains("Swift"),
-.meta-tag:contains("Kotlin"),
-.meta-tag:contains("Visual Programming") {
-    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
-    color: #1a1a1a !important;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(255, 193, 7, 0.4);
-    border: 2px solid #f57c00;
+/* Special styling for tags with very long text */
+.meta-tag.long-text, .price-tag.long-text {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: relative;
 }
 
-/* COST/PRICE TAGS - GREEN (Enhanced existing price-tag class) */
-.price-tag,
-.meta-tag:contains("Free"),
-.meta-tag:contains("Paid"), 
-.meta-tag:contains("Freemium"),
-.meta-tag:contains("Premium"),
-.meta-tag:contains("Subscription") {
-    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%) !important;
-    color: white !important;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
-    border: 2px solid #1b5e20;
-    transition: all 0.3s ease;
-}
-
-/* JavaScript solution for content-based styling since CSS :contains() doesn't work */
-/* This will be handled by JavaScript to add appropriate classes */
-.tag-resource-type {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%) !important;
-    color: white !important;
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 3px 6px rgba(26, 26, 26, 0.4);
-    border: 2px solid #000;
-}
-
-.tag-grade-level {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
-    color: white !important;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(33, 150, 243, 0.4);
-    border: 2px solid #1565c0;
-}
-
-.tag-language {
-    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
-    color: #1a1a1a !important;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(255, 193, 7, 0.4);
-    border: 2px solid #f57c00;
-}
-
-.tag-cost {
-    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%) !important;
-    color: white !important;
-    font-weight: 700 !important;
-    box-shadow: 0 3px 6px rgba(76, 175, 80, 0.4);
-    border: 2px solid #1b5e20;
-}
-
-/* Hover effects for all styled tags */
-.meta-tag:hover, .price-tag:hover,
-.tag-resource-type:hover, .tag-grade-level:hover, 
-.tag-language:hover, .tag-cost:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+.meta-tag.long-text:hover, .price-tag.long-text:hover {
+    max-width: none;
+    white-space: normal;
+    z-index: 10;
+    position: relative;
 }

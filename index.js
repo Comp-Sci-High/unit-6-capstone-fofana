@@ -16,6 +16,7 @@ app.use((req, res, next) => {
 
 const requestSchema = new mongoose.Schema(
     {
+        Topic: {type: String, required: true},
         ProductName: { type: String, required: true },
         Website: { type: String, required: true },
         ProductType: { type: String, required: true },
@@ -55,10 +56,45 @@ app.get("/admin", async (req, res) => {
     res.render("admin.ejs", { Requests } );
 })
 
+// UPDATED: Library route with rating calculations
 app.get("/library", async (req, res) => {
-    const Requests = await Request.find({});
-    console.log(Requests)
-    res.render("library.ejs", { Requests });
+    try {
+        // Only get approved requests
+        const requests = await Request.find({ isApproved: true });
+        
+        // Calculate ratings for each request
+        for (let request of requests) {
+            // FIXED: Use RequestId instead of resourceId to match your schema
+            const comments = await Comment.find({ RequestId: request._id });
+            const ratingsWithScores = comments.filter(comment => 
+                comment.rating !== null && comment.rating !== undefined
+            );
+            
+            if (ratingsWithScores.length > 0) {
+                const averageRating = ratingsWithScores.reduce((sum, comment) => 
+                    sum + comment.rating, 0) / ratingsWithScores.length;
+                
+                // Add rating data to the request object
+                request.ratingData = {
+                    averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+                    reviewCount: ratingsWithScores.length
+                };
+            } else {
+                request.ratingData = {
+                    averageRating: 0,
+                    reviewCount: 0
+                };
+            }
+        }
+        
+        // Get all comments for backward compatibility (if needed by your EJS template)
+        const Comments = await Comment.find({}).sort({ createdAt: -1 });
+        
+        res.render('library.ejs', { Requests: requests, Comments });
+    } catch (error) {
+        console.error('Error loading library with ratings:', error);
+        res.status(500).send('Server error');
+    }
 });
 
 // FIXED: Admin-specific routes with /admin prefix
@@ -147,10 +183,10 @@ app.get("/request", async (req, res) => {
     res.render("request.ejs", { Requests });
 });
 
-
 app.post("/request", async (req, res) => {
     try {
         const newRequest = await new Request({
+            Topic: req.body.Topic,
             ProductName: req.body.ProductName,
             Website: req.body.Website,
             ProductType: req.body.ProductType,
@@ -218,6 +254,7 @@ app.post("/indy/:id", async (req, res) => {
         res.status(500).json({ error: 'Failed to add comment' });
     }
 });
+
 // Route to get comments for a specific tool
 app.get("/comments/:id", async (req, res) => {
     try {
@@ -238,6 +275,7 @@ app.get("/comments/:id", async (req, res) => {
 app.patch("/admin/edit/:_id", async (req, res) => {
     try {
         const {
+            Topic,
             ProductName,
             Description,
             ProductType,
@@ -248,8 +286,8 @@ app.patch("/admin/edit/:_id", async (req, res) => {
             Website
         } = req.body;
         
-        // Validate required fields
-        if (!ProductName || !Description || !ProductType || !Price || !GradeLevel || !Website) {
+        // Validate required fields (including Topic)
+        if (!Topic || !ProductName || !Description || !ProductType || !Price || !GradeLevel || !Website) {
             return res.status(400).json({ error: 'All required fields must be provided' });
         }
         
@@ -261,6 +299,7 @@ app.patch("/admin/edit/:_id", async (req, res) => {
         }
         
         const updateData = {
+            Topic: Topic.trim(),
             ProductName: ProductName.trim(),
             Description: Description.trim(),
             ProductType: ProductType.trim(),
@@ -292,8 +331,7 @@ app.patch("/admin/edit/:_id", async (req, res) => {
     }
 });
 
-// ENHANCED: Update the existing comment PATCH route to include organization and role
-// Replace your existing app.patch("/comment/:_id", ...) route with this:
+// FIXED: Remove duplicate comment update route and keep only one
 app.patch("/comment/:_id", async (req, res) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
@@ -355,51 +393,6 @@ app.delete("/comment/:_id", async (req, res) => {
     } catch (error) {
         console.error('Error deleting comment:', error);
         res.status(500).json({ error: 'Failed to delete comment' });
-    }
-});
-
-// ENHANCED: Update comment route with validation
-app.patch("/comment/:_id", async (req, res) => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
-            return res.status(400).json({ error: 'Invalid comment ID format' });
-        }
-
-        const { username, comment, rating } = req.body;
-        
-        // Validate required fields
-        if (!username || !comment || !rating) {
-            return res.status(400).json({ error: 'All fields (username, comment, rating) are required' });
-        }
-
-        // Validate rating range
-        if (rating < 1 || rating > 5) {
-            return res.status(400).json({ error: 'Rating must be between 1 and 5' });
-        }
-
-        const updateData = {
-            username: username.trim(),
-            comment: comment.trim(),
-            rating: parseInt(rating)
-        };
-
-        const response = await Comment.findOneAndUpdate(
-            { _id: req.params._id }, 
-            updateData, 
-            { new: true, runValidators: true }
-        );
-        
-        if (!response) {
-            return res.status(404).json({ error: 'Comment not found' });
-        }
-        
-        res.json({ message: 'Comment updated successfully', comment: response });
-    } catch (error) {
-        console.error('Error updating comment:', error);
-        if (error.name === 'ValidationError') {
-            return res.status(400).json({ error: 'Invalid data provided' });
-        }
-        res.status(500).json({ error: 'Failed to update comment' });
     }
 });
 

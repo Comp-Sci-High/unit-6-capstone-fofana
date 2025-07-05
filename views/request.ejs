@@ -191,6 +191,29 @@
                         </div>
                     </div>
                     
+<div class="form-group">
+    <label for="topics">Topics</label>
+    <div class="multi-select-container" id="topics-container">
+        <div class="selected-chips" id="topics-chips"></div>
+        <div class="input-container">
+            <input type="text" id="topics-input" class="multi-select-input" placeholder="Type to search topics...">
+            <i class="fas fa-chevron-down dropdown-icon"></i>
+        </div>
+        <div class="dropdown-menu" id="topics-dropdown">
+            <div class="dropdown-item" data-value="Software Engineering">Software Engineering</div>
+            <div class="dropdown-item" data-value="Graphic/UX Design">Graphic/UX Design</div>
+            <div class="dropdown-item" data-value="Cybersecurity">Cybersecurity</div>
+            <div class="dropdown-item" data-value="Data Science">Data Science</div>
+            <div class="dropdown-item" data-value="Robotics">Robotics</div>
+            <div class="dropdown-item" data-value="Machine Learning/AI">Machine Learning/AI</div>
+            <div class="dropdown-item" data-value="Other">Other</div>
+        </div>
+    </div>
+    <div class="other-input" id="topics-other">
+        <input type="text" name="otherTopics" placeholder="Please specify..." maxlength="100">
+    </div>
+</div>
+
                     <!-- Supported Languages Multi-Select -->
                     <div class="form-group">
                         <label for="languages">Supported Languages/Tools</label>

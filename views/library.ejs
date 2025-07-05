@@ -106,12 +106,18 @@
                 </div>
                 
                 <div class="filter-group">
-                    <label class="type-filter-label">Resource Type</label>
+                    <label class="filter-label-with-indicator">
+                        <span class="filter-label-indicator resource-type">⚫</span>
+                        Resource Type
+                    </label>
                     <div id="resourceTypeAutocomplete" class="autocomplete-container"></div>
                 </div>
 
                 <div class="filter-group">
-                    <label for="priceFilter" class="cost-filter-label">Cost</label>
+                    <label for="priceFilter" class="filter-label-with-indicator">
+                        <span class="filter-label-indicator cost">🟢</span>
+                        Cost
+                    </label>
                     <select id="priceFilter">
                         <option value="">All Prices</option>
                         <option value="Free">Free</option>
@@ -122,13 +128,46 @@
 
             <div class="filter-row">
                 <div class="filter-group">
-                    <label class="grade-filter-label">Grade Levels</label>
+                    <label class="filter-label-with-indicator">
+                        <span class="filter-label-indicator grade-level">🔵</span>
+                        Grade Levels
+                    </label>
                     <div id="gradeLevelAutocomplete" class="autocomplete-container"></div>
                 </div>
 
                 <div class="filter-group">
-                    <label class="language-filter-label">Languages/Tools</label>
+                    <label class="filter-label-with-indicator">
+                        <span class="filter-label-indicator language">🟠</span>
+                        Languages/Tools
+                    </label>
                     <div id="languageAutocomplete" class="autocomplete-container"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label-with-indicator">
+                        <span class="filter-label-indicator standards">🟣</span>
+                        Standards Alignment
+                    </label>
+                    <div id="standardsAutocomplete" class="autocomplete-container"></div>
+                </div>
+                <div class="filter-group">
+    <label class="filter-label-with-indicator">
+        <span class="filter-label-indicator topic">⭕</span>
+        Topic
+    </label>
+    <div id="topicAutocomplete" class="autocomplete-container"></div>
+</div>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="rating-desc">Rating (High to Low)</option>
+                        <option value="rating-asc">Rating (Low to High)</option>
+                    </select>
                 </div>
             </div>
 
@@ -147,11 +186,39 @@
         <div class="resources-grid" id="resourcesGrid">
             <% if (Requests && Requests.length > 0) { %>
                 <% Requests.filter(request => request.isApproved).forEach(request => { %>
-                    <div class="resource-card" data-resource='<%- JSON.stringify(request) %>'>
+                    <% 
+                        // Get rating data for this request (assuming it's passed from server)
+                        const ratingData = request.ratingData || { averageRating: 0, reviewCount: 0 };
+                        const averageRating = ratingData.averageRating || 0;
+                        const reviewCount = ratingData.reviewCount || 0;
+                    %>
+                    <div class="resource-card" data-resource='<%- JSON.stringify(request) %>' data-rating="<%= averageRating %>" data-review-count="<%= reviewCount %>">
                         <h3><%= request.ProductName %></h3>
                         <a href="<%= request.Website %>" target="_blank" class="website"><%= request.Website %></a>
+                        
+                        <!-- Rating Display - Server Side Rendered -->
+                        <div class="rating-display">
+                            <% if (reviewCount > 0) { %>
+                                <div class="rating-stars">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <span class="rating-star <%= i <= Math.round(averageRating) ? '' : 'empty' %>">★</span>
+                                    <% } %>
+                                </div>
+                                <span class="rating-text">
+                                    <%= averageRating.toFixed(1) %> (<%= reviewCount %> review<%= reviewCount !== 1 ? 's' : '' %>)
+                                </span>
+                            <% } else { %>
+                                <span class="no-rating">No reviews yet</span>
+                            <% } %>
+                        </div>
+                        
                         <p class="description"><%= request.Description %></p>
                         
+<div class="product-topic">
+    <span class="topic-label">Topic:</span>
+    <span class="topic-value"><%= request.Topic %></span>
+</div>
+
                         <div class="resource-meta">
                             <span class="meta-tag"><%= request.ProductType %></span>
                             <span class="meta-tag"><%= request.GradeLevel %></span>
