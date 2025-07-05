@@ -88,7 +88,6 @@
         <% if (currentTool) { %>
         <div class="tool-header">
             <h1 class="tool-title"><%= currentTool.ProductName %></h1>
-            <a href="<%= currentTool.Website %>" target="_blank" class="tool-website"><%= currentTool.Website %></a>
             
             <!-- Add Topic Display -->
             <div class="tool-topic">
@@ -125,35 +124,7 @@
             <p><%= currentTool.Description %></p>
         </div>
 
-        <!-- Add Related Tools Section -->
-        <div class="related-tools">
-            <h2 class="section-title">Related Tools</h2>
-            <div class="related-tools-grid">
-                <% 
-                // Find other tools with the same topic
-                const relatedTools = Requests.filter(req => 
-                    req.Topic === currentTool.Topic && 
-                    req._id.toString() !== currentTool._id.toString() &&
-                    req.isApproved === true
-                ).slice(0, 3); // Limit to 3 related tools
-                %>
-                
-                <% if (relatedTools.length > 0) { %>
-                    <% relatedTools.forEach(tool => { %>
-                    <div class="related-tool-card">
-                        <h3 class="related-tool-name">
-                            <a href="/indy/<%= tool._id %>"><%= tool.ProductName %></a>
-                        </h3>
-                        <p class="related-tool-type"><%= tool.ProductType %></p>
-                        <p class="related-tool-price"><%= tool.Price %></p>
-                    </div>
-                    <% }); %>
-                <% } else { %>
-                    <p class="no-related-tools">No related tools found for this topic.</p>
-                <% } %>
-            </div>
-        </div>
-
+    
         <div class="comments-section">
             <h2 class="section-title">Reviews & Comments</h2>
             
@@ -238,6 +209,54 @@
         </div>
         <% } %>
     </div>
+
+
+        <!-- Add Related Tools Section -->
+        <div class="related-tools">
+            <h2 class="section-title">Related Tools</h2>
+            <div class="related-tools-grid">
+                <% 
+                // Find other tools with the same topic
+                const relatedTools = Requests.filter(req => 
+                    req.Topic === currentTool.Topic && 
+                    req._id.toString() !== currentTool._id.toString() &&
+                    req.isApproved === true
+                ).slice(0, 3); // Limit to 3 related tools
+                %>
+                
+                <% if (relatedTools.length > 0) { %>
+                    <% relatedTools.forEach(tool => { %>
+                    <div class="related-tool-card">
+                        <h3 class="related-tool-name">
+                            <a href="/indy/<%= tool._id %>"><%= tool.ProductName %></a>
+                        </h3>
+                        <p class="related-tool-type"><%= tool.ProductType %></p>
+                        <p class="related-tool-price"><%= tool.Price %></p>
+                    </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-related-tools">No related tools found for this topic.</p>
+                <% } %>
+            </div>
+        </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <a href="#" class="footer-logo">
+    CS Match
+</a>
+
+                    <p>Our mission is to empower computer science educators with high-quality, vetted resources to enhance teaching and learning experiences.</p>
+                   <p>Contact us: 📧 shilpa.agrawal@compscihigh.org</p>
+            </div>
+            <div class="footer-bottom">
+<p>© 2025 CS Match. All rights reserved.</p>
+                <p>Made with ❤️ for CS educators worldwide</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Login Modal -->
     <div class="modal" id="login-modal">

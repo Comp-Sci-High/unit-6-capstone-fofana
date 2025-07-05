@@ -514,12 +514,7 @@ function clearAllFilters() {
 // ========================
 
 // Helper function to parse comma-separated values consistently
-function parseCommaSeparatedValues(value) {
-    if (!value || typeof value !== 'string') {
-        return [];
-    }
-    return value.split(',').map(item => item.trim()).filter(item => item.length > 0);
-}
+
 
 function displayResources(resources) {
     const grid = document.getElementById('resourcesGrid');
@@ -713,10 +708,10 @@ function truncateDescription(text, maxLength = 120) {
     const lastSpace = truncated.lastIndexOf(' ');
     
     if (lastSpace > 0) {
-        return text.substring(0, lastSpace) + '... <span class="read-more-link">Read More</span>';
+        return text.substring(0, lastSpace) + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
     }
     
-    return truncated + '... <span class="read-more-link">Read More</span>';
+    return truncated + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
 }
 
 function initializeDescriptionTruncation() {
@@ -975,146 +970,40 @@ class AutocompleteMultiSelect {
 
 
 // Add this to your existing library.js file
-const TAG_COLORS = {
-    resourceType: '#2c2c2c',    // Black
-    gradeLevel: '#3b82f6',      // Blue
-    cost: '#10b981',            // Green
-    language: '#f59e0b',        // Orange
-    standards: '#8b5cf6',       // Purple (keeping existing)
-    topic: '#ef4444'            // Red (for topic tags)
-};
+// Enhanced function to convert text to proper title case with special handling for acronyms
 
 
-// Resource type options for identification
-const RESOURCE_TYPES = [
-    'Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity',
-    'Lesson Plans', 'Professional Development', 'Hardware/Robotics',
-    'Online Course', 'Educational', 'Other'
-];
-
-
-// Grade level options for identification
-const GRADE_LEVELS = ['K-5', '6-8', '9-12', 'Higher Ed'];
-
-
-// Cost options for identification
-const COST_OPTIONS = ['Free', 'Paid'];
-
-
-// Language options for identification (updated to match what we expect to see)
-const LANGUAGES = [
-    'Scratch', 'Python', 'JavaScript', 'Java', 'Block-Based', 'HTML/CSS',
-    'C++', 'C#', 'Swift', 'Ruby', 'Go', 'SQL', 'R', 'Shell/Bash',
-    'PowerShell', 'Assembly', 'C', 'Unplugged', 'AI Skills',
-    // Add lowercase versions for matching
-    'scratch', 'python', 'javascript', 'java', 'block-based', 'html/css',
-    'c++', 'c#', 'swift', 'ruby', 'go', 'sql', 'r', 'shell/bash',
-    'powershell', 'assembly', 'c', 'unplugged', 'ai skills'
-];
-
-
-// Function to determine tag type and return appropriate color
-function getTagColor(tagText) {
-    const normalizedText = tagText.toLowerCase();
-   
-    // Check if it's a resource type
-    if (RESOURCE_TYPES.some(type => type.toLowerCase() === normalizedText)) {
-        return TAG_COLORS.resourceType;
+// Enhanced function to properly parse and separate comma-separated values
+function parseCommaSeparatedValues(value) {
+    if (!value || typeof value !== 'string') {
+        return [];
     }
-   
-    // Check if it's a grade level
-    if (GRADE_LEVELS.some(grade => grade.toLowerCase() === normalizedText)) {
-        return TAG_COLORS.gradeLevel;
+    
+    // Try multiple separators
+    let items = [];
+    if (value.includes(',')) {
+        items = value.split(',');
+    } else if (value.includes(';')) {
+        items = value.split(';');
+    } else if (value.includes('|')) {
+        items = value.split('|');
+    } else {
+        // Single value
+        items = [value];
     }
-   
-    // Check if it's a cost option
-    if (COST_OPTIONS.some(cost => cost.toLowerCase() === normalizedText)) {
-        return TAG_COLORS.cost;
-    }
-   
-    // Check if it's a language
-    if (LANGUAGES.some(lang => lang.toLowerCase() === normalizedText)) {
-        return TAG_COLORS.language;
-    }
-   
-    // Default color for unknown tags
-    return TAG_COLORS.resourceType;
+    
+    return items.map(item => item.trim()).filter(item => item.length > 0);
 }
 
-
-// Function to apply colors to resource tags
-function applyTagColors() {
-    // Color meta tags in resource cards
-    const metaTags = document.querySelectorAll('.resource-card .meta-tag');
-    metaTags.forEach(tag => {
-        const tagText = tag.textContent.trim();
-        const color = getTagColor(tagText);
-        tag.style.backgroundColor = color;
-        tag.style.color = '#ffffff';
-        tag.style.display = 'inline-flex';
-        tag.style.alignItems = 'center';
-        tag.style.justifyContent = 'center';
-        tag.style.textAlign = 'center';
-        tag.style.lineHeight = '1';
-        tag.style.minHeight = '32px';
-        tag.style.padding = '8px 16px';
-        tag.style.borderRadius = '20px';
-       
-        // Format the text for better readability with proper camel casing
-        tag.textContent = toCamelCase(tagText);
-    });
-   
-    // Color price tags specifically
-    const priceTags = document.querySelectorAll('.resource-card .price-tag');
-    priceTags.forEach(tag => {
-        tag.style.backgroundColor = TAG_COLORS.cost;
-        tag.style.color = '#ffffff';
-        tag.style.display = 'inline-flex';
-        tag.style.alignItems = 'center';
-        tag.style.justifyContent = 'center';
-        tag.style.textAlign = 'center';
-        tag.style.lineHeight = '1';
-        tag.style.minHeight = '32px';
-        tag.style.padding = '8px 16px';
-        tag.style.borderRadius = '20px';
-    });
-   
-    // Fix topic display
-    const topicValues = document.querySelectorAll('.resource-card .topic-value');
-    topicValues.forEach(topicValue => {
-        const topicText = topicValue.textContent.trim();
-       
-        // Use "N/A" if no topic is provided
-        const displayText = (topicText && topicText !== '') ? toCamelCase(topicText) : 'N/A';
-       
-        // Create a styled span for the topic
-        const topicSpan = document.createElement('span');
-        topicSpan.textContent = displayText;
-        topicSpan.style.backgroundColor = TAG_COLORS.topic;
-        topicSpan.style.color = '#ffffff';
-        topicSpan.style.padding = '8px 16px';
-        topicSpan.style.borderRadius = '20px';
-        topicSpan.style.fontSize = '14px';
-        topicSpan.style.fontWeight = '600';
-        topicSpan.style.display = 'inline-flex';
-        topicSpan.style.alignItems = 'center';
-        topicSpan.style.justifyContent = 'center';
-        topicSpan.style.textAlign = 'center';
-        topicSpan.style.lineHeight = '1';
-        topicSpan.style.minHeight = '32px';
-       
-        // Replace the content
-        topicValue.innerHTML = '';
-        topicValue.appendChild(topicSpan);
-    });
-}
+// Enhanced function to rebuild resource cards with properly separated tags
 
 
-// Function to convert text to proper title case (first letter of each word capitalized)
+// Enhanced function to apply colors to existing tags with proper separation
+// Enhanced function to convert text to proper title case with special handling for acronyms
 function toCamelCase(text) {
     if (!text) return '';
    
-    // Handle special cases that should remain as-is
+    // Handle special cases that should remain as-is or have specific capitalization
     const specialCases = {
         'html/css': 'HTML/CSS',
         'c++': 'C++',
@@ -1129,7 +1018,6 @@ function toCamelCase(text) {
         'javascript': 'JavaScript',
         'block-based': 'Block-Based',
         'n/a': 'N/A',
-        // Add more programming language specific cases
         'python': 'Python',
         'java': 'Java',
         'scratch': 'Scratch',
@@ -1138,7 +1026,23 @@ function toCamelCase(text) {
         'assembly': 'Assembly',
         'unplugged': 'Unplugged',
         'free': 'Free',
-        'paid': 'Paid'
+        'paid': 'Paid',
+        // Topic-specific cases - Enhanced AI/UX handling
+        'graphic/ux design': 'Graphic/UX Design',
+        'ux design': 'UX Design',
+        'ui design': 'UI Design',
+        'machine learning/ai': 'Machine Learning/AI',
+        'artificial intelligence': 'Artificial Intelligence',
+        'ai': 'AI',
+        'ux': 'UX',
+        'ui': 'UI',
+        'data science': 'Data Science',
+        'software engineering': 'Software Engineering',
+        'cybersecurity': 'Cybersecurity',
+        'robotics': 'Robotics',
+        // Additional micro:bit specific cases
+        'micro:bit': 'micro:bit',
+        'microbit': 'micro:bit'
     };
    
     const lowerText = text.toLowerCase().trim();
@@ -1146,38 +1050,31 @@ function toCamelCase(text) {
         return specialCases[lowerText];
     }
    
-    // Convert to title case: First letter of each word capitalized
-    return text.split(/\s+/).map(word => {
+    // Apply title case first
+    let result = text.split(/\s+/).map(word => {
         if (word.length === 0) return word;
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }).join(' ');
-}
-
-
-// Function to create colored tag element
-function createColoredTag(text, type) {
-    const tag = document.createElement('span');
-    tag.className = 'meta-tag colored-tag';
-    tag.textContent = toCamelCase(text);
-    tag.style.backgroundColor = TAG_COLORS[type] || TAG_COLORS.resourceType;
-    tag.style.color = '#ffffff';
-    tag.style.padding = '8px 16px';
-    tag.style.borderRadius = '20px';
-    tag.style.fontSize = '14px';
-    tag.style.fontWeight = '600';
-    tag.style.margin = '3px';
-    tag.style.display = 'inline-flex';
-    tag.style.alignItems = 'center';
-    tag.style.justifyContent = 'center';
-    tag.style.textAlign = 'center';
-    tag.style.lineHeight = '1';
-    tag.style.minHeight = '32px';
+    
+    // Then handle AI/UX patterns with word boundaries to avoid partial matches
+    result = result.replace(/\bai\b/gi, 'AI');
+    result = result.replace(/\bux\b/gi, 'UX');
+    result = result.replace(/\bui\b/gi, 'UI');
+    result = result.replace(/\bmicro:bit\b/gi, 'micro:bit');
+    result = result.replace(/\bmicrobit\b/gi, 'micro:bit');
    
-    return tag;
+    // Handle slash-separated combinations
+    result = result.replace(/\bai\//gi, 'AI/');
+    result = result.replace(/\/ai\b/gi, '/AI');
+    result = result.replace(/\bux\//gi, 'UX/');
+    result = result.replace(/\/ux\b/gi, '/UX');
+    result = result.replace(/\bui\//gi, 'UI/');
+    result = result.replace(/\/ui\b/gi, '/UI');
+   
+    return result;
 }
 
-
-// Enhanced function to rebuild resource cards with proper color coding
+// Enhanced function to handle topic display with better AI/UX capitalization
 function rebuildResourceCardTags() {
     const resourceCards = document.querySelectorAll('.resource-card');
    
@@ -1197,16 +1094,22 @@ function rebuildResourceCardTags() {
             // Get the first meta container for main tags
             const mainMetaContainer = metaContainers[0];
             if (mainMetaContainer) {
-                // Add resource type tag
+                // Add resource type tags - SEPARATE EACH TYPE
                 if (resourceData.ProductType) {
-                    const typeTag = createColoredTag(resourceData.ProductType, 'resourceType');
-                    mainMetaContainer.appendChild(typeTag);
+                    const resourceTypes = parseCommaSeparatedValues(resourceData.ProductType);
+                    resourceTypes.forEach(type => {
+                        const typeTag = createColoredTag(type, 'resourceType');
+                        mainMetaContainer.appendChild(typeTag);
+                    });
                 }
                
-                // Add grade level tag
+                // Add grade level tags - SEPARATE EACH GRADE LEVEL
                 if (resourceData.GradeLevel) {
-                    const gradeTag = createColoredTag(resourceData.GradeLevel, 'gradeLevel');
-                    mainMetaContainer.appendChild(gradeTag);
+                    const gradeLevels = parseCommaSeparatedValues(resourceData.GradeLevel);
+                    gradeLevels.forEach(grade => {
+                        const gradeTag = createColoredTag(grade, 'gradeLevel');
+                        mainMetaContainer.appendChild(gradeTag);
+                    });
                 }
                
                 // Find and update price tag
@@ -1214,25 +1117,26 @@ function rebuildResourceCardTags() {
                 if (priceTag) {
                     priceTag.style.backgroundColor = TAG_COLORS.cost;
                     priceTag.style.color = '#ffffff';
+                    priceTag.textContent = toCamelCase(priceTag.textContent);
                 }
             }
            
-            // Handle language tags in second meta container
+            // Handle language tags in second meta container - SEPARATE EACH LANGUAGE
             const languageContainer = metaContainers[1];
             if (languageContainer && resourceData.SupportedLanguages) {
-                const languages = resourceData.SupportedLanguages.split(',');
+                const languages = parseCommaSeparatedValues(resourceData.SupportedLanguages);
                 languages.forEach(lang => {
                     const langTag = createColoredTag(lang.trim(), 'language');
                     languageContainer.appendChild(langTag);
                 });
             }
            
-            // Handle topic display with N/A fallback
+            // Handle topic display with proper capitalization and N/A fallback - ENHANCED FOR AI/UX
             const topicValues = card.querySelectorAll('.topic-value');
             topicValues.forEach(topicValue => {
                 const topicText = resourceData.Topic || topicValue.textContent.trim();
                
-                // Use "N/A" if no topic is provided
+                // Use "N/A" if no topic is provided, otherwise apply proper capitalization
                 const displayText = (topicText && topicText !== '') ? toCamelCase(topicText) : 'N/A';
                
                 // Create a styled span for the topic
@@ -1262,18 +1166,176 @@ function rebuildResourceCardTags() {
     });
 }
 
-
-// Initialize tag colors when DOM is ready
-function initializeTagColors() {
-    // Apply colors to existing tags
-    applyTagColors();
+// Enhanced function to apply colors to existing tags with proper AI/UX capitalization
+function applyTagColors() {
+    // Color meta tags in resource cards
+    const metaTags = document.querySelectorAll('.resource-card .meta-tag');
+    metaTags.forEach(tag => {
+        const tagText = tag.textContent.trim();
+        const color = getTagColor(tagText);
+        tag.style.backgroundColor = color;
+        tag.style.color = '#ffffff';
+        tag.style.display = 'inline-flex';
+        tag.style.alignItems = 'center';
+        tag.style.justifyContent = 'center';
+        tag.style.textAlign = 'center';
+        tag.style.lineHeight = '1';
+        tag.style.minHeight = '32px';
+        tag.style.padding = '8px 16px';
+        tag.style.borderRadius = '20px';
+        tag.style.margin = '3px 6px 3px 0';
+       
+        // Format the text for better readability with proper camel casing
+        tag.textContent = toCamelCase(tagText);
+    });
    
-    // Rebuild tags with proper color coding
+    // Color price tags specifically
+    const priceTags = document.querySelectorAll('.resource-card .price-tag');
+    priceTags.forEach(tag => {
+        tag.style.backgroundColor = TAG_COLORS.cost;
+        tag.style.color = '#ffffff';
+        tag.style.display = 'inline-flex';
+        tag.style.alignItems = 'center';
+        tag.style.justifyContent = 'center';
+        tag.style.textAlign = 'center';
+        tag.style.lineHeight = '1';
+        tag.style.minHeight = '32px';
+        tag.style.padding = '8px 16px';
+        tag.style.borderRadius = '20px';
+        tag.textContent = toCamelCase(tag.textContent);
+    });
+   
+    // Fix topic display - ENHANCED FOR AI/UX
+    const topicValues = document.querySelectorAll('.resource-card .topic-value');
+    topicValues.forEach(topicValue => {
+        const topicText = topicValue.textContent.trim();
+       
+        // Use "N/A" if no topic is provided, otherwise apply proper capitalization
+        const displayText = (topicText && topicText !== '') ? toCamelCase(topicText) : 'N/A';
+       
+        // Create a styled span for the topic
+        const topicSpan = document.createElement('span');
+        topicSpan.textContent = displayText;
+        topicSpan.style.backgroundColor = TAG_COLORS.topic;
+        topicSpan.style.color = '#ffffff';
+        topicSpan.style.padding = '8px 16px';
+        topicSpan.style.borderRadius = '20px';
+        topicSpan.style.fontSize = '14px';
+        topicSpan.style.fontWeight = '600';
+        topicSpan.style.display = 'inline-flex';
+        topicSpan.style.alignItems = 'center';
+        topicSpan.style.justifyContent = 'center';
+        topicSpan.style.textAlign = 'center';
+        topicSpan.style.lineHeight = '1';
+        topicSpan.style.minHeight = '32px';
+       
+        // Replace the content
+        topicValue.innerHTML = '';
+        topicValue.appendChild(topicSpan);
+    });
+}
+// Test the function to verify it works correctly
+console.log('Testing AI/UX capitalization:');
+console.log('ai ->', toCamelCase('ai')); // Should output: AI
+console.log('ux ->', toCamelCase('ux')); // Should output: UX
+console.log('machine learning/ai ->', toCamelCase('machine learning/ai')); // Should output: Machine Learning/AI
+console.log('graphic/ux design ->', toCamelCase('graphic/ux design')); // Should output: Graphic/UX Design
+console.log('data science ->', toCamelCase('data science')); // Should output: Data Science
+console.log('software engineering ->', toCamelCase('software engineering')); // Should output: Software Engineering
+// Enhanced CSS to ensure proper tag separation and spacing
+
+
+// The rest of your existing code remains the same...
+const TAG_COLORS = {
+    resourceType: '#2c2c2c',    // Black
+    gradeLevel: '#3b82f6',      // Blue
+    cost: '#10b981',            // Green
+    language: '#f59e0b',        // Orange
+    standards: '#8b5cf6',       // Purple
+    topic: '#ef4444'            // Red
+};
+
+const RESOURCE_TYPES = [
+    'Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity',
+    'Lesson Plans', 'Professional Development', 'Hardware/Robotics',
+    'Online Course', 'Educational', 'Other'
+];
+
+const GRADE_LEVELS = ['K-5', '6-8', '9-12', 'Higher Ed'];
+const COST_OPTIONS = ['Free', 'Paid'];
+
+const LANGUAGES = [
+    'Scratch', 'Python', 'JavaScript', 'Java', 'Block-Based', 'HTML/CSS',
+    'C++', 'C#', 'Swift', 'Ruby', 'Go', 'SQL', 'R', 'Shell/Bash',
+    'PowerShell', 'Assembly', 'C', 'Unplugged', 'AI Skills'
+];
+
+function getTagColor(tagText) {
+    const normalizedText = tagText.toLowerCase();
+   
+    if (RESOURCE_TYPES.some(type => type.toLowerCase() === normalizedText)) {
+        return TAG_COLORS.resourceType;
+    }
+   
+    if (GRADE_LEVELS.some(grade => grade.toLowerCase() === normalizedText)) {
+        return TAG_COLORS.gradeLevel;
+    }
+   
+    if (COST_OPTIONS.some(cost => cost.toLowerCase() === normalizedText)) {
+        return TAG_COLORS.cost;
+    }
+   
+    if (LANGUAGES.some(lang => lang.toLowerCase() === normalizedText)) {
+        return TAG_COLORS.language;
+    }
+   
+    return TAG_COLORS.resourceType;
+}
+
+
+function initializeTagColors() {
+    applyTagColors();
     rebuildResourceCardTags();
 }
 
 
-// Add CSS styles for colored tags and wider cards
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    addTagColorStyles();
+    setTimeout(() => {
+        initializeTagColors();
+    }, 100);
+});
+
+// Export functions for use in other parts of the application
+window.tagColorUtils = {
+    applyTagColors,
+    createColoredTag,
+    getTagColor,
+    initializeTagColors,
+    rebuildResourceCardTags,
+    toCamelCase,
+    parseCommaSeparatedValues,
+    TAG_COLORS
+};
+// Function to determine tag type and return appropriate color
+
+
+// Function to apply colors to resource tags
+
+
+// Function to convert text to proper title case (first letter of each word capitalized)
+
+
+
+// Function to create colored tag element
+// Enhanced function to convert text to proper title case with special handling for acronyms
+
+
+
+
+// Enhanced CSS to ensure proper tag separation and spacing with SMALLER tags
 function addTagColorStyles() {
     const style = document.createElement('style');
     style.textContent = `
@@ -1286,7 +1348,16 @@ function addTagColorStyles() {
             padding: 24px !important;
         }
        
-        /* Bigger tag bubbles */
+        /* Ensure proper spacing for meta containers */
+        .resource-meta {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+            margin: 10px 0 !important;
+            align-items: center !important;
+        }
+       
+        /* SMALLER tag bubbles with proportional font */
         .colored-tag {
             transition: all 0.2s ease;
             border: none;
@@ -1295,12 +1366,15 @@ function addTagColorStyles() {
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            line-height: 1 !important;
+            line-height: 1.2 !important;
             min-height: 32px !important;
-            padding: 8px 16px !important;
-            border-radius: 20px !important;
-            font-size: 14px !important;
+            padding: 6px 12px !important;
+            border-radius: 16px !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
+            margin: 3px 6px 3px 0 !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
         }
        
         .colored-tag:hover {
@@ -1309,17 +1383,20 @@ function addTagColorStyles() {
         }
        
         .resource-card .meta-tag {
-            margin: 3px 6px 3px 0;
-            font-size: 14px !important;
+            margin: 3px 6px 3px 0 !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
-            padding: 8px 16px !important;
-            border-radius: 20px !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            line-height: 1;
+            padding: 6px 12px !important;
+            border-radius: 16px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            line-height: 1.2 !important;
             min-height: 32px !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
        
         .resource-card .price-tag {
@@ -1329,12 +1406,16 @@ function addTagColorStyles() {
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            line-height: 1 !important;
+            line-height: 1.2 !important;
             min-height: 32px !important;
-            padding: 8px 16px !important;
-            border-radius: 20px !important;
-            font-size: 14px !important;
+            padding: 6px 12px !important;
+            border-radius: 16px !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
+            margin: 3px 6px 3px 0 !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
        
         .topic-value span {
@@ -1344,26 +1425,55 @@ function addTagColorStyles() {
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            line-height: 1 !important;
+            line-height: 1.2 !important;
             min-height: 32px !important;
-            padding: 8px 16px !important;
-            border-radius: 20px !important;
-            font-size: 14px !important;
+            padding: 6px 12px !important;
+            border-radius: 16px !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
        
         .product-topic {
-            margin: 8px 0;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
        
         .topic-label {
             font-weight: 600;
             color: #374151;
-            margin-right: 8px;
+            flex-shrink: 0;
+            font-size: 14px;
         }
        
         .topic-value {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+        }
+       
+        /* BOLD "Read More" link with better styling */
+        .read-more-link {
+            color: #3b82f6 !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+            text-decoration: underline !important;
+            cursor: pointer !important;
+            display: inline-block !important;
+            margin-left: 6px !important;
+        }
+        
+        .read-more-link:hover {
+            color: #2563eb !important;
+            text-decoration: none !important;
+        }
+        
+        .read-more-link strong {
+            font-weight: 700 !important;
         }
        
         /* Ensure cards grid adapts to bigger cards */
@@ -1372,6 +1482,15 @@ function addTagColorStyles() {
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)) !important;
             gap: 30px !important;
             padding: 30px 0;
+        }
+       
+        /* Prevent text overflow in tags but allow for appropriate text */
+        .resource-card .meta-tag,
+        .resource-card .price-tag,
+        .colored-tag {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
        
         /* Responsive adjustments */
@@ -1398,11 +1517,62 @@ function addTagColorStyles() {
                 grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
                 gap: 20px !important;
             }
+            
+            /* Even smaller tags on mobile */
+            .resource-card .meta-tag,
+            .resource-card .price-tag,
+            .colored-tag {
+                max-width: 140px;
+                font-size: 11px !important;
+                padding: 5px 10px !important;
+                min-height: 28px !important;
+            }
+            
+            .topic-value span {
+                font-size: 11px !important;
+                padding: 5px 10px !important;
+                min-height: 28px !important;
+            }
         }
     `;
    
     document.head.appendChild(style);
 }
+
+// Updated createColoredTag function with smaller sizing
+function createColoredTag(text, type) {
+    const tag = document.createElement('span');
+    tag.className = 'meta-tag colored-tag';
+    tag.textContent = toCamelCase(text);
+    tag.style.backgroundColor = TAG_COLORS[type] || TAG_COLORS.resourceType;
+    tag.style.color = '#ffffff';
+    tag.style.padding = '6px 12px';
+    tag.style.borderRadius = '16px';
+    tag.style.fontSize = '10px';
+    tag.style.fontWeight = '600';
+    tag.style.margin = '3px 6px 3px 0';
+    tag.style.display = 'inline-flex';
+    tag.style.alignItems = 'center';
+    tag.style.justifyContent = 'center';
+    tag.style.textAlign = 'center';
+    tag.style.lineHeight = '1.2';
+    tag.style.minHeight = '32px';
+    tag.style.whiteSpace = 'nowrap';
+    tag.style.flexShrink = '0';
+    tag.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+   
+    return tag;
+}
+
+// Enhanced function to rebuild resource cards with proper color coding
+
+
+
+// Initialize tag colors when DOM is ready
+
+
+
+
 
 
 // Override the displayResources function to apply colors after filtering
