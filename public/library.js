@@ -697,21 +697,37 @@ function initializeHeaderScrollEffects() {
         }
     });
 }
-
-// DESCRIPTION TRUNCATION
+// DESCRIPTION TRUNCATION - FIXED VERSION
 function truncateDescription(text, maxLength = 120) {
-    if (!text || text.length <= maxLength) {
+    if (!text) {
         return text;
     }
     
-    const truncated = text.substring(0, maxLength);
-    const lastSpace = truncated.lastIndexOf(' ');
+    // Clean up any existing ellipses or truncation indicators, but keep the original length intent
+    const cleanText = text.replace(/\s*\.{2,}\s*.*$/, '').trim();
     
-    if (lastSpace > 0) {
-        return text.substring(0, lastSpace) + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
+    // If the original text was longer than maxLength, we should still truncate
+    // even if the cleaned version is shorter
+    const shouldTruncate = text.length > maxLength || cleanText.length > maxLength;
+    
+    if (!shouldTruncate) {
+        return cleanText;
     }
     
-    return truncated + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
+    // If cleanText is still too long, truncate it
+    if (cleanText.length > maxLength) {
+        const truncated = cleanText.substring(0, maxLength);
+        const lastSpace = truncated.lastIndexOf(' ');
+        
+        if (lastSpace > 0) {
+            return cleanText.substring(0, lastSpace) + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
+        }
+        
+        return truncated + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
+    }
+    
+    // If cleanText is short enough but original was long, add ellipses
+    return cleanText + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
 }
 
 function initializeDescriptionTruncation() {
@@ -745,6 +761,43 @@ function initializeDescriptionTruncation() {
         }
     });
 }
+
+// Alternative approach - more robust cleaning
+function truncateDescriptionAdvanced(text, maxLength = 120) {
+    if (!text || text.length <= maxLength) {
+        return text;
+    }
+    
+    // Remove various truncation patterns that might already exist
+    const cleanText = text
+        .replace(/\s*\.{2,}.*$/, '')  // Remove existing ellipses and everything after
+        .replace(/\s*….*$/, '')       // Remove unicode ellipsis and everything after
+        .replace(/\s*\[.*?\].*$/, '') // Remove bracketed content like [Read More]
+        .replace(/\s*<.*?>.*$/, '')   // Remove HTML tags and content after
+        .trim();
+    
+    if (cleanText.length <= maxLength) {
+        return cleanText;
+    }
+    
+    const truncated = cleanText.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    const lastPunctuation = Math.max(
+        truncated.lastIndexOf('.'),
+        truncated.lastIndexOf('!'),
+        truncated.lastIndexOf('?')
+    );
+    
+    // Try to break at punctuation first, then space
+    let breakPoint = lastPunctuation > maxLength - 20 ? lastPunctuation + 1 : lastSpace;
+    
+    if (breakPoint > 0) {
+        return cleanText.substring(0, breakPoint).trim() + ' ...<span class="read-more-link"><strong>Read More</strong></span>';
+    }
+    
+    return truncated + ' ...<span class="read-more-link"><strong>Read More</strong></span>';
+}
+
 
 // AutocompleteMultiSelect class (keeping the original)
 class AutocompleteMultiSelect {
@@ -1507,31 +1560,71 @@ function addTagColorStyles() {
        
         @media (max-width: 768px) {
             .resource-card {
-                min-width: 350px !important;
+                min-width: 280px !important;
                 max-width: 100% !important;
                 min-height: 300px !important;
-                padding: 20px !important;
+                padding: 16px !important;
             }
            
             .resources-grid {
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
-                gap: 20px !important;
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+                padding: 16px 0;
             }
             
-            /* Even smaller tags on mobile */
+            /* Much smaller tags on mobile */
             .resource-card .meta-tag,
             .resource-card .price-tag,
             .colored-tag {
-                max-width: 140px;
-                font-size: 11px !important;
-                padding: 5px 10px !important;
-                min-height: 28px !important;
+                max-width: 100px !important;
+                font-size: 8px !important;
+                padding: 3px 8px !important;
+                min-height: 24px !important;
+                margin: 2px 4px 2px 0 !important;
+                border-radius: 12px !important;
             }
             
             .topic-value span {
-                font-size: 11px !important;
-                padding: 5px 10px !important;
-                min-height: 28px !important;
+                font-size: 8px !important;
+                padding: 3px 8px !important;
+                min-height: 24px !important;
+                max-width: 100px !important;
+                border-radius: 12px !important;
+            }
+            
+            .topic-label {
+                font-size: 12px !important;
+            }
+            
+            .product-topic {
+                gap: 4px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .resource-card {
+                min-width: 250px !important;
+                padding: 12px !important;
+            }
+            
+            /* Even smaller tags for very small screens */
+            .resource-card .meta-tag,
+            .resource-card .price-tag,
+            .colored-tag {
+                max-width: 80px !important;
+                font-size: 7px !important;
+                padding: 2px 6px !important;
+                min-height: 20px !important;
+                margin: 1px 3px 1px 0 !important;
+                border-radius: 10px !important;
+            }
+            
+            .topic-value span {
+                font-size: 7px !important;
+                padding: 2px 6px !important;
+                min-height: 20px !important;
+                max-width: 80px !important;
+                border-radius: 10px !important;
             }
         }
     `;
@@ -1563,7 +1656,6 @@ function createColoredTag(text, type) {
    
     return tag;
 }
-
 // Enhanced function to rebuild resource cards with proper color coding
 
 
