@@ -792,10 +792,10 @@ function truncateDescriptionAdvanced(text, maxLength = 120) {
     let breakPoint = lastPunctuation > maxLength - 20 ? lastPunctuation + 1 : lastSpace;
     
     if (breakPoint > 0) {
-        return cleanText.substring(0, breakPoint).trim() + ' ...<span class="read-more-link"><strong>Read More</strong></span>';
+        return cleanText.substring(0, breakPoint).trim() + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
     }
     
-    return truncated + ' ...<span class="read-more-link"><strong>Read More</strong></span>';
+    return truncated + ' ... <span class="read-more-link"><strong>Read More</strong></span>';
 }
 
 
