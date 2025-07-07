@@ -1110,4 +1110,47 @@
         .filter-tag i {
             margin-right: 8px;
         }
+    .csta-banner {
+    background: #000000;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.csta-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.csta-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.csta-logo img {
+    height: 60px;
+    width: auto;
+}
+
+@media (max-width: 768px) {
+    .csta-banner {
+        padding: 30px 16px;
+    }
     
+    .csta-text {
+        font-size: 1rem;
+    }
+    
+    .csta-logo img {
+        height: 50px;
+    }
+}
+a {
+            
+    color: #e91e63;
+}
