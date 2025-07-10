@@ -150,26 +150,25 @@
                     </label>
                     <div id="standardsAutocomplete" class="autocomplete-container"></div>
                 </div>
+                
                 <div class="filter-group">
-    <label class="filter-label-with-indicator">
-        <span class="filter-label-indicator topic">⭕</span>
-        Topic
-    </label>
-    <div id="topicAutocomplete" class="autocomplete-container"></div>
-</div>
-            </div>
-
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="sortBy">Sort By</label>
-                    <select id="sortBy">
-                        <option value="name-asc">Name (A-Z)</option>
-                        <option value="name-desc">Name (Z-A)</option>
-                        <option value="rating-desc">Rating (High to Low)</option>
-                        <option value="rating-asc">Rating (Low to High)</option>
-                    </select>
+                    <label class="filter-label-with-indicator">
+                        <span class="filter-label-indicator topic">⭕</span>
+                        Topic
+                    </label>
+                    <div id="topicAutocomplete" class="autocomplete-container"></div>
                 </div>
             </div>
+
+    <div class="filter-group">
+    <label for="sortBy">Sort By</label>
+    <select id="sortBy">
+        <option value="name-asc">Name (A-Z)</option>
+        <option value="name-desc">Name (Z-A)</option>
+        <option value="rating-desc">Rating (High to Low)</option>
+        <option value="rating-asc">Rating (Low to High)</option>
+    </select>
+</div>
 
             <button class="clear-filters" onclick="clearAllFilters()">Clear All Filters</button>
         </div>
@@ -185,17 +184,32 @@
 
         <div class="resources-grid" id="resourcesGrid">
             <% if (Requests && Requests.length > 0) { %>
-                <% Requests.filter(request => request.isApproved).forEach(request => { %>
+                <% Requests.filter(request => request.isApproved).forEach((request, index) => { %>
                     <% 
-                        // Get rating data for this request (assuming it's passed from server)
+                        // Get rating data for this request
                         const ratingData = request.ratingData || { averageRating: 0, reviewCount: 0 };
                         const averageRating = ratingData.averageRating || 0;
                         const reviewCount = ratingData.reviewCount || 0;
-                    %>
-                    <div class="resource-card" data-resource='<%- JSON.stringify(request) %>' data-rating="<%= averageRating %>" data-review-count="<%= reviewCount %>">
-                        <h3><%= request.ProductName %></h3>
                         
-                        <!-- Rating Display - Server Side Rendered -->
+                        // Safely escape JSON for data attributes
+                        const escapedResourceData = JSON.stringify(request).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    %>
+                    <div class="resource-card" 
+                         id="<%= request._id %>"
+                         data-resource='<%= escapedResourceData %>'
+                         data-rating="<%= averageRating %>"
+                         data-review-count="<%= reviewCount %>"
+                         data-name="<%= request.ProductName %>"
+                         data-type="<%= request.ProductType %>"
+                         data-grade="<%= request.GradeLevel %>"
+                         data-price="<%= request.Price %>"
+                         data-languages="<%= request.SupportedLanguages || '' %>"
+                         data-standards="<%= request.StandardAlignment || '' %>"
+                         data-topic="<%= request.Topic || '' %>">
+                        
+                        <h3 class="resource-title"><%= request.ProductName %></h3>
+                        
+                        <!-- Rating Display -->
                         <div class="rating-display">
                             <% if (reviewCount > 0) { %>
                                 <div class="rating-stars">
@@ -213,10 +227,10 @@
                         
                         <p class="description"><%= request.Description %></p>
                         
-<div class="product-topic">
-    <span class="topic-label">Topic:</span>
-    <span class="topic-value"><%= request.Topic %></span>
-</div>
+                        <div class="product-topic">
+                            <span class="topic-label">Topic:</span>
+                            <span class="topic-value"><%= request.Topic %></span>
+                        </div>
 
                         <div class="resource-meta">
                             <span class="meta-tag"><%= request.ProductType %></span>
@@ -253,19 +267,17 @@
         </div>
     </div>
 
-        <footer>
+    <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-about">
-                    <a href="#" class="footer-logo">
-    CS Match
-</a>
-
+                    <a href="#" class="footer-logo">CS Match</a>
                     <p>Our mission is to empower computer science educators with high-quality, vetted resources to enhance teaching and learning experiences.</p>
-                   <p>Contact us: 📧 shilpa.agrawal@compscihigh.org</p>
+                    <p>Contact us: 📧 shilpa.agrawal@compscihigh.org</p>
+                </div>
             </div>
             <div class="footer-bottom">
-<p>© 2025 CS Match. All rights reserved.</p>
+                <p>© 2025 CS Match. All rights reserved.</p>
                 <p>Made with ❤️ for CS educators worldwide</p>
             </div>
         </div>
@@ -295,5 +307,68 @@
         </div>
     </div>
 
+    <script>
+        // Basic sorting functionality if library.js is not available
+        if (typeof window.sortResources === 'undefined') {
+            document.getElementById('sortBy').addEventListener('change', function() {
+                const sortValue = this.value;
+                const resourcesGrid = document.getElementById('resourcesGrid');
+                const cards = Array.from(resourcesGrid.querySelectorAll('.resource-card'));
+                
+                cards.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortValue) {
+                        case 'name-asc':
+                            aValue = a.getAttribute('data-name').toLowerCase();
+                            bValue = b.getAttribute('data-name').toLowerCase();
+                            return aValue.localeCompare(bValue);
+                        case 'name-desc':
+                            aValue = a.getAttribute('data-name').toLowerCase();
+                            bValue = b.getAttribute('data-name').toLowerCase();
+                            return bValue.localeCompare(aValue);
+                        case 'rating-desc':
+                            aValue = parseFloat(a.getAttribute('data-rating')) || 0;
+                            bValue = parseFloat(b.getAttribute('data-rating')) || 0;
+                            return bValue - aValue;
+                        case 'rating-asc':
+                            aValue = parseFloat(a.getAttribute('data-rating')) || 0;
+                            bValue = parseFloat(b.getAttribute('data-rating')) || 0;
+                            return aValue - bValue;
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Clear and re-append sorted cards
+                resourcesGrid.innerHTML = '';
+                cards.forEach(card => resourcesGrid.appendChild(card));
+            });
+        }
+
+        // Basic clear filters functionality if not available
+        if (typeof window.clearAllFilters === 'undefined') {
+            function clearAllFilters() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('priceFilter').value = '';
+                document.getElementById('sortBy').value = 'name-asc';
+                
+                // Clear autocomplete fields if they exist
+                const autocompleteContainers = document.querySelectorAll('.autocomplete-container');
+                autocompleteContainers.forEach(container => {
+                    const input = container.querySelector('input');
+                    if (input) input.value = '';
+                });
+                
+                // Show all cards
+                const cards = document.querySelectorAll('.resource-card');
+                cards.forEach(card => card.style.display = 'block');
+                
+                // Update results count
+                const resultsCount = document.getElementById('resultsCount');
+                resultsCount.textContent = `Showing ${cards.length} approved resource${cards.length !== 1 ? 's' : ''}`;
+            }
+        }
+    </script>
 </body>
 </html>

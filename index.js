@@ -8,7 +8,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(__dirname + "/public")); 
 app.use("/indy", express.static(__dirname + "/public")); // Add this for /indy/ prefixed files
-
+app.use(express.static(__dirname + '/public', {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+    }
+}));
 app.use((req, res, next) => {
     console.log(`${req.method}: ${req.path}`);
     next();
@@ -56,41 +62,56 @@ app.get("/admin", async (req, res) => {
     res.render("admin.ejs", { Requests } );
 })
 
-// UPDATED: Library route with rating calculations
+// FIXED: Library route with proper rating calculations
 app.get("/library", async (req, res) => {
     try {
         // Only get approved requests
-        const requests = await Request.find({ isApproved: true });
+        const requests = await Request.find({ isApproved: true }).lean();
+        console.log(`Found ${requests.length} approved requests for library`);
         
         // Calculate ratings for each request
-        for (let request of requests) {
-            // FIXED: Use RequestId instead of resourceId to match your schema
-            const comments = await Comment.find({ RequestId: request._id });
-            const ratingsWithScores = comments.filter(comment => 
-                comment.rating !== null && comment.rating !== undefined
-            );
-            
-            if (ratingsWithScores.length > 0) {
-                const averageRating = ratingsWithScores.reduce((sum, comment) => 
-                    sum + comment.rating, 0) / ratingsWithScores.length;
-                
-                // Add rating data to the request object
-                request.ratingData = {
-                    averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
-                    reviewCount: ratingsWithScores.length
-                };
-            } else {
-                request.ratingData = {
-                    averageRating: 0,
-                    reviewCount: 0
-                };
-            }
-        }
+        const requestsWithRatings = await Promise.all(
+            requests.map(async (request) => {
+                try {
+                    const comments = await Comment.find({ RequestId: request._id });
+                    const ratingsWithScores = comments.filter(comment => 
+                        comment.rating !== null && comment.rating !== undefined
+                    );
+                    
+                    if (ratingsWithScores.length > 0) {
+                        const averageRating = ratingsWithScores.reduce((sum, comment) => 
+                            sum + comment.rating, 0) / ratingsWithScores.length;
+                        
+                        // Add rating data to the request object
+                        request.ratingData = {
+                            averageRating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+                            reviewCount: ratingsWithScores.length
+                        };
+                    } else {
+                        request.ratingData = {
+                            averageRating: 0,
+                            reviewCount: 0
+                        };
+                    }
+                    
+                    return request;
+                } catch (error) {
+                    console.error(`Error processing ratings for request ${request._id}:`, error);
+                    request.ratingData = {
+                        averageRating: 0,
+                        reviewCount: 0
+                    };
+                    return request;
+                }
+            })
+        );
+        
+        console.log(`Processed ${requestsWithRatings.length} requests with ratings`);
         
         // Get all comments for backward compatibility (if needed by your EJS template)
         const Comments = await Comment.find({}).sort({ createdAt: -1 });
         
-        res.render('library.ejs', { Requests: requests, Comments });
+        res.render('library.ejs', { Requests: requestsWithRatings, Comments });
     } catch (error) {
         console.error('Error loading library with ratings:', error);
         res.status(500).send('Server error');
@@ -100,14 +121,17 @@ app.get("/library", async (req, res) => {
 // FIXED: Admin-specific routes with /admin prefix
 app.patch("/admin/approve/:_id", async (req, res) => {
     try {
+        console.log(`Approving request with ID: ${req.params._id}`);
         const response = await Request.findOneAndUpdate(
             {_id: req.params._id}, 
             {isApproved: true}, 
             {new: true}
         );
         if (!response) {
+            console.log(`Request not found for ID: ${req.params._id}`);
             return res.status(404).json({ error: 'Request not found' });
         }
+        console.log(`Successfully approved request: ${response.ProductName}`);
         res.json(response);
     } catch (error) {
         console.error('Error approving request:', error);
@@ -117,14 +141,17 @@ app.patch("/admin/approve/:_id", async (req, res) => {
 
 app.patch("/admin/reject/:_id", async (req, res) => {
     try {
+        console.log(`Rejecting request with ID: ${req.params._id}`);
         const response = await Request.findOneAndUpdate(
             {_id: req.params._id}, 
             {isApproved: false}, 
             {new: true}
         );
         if (!response) {
+            console.log(`Request not found for ID: ${req.params._id}`);
             return res.status(404).json({ error: 'Request not found' });
         }
+        console.log(`Successfully rejected request: ${response.ProductName}`);
         res.json(response);
     } catch (error) {
         console.error('Error rejecting request:', error);
@@ -147,16 +174,40 @@ app.delete("/admin/delete/:_id", async (req, res) => {
 
 // Keep the old routes for backward compatibility
 app.patch("/approve/:_id", async (req, res) => {
-    const response = await Request.findOneAndUpdate({_id: req.params._id}, {isApproved: true}, {new: true}
-    )
-    res.json(response);
-})
+    try {
+        console.log(`Approving request (legacy route) with ID: ${req.params._id}`);
+        const response = await Request.findOneAndUpdate(
+            {_id: req.params._id}, 
+            {isApproved: true}, 
+            {new: true}
+        );
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        console.log(`Successfully approved request (legacy): ${response.ProductName}`);
+        res.json(response);
+    } catch (error) {
+        console.error('Error approving request (legacy):', error);
+        res.status(500).json({ error: 'Failed to approve request' });
+    }
+});
 
 app.patch("/disapprove/:_id", async (req, res) => {
-    const response = await Request.findOneAndUpdate({_id: req.params._id}, {isApproved: false}, {new: true}
-    )
-    res.json(response);
-})
+    try {
+        const response = await Request.findOneAndUpdate(
+            {_id: req.params._id}, 
+            {isApproved: false}, 
+            {new: true}
+        );
+        if (!response) {
+            return res.status(404).json({ error: 'Request not found' });
+        }
+        res.json(response);
+    } catch (error) {
+        console.error('Error disapproving request:', error);
+        res.status(500).json({ error: 'Failed to disapprove request' });
+    }
+});
 
 // Single GET route for /indy/:id (removed duplicate)
 app.get("/indy/:id", async (req, res) => {
@@ -425,6 +476,20 @@ app.get("/rating/:id", async (req, res) => {
     } catch (error) {
         console.error('Error calculating rating:', error);
         res.status(500).json({ error: 'Failed to calculate rating' });
+    }
+});
+
+// ADDED: Debug route to check approved requests
+app.get("/debug/approved", async (req, res) => {
+    try {
+        const approvedRequests = await Request.find({ isApproved: true });
+        res.json({
+            count: approvedRequests.length,
+            requests: approvedRequests
+        });
+    } catch (error) {
+        console.error('Error fetching approved requests:', error);
+        res.status(500).json({ error: 'Failed to fetch approved requests' });
     }
 });
 

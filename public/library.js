@@ -38,49 +38,314 @@ function sortResources(resources, sortBy = currentSortBy, sortOrder = currentSor
                 aValue = (a.ProductName || '').toLowerCase();
                 bValue = (b.ProductName || '').toLowerCase();
                 break;
-            case 'rating':
-                // Get rating from the resource data - check multiple possible locations
-                aValue = parseFloat(a.ratingData?.averageRating || a.averageRating || a.Rating || 0);
-                bValue = parseFloat(b.ratingData?.averageRating || b.averageRating || b.Rating || 0);
                 
-                // If we still don't have rating data, try to get it from the DOM
+            case 'rating':
+                // Try multiple ways to get rating data
+                aValue = 0;
+                bValue = 0;
+                
+                // First try from the resource object itself
+                if (a.ratingData && a.ratingData.averageRating) {
+                    aValue = parseFloat(a.ratingData.averageRating);
+                } else if (a.averageRating) {
+                    aValue = parseFloat(a.averageRating);
+                } else if (a.Rating) {
+                    aValue = parseFloat(a.Rating);
+                }
+                
+                if (b.ratingData && b.ratingData.averageRating) {
+                    bValue = parseFloat(b.ratingData.averageRating);
+                } else if (b.averageRating) {
+                    bValue = parseFloat(b.averageRating);
+                } else if (b.Rating) {
+                    bValue = parseFloat(b.Rating);
+                }
+                
+                // If still no rating data, try to get it from the DOM
                 if (aValue === 0 && bValue === 0) {
-                    const aCard = document.querySelector(`[data-resource*='"_id":"${a._id}"']`);
-                    const bCard = document.querySelector(`[data-resource*='"_id":"${b._id}"']`);
-                    
-                    if (aCard) aValue = parseFloat(aCard.dataset.rating) || 0;
-                    if (bCard) bValue = parseFloat(bCard.dataset.rating) || 0;
+                    try {
+                        const aCard = document.querySelector(`[data-resource*='"_id":"${a._id}"']`);
+                        const bCard = document.querySelector(`[data-resource*='"_id":"${b._id}"']`);
+                        
+                        if (aCard && aCard.dataset.rating) {
+                            aValue = parseFloat(aCard.dataset.rating) || 0;
+                        }
+                        if (bCard && bCard.dataset.rating) {
+                            bValue = parseFloat(bCard.dataset.rating) || 0;
+                        }
+                    } catch (e) {
+                        console.warn('Could not get rating from DOM:', e);
+                    }
+                }
+                
+                // Ensure we have valid numbers
+                aValue = isNaN(aValue) ? 0 : aValue;
+                bValue = isNaN(bValue) ? 0 : bValue;
+                break;
+                
+            case 'price':
+                // Handle price sorting - Free comes first (0), then numeric values
+                const aPrice = a.Price || '';
+                const bPrice = b.Price || '';
+                
+                if (aPrice === 'Free') {
+                    aValue = 0;
+                } else if (aPrice === '' || aPrice === 'N/A') {
+                    aValue = 999999; // Put empty/unknown prices at the end
+                } else {
+                    // Extract numeric value from price string
+                    const numericPrice = aPrice.toString().replace(/[^0-9.-]+/g, '');
+                    aValue = parseFloat(numericPrice) || 999999;
+                }
+                
+                if (bPrice === 'Free') {
+                    bValue = 0;
+                } else if (bPrice === '' || bPrice === 'N/A') {
+                    bValue = 999999;
+                } else {
+                    const numericPrice = bPrice.toString().replace(/[^0-9.-]+/g, '');
+                    bValue = parseFloat(numericPrice) || 999999;
                 }
                 break;
-            case 'price':
-                // Handle price sorting - Free comes first, then numeric values
-                aValue = a.Price === 'Free' ? 0 : parseFloat(a.Price?.replace(/[^0-9.-]+/g, '')) || 999999;
-                bValue = b.Price === 'Free' ? 0 : parseFloat(b.Price?.replace(/[^0-9.-]+/g, '')) || 999999;
-                break;
+                
             default:
                 aValue = (a.ProductName || '').toLowerCase();
                 bValue = (b.ProductName || '').toLowerCase();
         }
         
         // Handle comparison based on sort order
-        if (sortBy === 'rating') {
-            // For rating, handle the comparison properly
-            if (sortOrder === 'desc') {
-                return bValue - aValue; // Higher ratings first
+        if (sortBy === 'name') {
+            // String comparison
+            if (sortOrder === 'asc') {
+                return aValue.localeCompare(bValue);
             } else {
-                return aValue - bValue; // Lower ratings first
+                return bValue.localeCompare(aValue);
             }
         } else {
-            // For text and price sorting
-            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-            return 0;
+            // Numeric comparison (rating, price)
+            if (sortOrder === 'asc') {
+                return aValue - bValue;
+            } else {
+                return bValue - aValue;
+            }
         }
     });
     
     return sorted;
 }
 
+// ========================
+// ENHANCED DISPLAY FUNCTION
+// ========================
+function displayResources(resources) {
+    const resourcesGrid = document.getElementById('resourcesGrid');
+    const noResults = document.getElementById('noResults');
+    const resultsCount = document.getElementById('resultsCount');
+    
+    if (!resourcesGrid) {
+        console.error('Resources grid element not found');
+        return;
+    }
+    
+    // Update results count
+    if (resultsCount) {
+        resultsCount.textContent = `Showing ${resources.length} approved resource${resources.length !== 1 ? 's' : ''}`;
+    }
+    
+    // Show/hide no results message
+    if (noResults) {
+        noResults.style.display = resources.length === 0 ? 'block' : 'none';
+    }
+    
+    // Clear existing content
+    resourcesGrid.innerHTML = '';
+    
+    // If no resources, return early
+    if (resources.length === 0) {
+        resourcesGrid.style.display = 'none';
+        return;
+    }
+    
+    resourcesGrid.style.display = 'grid';
+    
+    // Create and append resource cards
+    resources.forEach(resource => {
+        const card = createResourceCard(resource);
+        if (card) {
+            resourcesGrid.appendChild(card);
+        }
+    });
+}
+
+function createResourceCard(resource) {
+    try {
+        const card = document.createElement('div');
+        card.className = 'resource-card';
+        card.id = resource._id;
+        
+        // Get rating data
+        const ratingData = resource.ratingData || { averageRating: 0, reviewCount: 0 };
+        const averageRating = ratingData.averageRating || 0;
+        const reviewCount = ratingData.reviewCount || 0;
+        
+        // Set data attributes
+        card.setAttribute('data-resource', JSON.stringify(resource));
+        card.setAttribute('data-rating', averageRating.toString());
+        card.setAttribute('data-review-count', reviewCount.toString());
+        card.setAttribute('data-name', resource.ProductName || '');
+        card.setAttribute('data-type', resource.ProductType || '');
+        card.setAttribute('data-grade', resource.GradeLevel || '');
+        card.setAttribute('data-price', resource.Price || '');
+        card.setAttribute('data-languages', resource.SupportedLanguages || '');
+        card.setAttribute('data-standards', resource.StandardAlignment || '');
+        card.setAttribute('data-topic', resource.Topic || '');
+        
+        // Create rating stars HTML
+        let ratingStarsHtml = '';
+        if (reviewCount > 0) {
+            for (let i = 1; i <= 5; i++) {
+                const starClass = i <= Math.round(averageRating) ? 'rating-star' : 'rating-star empty';
+                ratingStarsHtml += `<span class="${starClass}">★</span>`;
+            }
+        }
+        
+        // Create supported languages HTML
+        let languagesHtml = '';
+        if (resource.SupportedLanguages) {
+            const languages = resource.SupportedLanguages.split(',');
+            languagesHtml = languages.map(lang => `<span class="meta-tag">${lang.trim()}</span>`).join('');
+        }
+        
+        // Build card HTML
+        card.innerHTML = `
+            <h3 class="resource-title">${resource.ProductName || 'Untitled Resource'}</h3>
+            
+            <div class="rating-display">
+                ${reviewCount > 0 ? `
+                    <div class="rating-stars">
+                        ${ratingStarsHtml}
+                    </div>
+                    <span class="rating-text">
+                        ${averageRating.toFixed(1)} (${reviewCount} review${reviewCount !== 1 ? 's' : ''})
+                    </span>
+                ` : `
+                    <span class="no-rating">No reviews yet</span>
+                `}
+            </div>
+            
+            <p class="description">${resource.Description || 'No description available'}</p>
+            
+            ${resource.Topic ? `
+                <div class="product-topic">
+                    <span class="topic-label">Topic:</span>
+                    <span class="topic-value">${resource.Topic}</span>
+                </div>
+            ` : ''}
+            
+            <div class="resource-meta">
+                <span class="meta-tag">${resource.ProductType || 'Unknown Type'}</span>
+                <span class="meta-tag">${resource.GradeLevel || 'All Grades'}</span>
+                <span class="price-tag">${resource.Price || 'Price Not Available'}</span>
+            </div>
+            
+            ${languagesHtml ? `
+                <div class="resource-meta">
+                    ${languagesHtml}
+                </div>
+            ` : ''}
+            
+            ${resource.StandardAlignment ? `
+                <div class="standard-alignment">
+                    <strong>Standards:</strong> ${resource.StandardAlignment}
+                </div>
+            ` : ''}
+            
+            <div class="card-actions">
+                <a href="/indy/${resource._id}" class="btn btn-primary">Learn More</a>
+                ${resource.Website ? `
+                    <a href="${resource.Website}" target="_blank" class="btn btn-outline">Visit Website</a>
+                ` : ''}
+            </div>
+        `;
+        
+        return card;
+    } catch (error) {
+        console.error('Error creating resource card:', error, resource);
+        return null;
+    }
+}
+
+// ========================
+// BACKUP SORTING FOR HTML FALLBACK
+// ========================
+// This runs if the main library.js isn't loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Only run if the main sorting function isn't available
+    if (typeof window.sortResources === 'undefined') {
+        const sortSelect = document.getElementById('sortBy');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                const resourcesGrid = document.getElementById('resourcesGrid');
+                if (!resourcesGrid) return;
+                
+                const cards = Array.from(resourcesGrid.querySelectorAll('.resource-card'));
+                
+                cards.sort((a, b) => {
+                    let aValue, bValue;
+                    
+                    switch(sortValue) {
+                        case 'name-asc':
+                            aValue = (a.getAttribute('data-name') || '').toLowerCase();
+                            bValue = (b.getAttribute('data-name') || '').toLowerCase();
+                            return aValue.localeCompare(bValue);
+                            
+                        case 'name-desc':
+                            aValue = (a.getAttribute('data-name') || '').toLowerCase();
+                            bValue = (b.getAttribute('data-name') || '').toLowerCase();
+                            return bValue.localeCompare(aValue);
+                            
+                        case 'rating-desc':
+                            aValue = parseFloat(a.getAttribute('data-rating')) || 0;
+                            bValue = parseFloat(b.getAttribute('data-rating')) || 0;
+                            return bValue - aValue;
+                            
+                        case 'rating-asc':
+                            aValue = parseFloat(a.getAttribute('data-rating')) || 0;
+                            bValue = parseFloat(b.getAttribute('data-rating')) || 0;
+                            return aValue - bValue;
+                            
+                        case 'price-asc':
+                            aValue = getPriceValue(a.getAttribute('data-price'));
+                            bValue = getPriceValue(b.getAttribute('data-price'));
+                            return aValue - bValue;
+                            
+                        case 'price-desc':
+                            aValue = getPriceValue(a.getAttribute('data-price'));
+                            bValue = getPriceValue(b.getAttribute('data-price'));
+                            return bValue - aValue;
+                            
+                        default:
+                            return 0;
+                    }
+                });
+                
+                // Clear and re-append sorted cards
+                resourcesGrid.innerHTML = '';
+                cards.forEach(card => resourcesGrid.appendChild(card));
+            });
+        }
+    }
+});
+
+function getPriceValue(priceString) {
+    if (!priceString) return 999999;
+    if (priceString === 'Free') return 0;
+    if (priceString === 'N/A' || priceString === '') return 999999;
+    
+    const numericPrice = priceString.replace(/[^0-9.-]+/g, '');
+    return parseFloat(numericPrice) || 999999;
+}
 // ========================
 // ENHANCED FILTER LOGIC WITH SORTING
 // ========================
@@ -420,54 +685,7 @@ function parseCommaSeparatedValues(value) {
 // ========================
 // RESOURCE FILTERING FUNCTIONALITY (UPDATED)
 // ========================
-function initializeResourceFiltering() {
-    const allResourceElements = document.querySelectorAll('.resource-card');
-    const allResources = Array.from(allResourceElements).map(card => {
-        try {
-            const resourceData = JSON.parse(card.dataset.resource);
-            
-            // Add rating data from DOM attributes if available
-            if (card.dataset.rating) {
-                resourceData.averageRating = parseFloat(card.dataset.rating);
-            }
-            if (card.dataset.reviewCount) {
-                resourceData.reviewCount = parseInt(card.dataset.reviewCount);
-            }
-            
-            return resourceData;
-        } catch (e) {
-            console.error('Error parsing resource data:', e);
-            return null;
-        }
-    }).filter(resource => resource !== null);
 
-    console.log('Initialized with', allResources.length, 'resources');
-
-    // Sort resources by name initially (default sort)
-    const sortedResources = sortResources(allResources);
-    
-    // Store sorted resources globally for filtering
-    window.allResources = sortedResources;
-    
-    // Make filter functions available globally
-    window.applyFilters = applyFilters;
-    window.clearAllFilters = clearAllFilters;
-
-    // Initialize event listeners for basic filters
-    const searchInput = document.getElementById('searchInput');
-    const priceFilter = document.getElementById('priceFilter');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', debounce(applyFilters, 300));
-    }
-    
-    if (priceFilter) {
-        priceFilter.addEventListener('change', applyFilters);
-    }
-
-    // Display sorted resources initially
-    displayResources(sortedResources);
-}
 
 // ========================
 // CLEAR FILTERS FUNCTION (UPDATED)
@@ -515,8 +733,126 @@ function clearAllFilters() {
 
 // Helper function to parse comma-separated values consistently
 
+// ========================
+// DEBUG RESOURCE INITIALIZATION (ENHANCED)
+// ========================
+function initializeResourceFiltering() {
+    console.log('=== DEBUGGING RESOURCE INITIALIZATION ===');
+    
+    const allResourceElements = document.querySelectorAll('.resource-card');
+    console.log(`Found ${allResourceElements.length} resource card elements in DOM`);
+    
+    const allResources = [];
+    const failedResources = [];
+    
+    // First create a map of DOM elements by their visible product names
+    const domElementsMap = {};
+    Array.from(allResourceElements).forEach((card, index) => {
+        const productName = card.querySelector('h3')?.textContent.trim();
+        if (productName) {
+            domElementsMap[productName] = card;
+        }
+    });
+    
+    // Now process the server-side rendered data
+    Array.from(allResourceElements).forEach((card, index) => {
+        try {
+            let resourceData;
+            
+            // Try to parse the resource data from dataset
+            if (card.dataset.resource) {
+                try {
+                    resourceData = JSON.parse(card.dataset.resource);
+                } catch (e) {
+                    console.warn(`Failed to parse resource ${index} from dataset:`, e);
+                    // Fallback to creating from DOM
+                    const productName = card.querySelector('h3')?.textContent.trim();
+                    resourceData = {
+                        _id: `dom_${index}`,
+                        ProductName: productName || `Resource ${index}`,
+                        ProductType: card.querySelector('.resource-meta .meta-tag:nth-child(1)')?.textContent || '',
+                        GradeLevel: card.querySelector('.resource-meta .meta-tag:nth-child(2)')?.textContent || '',
+                        Price: card.querySelector('.price-tag')?.textContent || '',
+                        Description: card.querySelector('.description')?.textContent || '',
+                        SupportedLanguages: Array.from(card.querySelectorAll('.resource-meta:nth-child(4) .meta-tag')).map(tag => tag.textContent).join(', '),
+                        StandardAlignment: card.querySelector('.standard-alignment')?.textContent.replace('Standards:', '').trim() || '',
+                        Topic: card.querySelector('.topic-value')?.textContent || '',
+                        Website: card.querySelector('.card-actions a[target="_blank"]')?.href || ''
+                    };
+                }
+            } else {
+                // Create minimal resource from DOM
+                const productName = card.querySelector('h3')?.textContent.trim();
+                resourceData = {
+                    _id: `dom_${index}`,
+                    ProductName: productName || `Resource ${index}`,
+                    // Add other minimal required fields
+                    ProductType: '',
+                    GradeLevel: '',
+                    Price: '',
+                    Description: '',
+                    SupportedLanguages: '',
+                    StandardAlignment: '',
+                    Topic: ''
+                };
+            }
+            
+            // Add rating data from DOM attributes if available
+            if (card.dataset.rating) {
+                resourceData.averageRating = parseFloat(card.dataset.rating);
+            }
+            if (card.dataset.reviewCount) {
+                resourceData.reviewCount = parseInt(card.dataset.reviewCount);
+            }
+            
+            console.log(`✓ Resource ${index} processed:`, {
+                id: resourceData._id,
+                name: resourceData.ProductName
+            });
+            
+            allResources.push(resourceData);
+            
+        } catch (e) {
+            console.error(`✗ Error processing resource card ${index}:`, e);
+            failedResources.push({ index, reason: 'Processing Error', error: e });
+        }
+    });
+
+    console.log(`=== RESOURCE PARSING RESULTS ===`);
+    console.log(`✓ Successfully processed: ${allResources.length} resources`);
+    console.log(`✗ Failed to process: ${failedResources.length} resources`);
+    
+    if (failedResources.length > 0) {
+        console.log('Failed resources details:', failedResources);
+    }
+
+    // Store resources globally for filtering
+    window.allResources = allResources;
+    window.domElementsMap = domElementsMap;
+    
+    // Initialize event listeners for basic filters
+    const searchInput = document.getElementById('searchInput');
+    const priceFilter = document.getElementById('priceFilter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(applyFilters, 300));
+    }
+    
+    if (priceFilter) {
+        priceFilter.addEventListener('change', applyFilters);
+    }
+
+    // Display all resources initially
+    console.log('Displaying initial resources...');
+    displayResources(allResources);
+    
+    console.log('=== INITIALIZATION COMPLETE ===');
+}
 
 function displayResources(resources) {
+    console.log('=== DISPLAYING RESOURCES ===');
+    console.log(`Attempting to display ${resources.length} resources`);
+    
     const grid = document.getElementById('resourcesGrid');
     const noResults = document.getElementById('noResults');
     const resultsCount = document.getElementById('resultsCount');
@@ -532,41 +868,108 @@ function displayResources(resources) {
         card.style.display = 'none';
     });
 
-    // Show filtered resources in the correct order
+    // Show filtered resources
     let visibleCount = 0;
-    const gridContainer = grid;
     
-    // Clear the grid and re-append cards in sorted order
-    resources.forEach(resource => {
-        const matchingCard = Array.from(allResourceElements).find(card => {
-            try {
-                const cardData = JSON.parse(card.dataset.resource);
-                return cardData._id === resource._id;
-            } catch (e) {
-                return false;
-            }
-        });
+    resources.forEach((resource, index) => {
+        // Try to find matching DOM element by product name
+        const matchingCard = window.domElementsMap[resource.ProductName];
         
         if (matchingCard) {
             matchingCard.style.display = 'block';
-            // Re-append to maintain sort order
-            gridContainer.appendChild(matchingCard);
             visibleCount++;
+            console.log(`✓ Displayed resource ${index}: ${resource.ProductName}`);
+        } else {
+            console.warn(`✗ Could not find DOM element for resource: ${resource.ProductName || 'Unknown'} (ID: ${resource._id || 'none'})`);
         }
     });
 
+    console.log(`=== DISPLAY RESULTS ===`);
+    console.log(`✓ Successfully displayed: ${visibleCount} resources`);
+    console.log(`✗ Could not find DOM elements for: ${resources.length - visibleCount} resources`);
+    
     // Update UI
     resultsCount.textContent = `Showing ${visibleCount} resource${visibleCount !== 1 ? 's' : ''}`;
-
-    if (visibleCount === 0) {
-        noResults.style.display = 'block';
-    } else {
-        noResults.style.display = 'none';
-    }
+    noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     
-    // Reinitialize description truncation for visible cards
-    initializeDescriptionTruncation();
+    console.log('=== DISPLAY COMPLETE ===');
 }
+
+// ========================
+// ENHANCED DISPLAY FUNCTION WITH DEBUGGING
+// ========================
+
+// ========================
+// DEBUG HELPER FUNCTIONS
+// ========================
+
+// Function to check resource-DOM alignment
+function debugResourceAlignment() {
+    console.log('=== DEBUGGING RESOURCE-DOM ALIGNMENT ===');
+    
+    const allResourceElements = document.querySelectorAll('.resource-card');
+    const domResourceIds = [];
+    
+    allResourceElements.forEach((card, index) => {
+        try {
+            const resourceData = JSON.parse(card.dataset.resource);
+            domResourceIds.push(resourceData._id);
+        } catch (e) {
+            console.error(`Failed to parse resource ${index}:`, e);
+        }
+    });
+    
+    const memoryResourceIds = window.allResources ? window.allResources.map(r => r._id) : [];
+    
+    console.log('DOM Resource IDs:', domResourceIds);
+    console.log('Memory Resource IDs:', memoryResourceIds);
+    
+    const inDOMNotMemory = domResourceIds.filter(id => !memoryResourceIds.includes(id));
+    const inMemoryNotDOM = memoryResourceIds.filter(id => !domResourceIds.includes(id));
+    
+    console.log('In DOM but not in memory:', inDOMNotMemory);
+    console.log('In memory but not in DOM:', inMemoryNotDOM);
+    
+    return {
+        domCount: domResourceIds.length,
+        memoryCount: memoryResourceIds.length,
+        inDOMNotMemory,
+        inMemoryNotDOM
+    };
+}
+
+// Function to get current display state
+function getDisplayState() {
+    const allCards = document.querySelectorAll('.resource-card');
+    const visibleCards = document.querySelectorAll('.resource-card[style*="display: block"], .resource-card:not([style*="display: none"])');
+    
+    console.log('=== CURRENT DISPLAY STATE ===');
+    console.log(`Total cards: ${allCards.length}`);
+    console.log(`Visible cards: ${visibleCards.length}`);
+    
+    return {
+        totalCards: allCards.length,
+        visibleCards: visibleCards.length,
+        hiddenCards: allCards.length - visibleCards.length
+    };
+}
+
+
+debugResourceAlignment()
+
+// Check current display state
+getDisplayState()
+
+// Get full debug info
+window.debugInfo
+
+// Export debug functions to window
+window.debugResourceDisplay = {
+    debugResourceAlignment,
+    getDisplayState,
+    getDebugInfo: () => window.debugInfo
+};
+
 
 function debounce(func, wait) {
     let timeout;
@@ -1133,9 +1536,24 @@ function rebuildResourceCardTags() {
    
     resourceCards.forEach(card => {
         try {
-            const resourceData = JSON.parse(card.dataset.resource);
+            let resourceData;
+            
+            // Try to parse the resource data
+            try {
+                resourceData = JSON.parse(card.dataset.resource);
+            } catch (e) {
+                // If parsing fails, create a minimal resource object from the visible DOM
+                resourceData = {
+                    ProductName: card.querySelector('h3')?.textContent || 'Unknown Resource',
+                    ProductType: card.querySelector('.resource-meta .meta-tag:nth-child(1)')?.textContent || '',
+                    GradeLevel: card.querySelector('.resource-meta .meta-tag:nth-child(2)')?.textContent || '',
+                    Price: card.querySelector('.price-tag')?.textContent || '',
+                    SupportedLanguages: Array.from(card.querySelectorAll('.resource-meta:nth-child(4) .meta-tag')).map(tag => tag.textContent).join(', '),
+                    Topic: card.querySelector('.topic-value')?.textContent || ''
+                };
+            }
            
-            // Find existing meta containers
+            // Rest of the function remains the same...
             const metaContainers = card.querySelectorAll('.resource-meta');
            
             // Clear existing meta tags but keep the structure
@@ -1184,15 +1602,12 @@ function rebuildResourceCardTags() {
                 });
             }
            
-            // Handle topic display with proper capitalization and N/A fallback - ENHANCED FOR AI/UX
+            // Handle topic display
             const topicValues = card.querySelectorAll('.topic-value');
             topicValues.forEach(topicValue => {
                 const topicText = resourceData.Topic || topicValue.textContent.trim();
-               
-                // Use "N/A" if no topic is provided, otherwise apply proper capitalization
                 const displayText = (topicText && topicText !== '') ? toCamelCase(topicText) : 'N/A';
                
-                // Create a styled span for the topic
                 const topicSpan = document.createElement('span');
                 topicSpan.textContent = displayText;
                 topicSpan.style.backgroundColor = TAG_COLORS.topic;
@@ -1208,7 +1623,6 @@ function rebuildResourceCardTags() {
                 topicSpan.style.lineHeight = '1';
                 topicSpan.style.minHeight = '32px';
                
-                // Replace the content
                 topicValue.innerHTML = '';
                 topicValue.appendChild(topicSpan);
             });
@@ -1298,7 +1712,12 @@ console.log('software engineering ->', toCamelCase('software engineering')); // 
 // Enhanced CSS to ensure proper tag separation and spacing
 
 
-// The rest of your existing code remains the same...
+function parseCommaSeparatedValues(text) {
+    if (!text) return [];
+    return text.split(',').map(item => item.trim()).filter(item => item.length > 0);
+}
+
+// Tag color configuration
 const TAG_COLORS = {
     resourceType: '#2c2c2c',    // Black
     gradeLevel: '#3b82f6',      // Blue
@@ -1308,6 +1727,7 @@ const TAG_COLORS = {
     topic: '#ef4444'            // Red
 };
 
+// Category definitions
 const RESOURCE_TYPES = [
     'Curriculum', 'Coding Platform', 'Assessment Tool', 'Game/Activity',
     'Lesson Plans', 'Professional Development', 'Hardware/Robotics',
@@ -1323,72 +1743,97 @@ const LANGUAGES = [
     'PowerShell', 'Assembly', 'C', 'Unplugged', 'AI Skills'
 ];
 
+const STANDARDS = [
+    'CSTA', 'Common Core', 'NGSS', 'State Standards', 'AP CS A', 'AP CS Principles'
+];
+
+// Enhanced function to determine tag color based on content
+
+
+// Enhanced function to create colored tag element
+// Enhanced function to determine tag color based on content
 function getTagColor(tagText) {
-    const normalizedText = tagText.toLowerCase();
-   
+    const normalizedText = tagText.toLowerCase().trim();
+    
+    // Check resource types
     if (RESOURCE_TYPES.some(type => type.toLowerCase() === normalizedText)) {
         return TAG_COLORS.resourceType;
     }
-   
-    if (GRADE_LEVELS.some(grade => grade.toLowerCase() === normalizedText)) {
+    
+    // Enhanced grade level checking - handle multiple grades
+    if (GRADE_LEVELS.some(grade => normalizedText.includes(grade.toLowerCase())) || 
+        normalizedText.match(/^[k\d\-\s,]+$/)) { // Matches patterns like "K-5, 6-8" or "K-5"
         return TAG_COLORS.gradeLevel;
     }
-   
+    
+    // Check cost options
     if (COST_OPTIONS.some(cost => cost.toLowerCase() === normalizedText)) {
         return TAG_COLORS.cost;
     }
-   
+    
+    // Check languages
     if (LANGUAGES.some(lang => lang.toLowerCase() === normalizedText)) {
         return TAG_COLORS.language;
     }
-   
+    
+    // Check standards
+    if (STANDARDS.some(standard => standard.toLowerCase().includes(normalizedText) || 
+                     normalizedText.includes(standard.toLowerCase()))) {
+        return TAG_COLORS.standards;
+    }
+    
+    // Default to resource type color
     return TAG_COLORS.resourceType;
 }
 
-
-function initializeTagColors() {
-    applyTagColors();
-    rebuildResourceCardTags();
+// Enhanced function to determine tag type based on context
+function getTagType(tagText, context = '') {
+    const normalizedText = tagText.toLowerCase().trim();
+    const normalizedContext = context.toLowerCase();
+    
+    // Check by context first
+    if (normalizedContext.includes('grade') || normalizedContext.includes('level')) {
+        return 'gradeLevel';
+    }
+    if (normalizedContext.includes('price') || normalizedContext.includes('cost')) {
+        return 'cost';
+    }
+    if (normalizedContext.includes('language') || normalizedContext.includes('tool')) {
+        return 'language';
+    }
+    if (normalizedContext.includes('standard') || normalizedContext.includes('alignment')) {
+        return 'standards';
+    }
+    if (normalizedContext.includes('topic')) {
+        return 'topic';
+    }
+    
+    // Enhanced grade level checking - handle multiple grades
+    if (GRADE_LEVELS.some(grade => normalizedText.includes(grade.toLowerCase())) || 
+        normalizedText.match(/^[k\d\-\s,]+$/)) {
+        return 'gradeLevel';
+    }
+    
+    // Then check by content
+    if (COST_OPTIONS.some(cost => cost.toLowerCase() === normalizedText)) {
+        return 'cost';
+    }
+    if (LANGUAGES.some(lang => lang.toLowerCase() === normalizedText)) {
+        return 'language';
+    }
+    if (STANDARDS.some(standard => standard.toLowerCase().includes(normalizedText) || 
+                     normalizedText.includes(standard.toLowerCase()))) {
+        return 'standards';
+    }
+    if (RESOURCE_TYPES.some(type => type.toLowerCase() === normalizedText)) {
+        return 'resourceType';
+    }
+    
+    // Default
+    return 'resourceType';
 }
 
-
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    addTagColorStyles();
-    setTimeout(() => {
-        initializeTagColors();
-    }, 100);
-});
-
-// Export functions for use in other parts of the application
-window.tagColorUtils = {
-    applyTagColors,
-    createColoredTag,
-    getTagColor,
-    initializeTagColors,
-    rebuildResourceCardTags,
-    toCamelCase,
-    parseCommaSeparatedValues,
-    TAG_COLORS
-};
-// Function to determine tag type and return appropriate color
-
-
-// Function to apply colors to resource tags
-
-
-// Function to convert text to proper title case (first letter of each word capitalized)
-
-
-
-// Function to create colored tag element
-// Enhanced function to convert text to proper title case with special handling for acronyms
-
-
-
-
-// Enhanced CSS to ensure proper tag separation and spacing with SMALLER tags
+// Enhanced CSS with smaller font size
 function addTagColorStyles() {
     const style = document.createElement('style');
     style.textContent = `
@@ -1410,7 +1855,7 @@ function addTagColorStyles() {
             align-items: center !important;
         }
        
-        /* SMALLER tag bubbles with proportional font */
+        /* SMALLER tag bubbles with smaller font */
         .colored-tag {
             transition: all 0.2s ease;
             border: none;
@@ -1420,10 +1865,10 @@ function addTagColorStyles() {
             justify-content: center !important;
             text-align: center !important;
             line-height: 1.2 !important;
-            min-height: 32px !important;
-            padding: 6px 12px !important;
-            border-radius: 16px !important;
-            font-size: 10px !important;
+            min-height: 28px !important;
+            padding: 4px 10px !important;
+            border-radius: 14px !important;
+            font-size: 8px !important;
             font-weight: 600 !important;
             margin: 3px 6px 3px 0 !important;
             white-space: nowrap !important;
@@ -1437,16 +1882,16 @@ function addTagColorStyles() {
        
         .resource-card .meta-tag {
             margin: 3px 6px 3px 0 !important;
-            font-size: 10px !important;
+            font-size: 8px !important;
             font-weight: 600 !important;
-            padding: 6px 12px !important;
-            border-radius: 16px !important;
+            padding: 4px 10px !important;
+            border-radius: 14px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
             line-height: 1.2 !important;
-            min-height: 32px !important;
+            min-height: 28px !important;
             white-space: nowrap !important;
             flex-shrink: 0 !important;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -1460,10 +1905,10 @@ function addTagColorStyles() {
             justify-content: center !important;
             text-align: center !important;
             line-height: 1.2 !important;
-            min-height: 32px !important;
-            padding: 6px 12px !important;
-            border-radius: 16px !important;
-            font-size: 10px !important;
+            min-height: 28px !important;
+            padding: 4px 10px !important;
+            border-radius: 14px !important;
+            font-size: 8px !important;
             font-weight: 600 !important;
             margin: 3px 6px 3px 0 !important;
             white-space: nowrap !important;
@@ -1479,10 +1924,10 @@ function addTagColorStyles() {
             justify-content: center !important;
             text-align: center !important;
             line-height: 1.2 !important;
-            min-height: 32px !important;
-            padding: 6px 12px !important;
-            border-radius: 16px !important;
-            font-size: 10px !important;
+            min-height: 28px !important;
+            padding: 4px 10px !important;
+            border-radius: 14px !important;
+            font-size: 8px !important;
             font-weight: 600 !important;
             white-space: nowrap !important;
             flex-shrink: 0 !important;
@@ -1507,6 +1952,22 @@ function addTagColorStyles() {
         .topic-value {
             display: inline-flex;
             align-items: center;
+        }
+       
+        .standard-alignment {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+       
+        .standard-alignment strong {
+            font-weight: 600;
+            color: #374151;
+            flex-shrink: 0;
+            font-size: 14px;
+            margin-right: 8px;
         }
        
         /* BOLD "Read More" link with better styling */
@@ -1577,7 +2038,7 @@ function addTagColorStyles() {
             .resource-card .price-tag,
             .colored-tag {
                 max-width: 100px !important;
-                font-size: 8px !important;
+                font-size: 7px !important;
                 padding: 3px 8px !important;
                 min-height: 24px !important;
                 margin: 2px 4px 2px 0 !important;
@@ -1585,7 +2046,7 @@ function addTagColorStyles() {
             }
             
             .topic-value span {
-                font-size: 8px !important;
+                font-size: 7px !important;
                 padding: 3px 8px !important;
                 min-height: 24px !important;
                 max-width: 100px !important;
@@ -1612,7 +2073,7 @@ function addTagColorStyles() {
             .resource-card .price-tag,
             .colored-tag {
                 max-width: 80px !important;
-                font-size: 7px !important;
+                font-size: 6px !important;
                 padding: 2px 6px !important;
                 min-height: 20px !important;
                 margin: 1px 3px 1px 0 !important;
@@ -1620,7 +2081,7 @@ function addTagColorStyles() {
             }
             
             .topic-value span {
-                font-size: 7px !important;
+                font-size: 6px !important;
                 padding: 2px 6px !important;
                 min-height: 20px !important;
                 max-width: 80px !important;
@@ -1632,16 +2093,21 @@ function addTagColorStyles() {
     document.head.appendChild(style);
 }
 
-// Updated createColoredTag function with smaller sizing
-function createColoredTag(text, type) {
+// Enhanced function to create colored tag element
+function createColoredTag(text, type = null, context = '') {
     const tag = document.createElement('span');
     tag.className = 'meta-tag colored-tag';
-    tag.textContent = toCamelCase(text);
-    tag.style.backgroundColor = TAG_COLORS[type] || TAG_COLORS.resourceType;
+    
+    // Determine tag type if not provided
+    const tagType = type || getTagType(text, context);
+    const formattedText = toCamelCase(text);
+    
+    tag.textContent = formattedText;
+    tag.style.backgroundColor = TAG_COLORS[tagType] || TAG_COLORS.resourceType;
     tag.style.color = '#ffffff';
-    tag.style.padding = '6px 12px';
-    tag.style.borderRadius = '16px';
-    tag.style.fontSize = '10px';
+    tag.style.padding = '4px 10px';
+    tag.style.borderRadius = '14px';
+    tag.style.fontSize = '8px';
     tag.style.fontWeight = '600';
     tag.style.margin = '3px 6px 3px 0';
     tag.style.display = 'inline-flex';
@@ -1649,23 +2115,195 @@ function createColoredTag(text, type) {
     tag.style.justifyContent = 'center';
     tag.style.textAlign = 'center';
     tag.style.lineHeight = '1.2';
-    tag.style.minHeight = '32px';
+    tag.style.minHeight = '28px';
     tag.style.whiteSpace = 'nowrap';
     tag.style.flexShrink = '0';
     tag.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-   
+    
     return tag;
-}
+} 
+
 // Enhanced function to rebuild resource cards with proper color coding
+function rebuildResourceCardTags() {
+    const resourceCards = document.querySelectorAll('.resource-card');
+    
+    resourceCards.forEach(card => {
+        // Get the resource data
+        const resourceData = JSON.parse(card.getAttribute('data-resource') || '{}');
+        
+        // Find existing meta containers or create them
+        let metaContainers = card.querySelectorAll('.resource-meta');
+        
+        // Clear existing meta tags but keep structure
+        metaContainers.forEach(container => {
+            container.innerHTML = '';
+        });
+        
+        // If no meta containers exist, create them
+        if (metaContainers.length === 0) {
+            const metaContainer = document.createElement('div');
+            metaContainer.className = 'resource-meta';
+            
+            // Insert after description or topic
+            const description = card.querySelector('.description');
+            const topic = card.querySelector('.product-topic');
+            const insertAfter = topic || description;
+            
+            if (insertAfter) {
+                insertAfter.parentNode.insertBefore(metaContainer, insertAfter.nextSibling);
+            } else {
+                card.appendChild(metaContainer);
+            }
+            
+            metaContainers = [metaContainer];
+        }
+        
+        const mainMetaContainer = metaContainers[0];
+        
+        // Add main tags (Type, Grade, Price)
+        if (resourceData.ProductType) {
+            const typeTag = createColoredTag(resourceData.ProductType, 'resourceType', 'type');
+            mainMetaContainer.appendChild(typeTag);
+        }
+        
+        if (resourceData.GradeLevel) {
+            const gradeTag = createColoredTag(resourceData.GradeLevel, 'gradeLevel', 'grade');
+            mainMetaContainer.appendChild(gradeTag);
+        }
+        
+        if (resourceData.Price) {
+            const priceTag = createColoredTag(resourceData.Price, 'cost', 'price');
+            mainMetaContainer.appendChild(priceTag);
+        }
+        
+        // Add language tags in a separate container if they exist
+        if (resourceData.SupportedLanguages) {
+            let languageContainer = metaContainers[1];
+            if (!languageContainer) {
+                languageContainer = document.createElement('div');
+                languageContainer.className = 'resource-meta';
+                mainMetaContainer.parentNode.insertBefore(languageContainer, mainMetaContainer.nextSibling);
+            }
+            
+            const languages = parseCommaSeparatedValues(resourceData.SupportedLanguages);
+            languages.forEach(lang => {
+                const langTag = createColoredTag(lang, 'language', 'language');
+                languageContainer.appendChild(langTag);
+            });
+        }
+        
+        // Add standards tags if they exist
+        if (resourceData.StandardAlignment) {
+            let standardsContainer = document.querySelector('.standard-alignment');
+            if (!standardsContainer) {
+                standardsContainer = document.createElement('div');
+                standardsContainer.className = 'standard-alignment';
+                card.appendChild(standardsContainer);
+            }
+            
+            // Clear existing content
+            standardsContainer.innerHTML = '<strong>Standards:</strong> ';
+            
+            const standards = parseCommaSeparatedValues(resourceData.StandardAlignment);
+            standards.forEach(standard => {
+                const standardTag = createColoredTag(standard, 'standards', 'standard');
+                standardsContainer.appendChild(standardTag);
+            });
+        }
+    });
+}
+
+// Enhanced function to apply colors to existing tags with proper AI/UX capitalization
+function applyTagColors() {
+    // Color meta tags in resource cards
+    const metaTags = document.querySelectorAll('.resource-card .meta-tag');
+    metaTags.forEach(tag => {
+        const tagText = tag.textContent.trim();
+        const color = getTagColor(tagText);
+        tag.style.backgroundColor = color;
+        tag.style.color = '#ffffff';
+        tag.style.display = 'inline-flex';
+        tag.style.alignItems = 'center';
+        tag.style.justifyContent = 'center';
+        tag.style.textAlign = 'center';
+        tag.style.lineHeight = '1.2';
+        tag.style.minHeight = '32px';
+        tag.style.padding = '6px 12px';
+        tag.style.borderRadius = '16px';
+        tag.style.fontSize = '10px';
+        tag.style.fontWeight = '600';
+        tag.style.margin = '3px 6px 3px 0';
+        tag.style.whiteSpace = 'nowrap';
+        tag.style.flexShrink = '0';
+        tag.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+       
+        // Format the text for better readability with proper camel casing
+        tag.textContent = toCamelCase(tagText);
+    });
+   
+    // Color price tags specifically
+    const priceTags = document.querySelectorAll('.resource-card .price-tag');
+    priceTags.forEach(tag => {
+        tag.style.backgroundColor = TAG_COLORS.cost;
+        tag.style.color = '#ffffff';
+        tag.style.display = 'inline-flex';
+        tag.style.alignItems = 'center';
+        tag.style.justifyContent = 'center';
+        tag.style.textAlign = 'center';
+        tag.style.lineHeight = '1.2';
+        tag.style.minHeight = '32px';
+        tag.style.padding = '6px 12px';
+        tag.style.borderRadius = '16px';
+        tag.style.fontSize = '10px';
+        tag.style.fontWeight = '600';
+        tag.style.margin = '3px 6px 3px 0';
+        tag.style.whiteSpace = 'nowrap';
+        tag.style.flexShrink = '0';
+        tag.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+        tag.textContent = toCamelCase(tag.textContent);
+    });
+   
+    // Fix topic display - ENHANCED FOR AI/UX
+    const topicValues = document.querySelectorAll('.resource-card .topic-value');
+    topicValues.forEach(topicValue => {
+        const topicText = topicValue.textContent.trim();
+       
+        // Use "N/A" if no topic is provided, otherwise apply proper capitalization
+        const displayText = (topicText && topicText !== '') ? toCamelCase(topicText) : 'N/A';
+       
+        // Create a styled span for the topic
+        const topicSpan = document.createElement('span');
+        topicSpan.textContent = displayText;
+        topicSpan.style.backgroundColor = TAG_COLORS.topic;
+        topicSpan.style.color = '#ffffff';
+        topicSpan.style.padding = '6px 12px';
+        topicSpan.style.borderRadius = '16px';
+        topicSpan.style.fontSize = '10px';
+        topicSpan.style.fontWeight = '600';
+        topicSpan.style.display = 'inline-flex';
+        topicSpan.style.alignItems = 'center';
+        topicSpan.style.justifyContent = 'center';
+        topicSpan.style.textAlign = 'center';
+        topicSpan.style.lineHeight = '1.2';
+        topicSpan.style.minHeight = '32px';
+        topicSpan.style.whiteSpace = 'nowrap';
+        topicSpan.style.flexShrink = '0';
+        topicSpan.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+       
+        // Replace the content
+        topicValue.innerHTML = '';
+        topicValue.appendChild(topicSpan);
+    });
+}
+
+// Enhanced CSS to ensure proper tag separation and spacing with SMALLER tags
 
 
-
-// Initialize tag colors when DOM is ready
-
-
-
-
-
+// Function to initialize tag colors
+function initializeTagColors() {
+    applyTagColors();
+    rebuildResourceCardTags();
+}
 
 // Override the displayResources function to apply colors after filtering
 const originalDisplayResources = window.displayResources;
@@ -1682,26 +2320,32 @@ if (originalDisplayResources) {
     };
 }
 
-
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     addTagColorStyles();
-   
-    // Wait for the main initialization to complete
     setTimeout(() => {
         initializeTagColors();
     }, 100);
 });
-
 
 // Export functions for use in other parts of the application
 window.tagColorUtils = {
     applyTagColors,
     createColoredTag,
     getTagColor,
+    getTagType,
     initializeTagColors,
+    rebuildResourceCardTags,
+    toCamelCase,
+    parseCommaSeparatedValues,
     TAG_COLORS
 };
 
-
-
+// Test the function to verify it works correctly
+console.log('Testing AI/UX capitalization:');
+console.log('ai ->', toCamelCase('ai')); // Should output: AI
+console.log('ux ->', toCamelCase('ux')); // Should output: UX
+console.log('machine learning/ai ->', toCamelCase('machine learning/ai')); // Should output: Machine Learning/AI
+console.log('graphic/ux design ->', toCamelCase('graphic/ux design')); // Should output: Graphic/UX Design
+console.log('data science ->', toCamelCase('data science')); // Should output: Data Science
+console.log('software engineering ->', toCamelCase('software engineering')); // Should output: Software Engineering
